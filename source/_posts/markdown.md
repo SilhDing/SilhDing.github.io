@@ -30,6 +30,7 @@ Can you test '??' and "??".
 *hello*
 **hello**
 **你好**
+**这句话应该被加粗。**
 他姐说，“你这样有意思吗”？我濡染布置但怎！么办……好被。
 "How can you do this?"
 
