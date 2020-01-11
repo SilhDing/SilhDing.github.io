@@ -23,18 +23,18 @@ avatar: /image/avatar.jpeg
 ## Complete url after key words.
 ## Unused key can be commented out.
 links:
-  Blog: /archives
+#  Blog: /archives
 #  Category:
 #  Tags: 
 #  Link:
-#  Resume: /about
+  Resume: /about
 #  Publish:
 #  Trophy:
 #  Gallary:
 #  RSS:
 #  AliPay:
 #  ZhiHu:
-  LinkedIn: https://www.google.com/
+  LinkedIn: https://www.linkedin.com/in/yihangding/
 #  FaceBook:
 #  Twitter:
 #  Skype:
@@ -43,13 +43,13 @@ links:
 #  Sketch:
 #  Gitlab:
 #  Dribble:
-  Instagram:
+  Instagram: https://www.instagram.com/silhding/
 #  Reddit:
 #  YouTube:
 #  QQ:
 #  Weibo:
 #  WeChat:
-  Github: https://github.com/Siricee
+  Github: https://github.com/SilhDing
 
 # how links show: you have 2 choice--text or icon.
 links_text_enable: false
