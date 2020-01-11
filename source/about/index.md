@@ -3,8 +3,12 @@ title: About Me
 date: 2020-01-10 20:44:42
 ---
 
-<img src="me.jpeg" alt="drawing" width="200" height="120" style="float: left; margin-right: 60px;margin-left: 80px;"/> <br><br>**Yihang (Ian) Ding**
+<img src="me.jpeg" alt="drawing" width="200" height="120" style="float: left; margin-right: 60px;margin-left: 80px;"/> 
+<br>
+
+**Yihang (Ian) Ding**
 I am a software engineer at Apple.
+现就职于苹果的软件工程师。
 Email: dingyihang1994@gmail.com
 <br>
 <br>
