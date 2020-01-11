@@ -26,7 +26,7 @@ Email: dingyihang1994@gmail.com
 >- Lorem ipsum dolor sit amet, **consectetur adipiscing elit**. Fusce eget urna vitae velit eleifend interdum at ac nisi.
 >- (wait for employment)
 
-<img src="google_logo.png" alt="drawing" width="180" height="70" style="float: center; margin-top: 50px;" /> <p style="text-align: center;"> **Software Engineer Intern in Google Ads** <br> 05/2019 - 08/2019, Kirkland WA </p> 
+<img src="google_logo.svg" alt="drawing" width="180" height="70" style="float: center; margin-top: 50px;" /> <p style="text-align: center;"> **Software Engineer Intern in Google Ads** <br> 05/2019 - 08/2019, Kirkland WA </p> 
 >- Designed a new type of suggestion (to exclude low-performance audience list of line items) on advertisers’ spending to improve ads targeting performance, and completed a detailed product feature design documentation.
 >- Implemented a new data aggregation dimension and modified existing data aggregation/segmentation pipeline with Google’s parallel computing framework (C++) to support new dimension and new suggestion type.
 >- Developed three new algorithms (C++) that generate audience list exclusion suggestions for eligible line items, further improved these algorithms based on users’ needs and real data patterns obtained by advanced GoogleSQL query, and wrote a full set of tests to evaluate the validity and effectiveness of these algorithms.
