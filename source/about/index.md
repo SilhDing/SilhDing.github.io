@@ -6,7 +6,7 @@ date: 2020-01-10 20:44:42
 <img src="me.jpeg" alt="drawing" width="200" height="120" style="float: left; margin-right: 60px;margin-left: 80px;"/> 
 <br>
 
-**Yihang (Ian) Ding**
+**Yihang (Ian) Ding 丁一航**
 I am a software engineer at Apple.
 现就职于苹果的软件工程师。
 [E-mail](mailto:dingyihang1994@gmail.com) | [LinkedIn](https://www.linkedin.com/in/yihangding/) | [GitHub](https://github.com/SilhDing)
