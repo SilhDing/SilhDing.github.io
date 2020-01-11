@@ -20,10 +20,10 @@ I am a software engineer at Apple.
 
 ## Education
 >**Carnegine Mellon University**, Pittsburgh PA, 12/2019
->M.S. in Electrocanl and Computer Engineering, GPA: 3.67/4.0
+>M.S. in Electrical and Computer Engineering
 
 >**Huazhong University of Science and Technology**, Wuhan China, 06/2016
->B.Eng. in Optoelectronics Information Engineering with Distinction (rank 5th/252), GPA: 3.97/4.0
+>B.Eng. in Optoelectronics Information Engineering with Distinction
 
 ## Experience
 <img src="apple_logo.svg" alt="drawing" width="50" height="50" style="float: center;"/> <p style="text-align: center;"> **Software Engineer in Apple SEG** <br> 03/2020 - present, Cupertino CA </p> 
