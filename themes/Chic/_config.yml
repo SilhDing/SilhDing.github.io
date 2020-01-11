@@ -1,5 +1,5 @@
 # Header
-navname: "丁一航 Yihang's Nest"
+navname: "丁一航 | Yihang's Nest"
 
 # navigatior items
 nav:
@@ -9,7 +9,7 @@ nav:
   Résumé: /about
 
 # favicon
-favicon: /favicon.ico
+favicon: /favicon.png
 
 # Profile
 nickname: Yihang (Ian) Ding

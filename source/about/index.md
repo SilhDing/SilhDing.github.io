@@ -3,7 +3,8 @@ title: About Me
 date: 2020-01-10 20:44:42
 ---
 
-<img src="me.jpeg" alt="drawing" width="200" height="120" style="float: left; margin-right: 60px;margin-left: 80px;"/> 
+<img src="me.jpeg" alt="drawing" width="200" height="120" style="float: left; margin-right: 80px;margin-left: 100px;"/> 
+<br>
 <br>
 
 **Yihang (Ian) Ding 丁一航**
