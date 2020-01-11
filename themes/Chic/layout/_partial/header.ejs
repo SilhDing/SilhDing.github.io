@@ -1,7 +1,10 @@
 <header>
     <nav class="navbar">
         <div class="container">
-            <div class="navbar-header header-logo"><a href="<%- config.root %>"><%= theme.navname %></a></div>
+            <div class="navbar-header header-logo">
+            <a href="<%- config.root %>"><%= theme.navname %></a>
+            </div>
+
             <div class="menu navbar-right">
                 <% for (var i in theme.nav){ %>
                     <a class="menu-item" href="<%- url_for(theme.nav[i]) %>"><%= i %></a>
@@ -9,7 +12,6 @@
                 <input id="switch_default" type="checkbox" class="switch_default">
                 <label for="switch_default" class="toggleBtn"></label>
             </div>
-
         </div>
     </nav>
 
