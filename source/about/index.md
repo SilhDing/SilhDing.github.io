@@ -1,10 +1,10 @@
 ---
-title: Résumé
+title: About Me
 date: 2020-01-10 20:44:42
 ---
 
 <img src="me.jpeg" alt="drawing" width="200" height="120" style="float: left; margin-right: 60px;margin-left: 80px;"/> <br><br>**Yihang (Ian) Ding**
-I am currently a software engineer at Apple.
+I am a software engineer at Apple.
 Email: dingyihang1994@gmail.com
 <br>
 <br>
