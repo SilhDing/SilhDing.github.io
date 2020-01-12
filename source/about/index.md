@@ -10,7 +10,7 @@ date: 2020-01-10 20:44:42
 <br>
 <br>
 
-**Yihang (Ian) Ding 丁一航**
+**Yihang (Ian) Ding** 丁一航
 I am a software engineer at Apple.
 现就职于苹果的软件工程师。
 [E-mail](mailto:dingyihang1994@gmail.com) | [LinkedIn](https://www.linkedin.com/in/yihangding/) | [GitHub](https://github.com/SilhDing)
