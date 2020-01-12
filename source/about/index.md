@@ -3,10 +3,10 @@ title: About Me
 date: 2020-01-10 20:44:42
 ---
 
-<br>
+<!-- <br>
 <br>
 
-<img src="me.jpeg" alt="drawing" width="200" height="120" style="float: left; margin-right: 60px;margin-left: 100px;"/> 
+<img src="me.jpeg" alt="drawing" width="200" style="float: left; margin-right: 60px;margin-left: 100px;"/> 
 <br>
 <br>
 
@@ -16,7 +16,7 @@ I am a software engineer at Apple.
 [E-mail](mailto:dingyihang1994@gmail.com) | [LinkedIn](https://www.linkedin.com/in/yihangding/) | [GitHub](https://github.com/SilhDing)
 <br>
 <br>
-<br>
+<br> -->
 
 ## Education
 >**Carnegine Mellon University**, Pittsburgh PA, 12/2019

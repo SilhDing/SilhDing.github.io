@@ -3,3 +3,22 @@
   .post-content
     margin 0
     padding-top 0
+  .post-title
+  	margin-top 0px
+  	margin-bottom 0px
+  .post-line
+  	fill $light-post-link-color
+.info
+	.email, .linkedin, .github
+		color $light-post-link-color
+		&:hover
+    	color $light-post-link-hover-color
+    	text-decoration none
+    	transition color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease
+
+    .dark-theme &
+      color $dark-post-link-color
+			&:hover
+	    	color $dark-post-link-hover-color
+	    	text-decoration none
+	    	transition color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease

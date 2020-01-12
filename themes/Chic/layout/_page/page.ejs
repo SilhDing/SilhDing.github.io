@@ -1,12 +1,34 @@
+
+<div class="container">
+    <div class="post-wrap page" style="text-align:center;">
+        <br>
+        <br>
+        <h1 class="post-title">About Me</h1>
+    </div>
+</div>
+
+<br>
+
+<div class="container" style="text-align:center;">
+    <div class="post-wrap img" style="width: 270px; display: inline-block; vertical-align:middle;">
+        <img src="me.jpeg" alt="drawing" height="250" />
+    </div>
+    <div class="post-wrap info" style="width: 270px; height: 150px; display: inline-block; vertical-align:middle;">
+        <p style="vertical-align: middle"><b>Yihang Ding</b> 丁一航</p>
+        <p>I am a software engineer at Apple.</p>
+        <a class="email" href="mailto:dingyihang1994@gmail">E-mail</a> | 
+        <a class="linkedin" href="https://www.linkedin.com/in/yihangding/">LinkedIn</a> | 
+        <a class="github" href="https://github.com/SilhDing">GitHub</a>
+    </div>
+</div>
+
+
 <div class="container">
 	<%# toc %>
     <%if(theme.post_toc_enable && toc(page.content).length!==0){%>
         <%- partial('_partial/toc') %>
     <%}%>
     <article class="post-wrap page">
-        <% if(theme.page_title_enable){ %>
-        <h2 class="post-title"><%- page.title %></h2>
-        <% } %>
         <section class="post-content">
             <%- page.content %>
         </section>
