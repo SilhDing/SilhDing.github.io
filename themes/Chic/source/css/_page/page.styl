@@ -54,10 +54,26 @@
 		margin-right 20px
 
 	.link
-		width 350px
-		height 70px
-		display table-cell
-		vertical-align middle
+		.link2
+			width 350px
+			height 70px
+			display table-cell
+			vertical-align middle
+			color $light-post-link-color
+			&:hover
+	    	color $light-post-link-hover-color
+	    	text-decoration none
+	    	transition color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease
+
+	    .dark-theme &
+	      color $dark-post-link-color
+				&:hover
+		    	color $dark-post-link-hover-color
+		    	text-decoration none
+		    	transition color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease
+			border-top: 1px solid rgba(0,0,0,0.1)
+			.dark-theme &
+		     border-top: 1px solid rgba(255,255,255,0.3)
 
 
 		
