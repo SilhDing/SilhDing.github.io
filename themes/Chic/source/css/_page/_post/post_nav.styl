@@ -1,13 +1,14 @@
 .post-nav 
 
-  &:before,
-  &:after 
+
+  & a.prev,
+  & a.next
     content: " "
     display: table
   
 
   & a.prev,
-  & a.next 
+  & a.next
     font-weight: 600
     font-size: 16px
 
@@ -22,11 +23,9 @@
   & a.prev::before 
     content "↩"
     margin-right .5em
-  
 
   & a.prev:hover 
     transform: translateX(-4px)
-  
 
   & a.next 
     float: right
