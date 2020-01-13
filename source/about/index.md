@@ -25,6 +25,11 @@ I am a software engineer at Apple.
 >**Huazhong University of Science and Technology**, Wuhan China, 06/2016
 >B.Eng. in Optoelectronics Information Engineering with Distinction
 
+## Skills
+**Programming Language**: Java, Python, C, C++, Markdown
+**Tool**: AWS, Spark, TensorFlow, Node.js, Docker, Jenkins, Git, Django, MySQL, Linux
+**Interests**: backend system, Java software design, reliable distributed system
+
 ## Experience
 <img src="apple_logo.svg" alt="drawing" width="50" height="50" style="float: center;"/> <p style="text-align: center;"> **Software Engineer in Apple SEG** <br> 03/2020 - present, Cupertino CA </p> 
 >- Lorem ipsum dolor sit amet, **consectetur adipiscing elit**. Fusce eget urna vitae velit eleifend interdum at ac nisi.
@@ -44,8 +49,6 @@ I am a software engineer at Apple.
 >-Developed a CI/CD system for video production application (Jenkins and GitLab) to realize the automation of production pipelines (build, integrate, test and report) triggered by GitLab events or manual operations.
 
 ## Project
-
-(TODO!)
 
 
 
