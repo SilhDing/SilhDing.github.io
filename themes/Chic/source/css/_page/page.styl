@@ -8,7 +8,17 @@
   	margin-bottom 0px
   .post-line
   	fill $light-post-link-color
+
+.img
+	width 270px
+	display inline-block
+	vertical-align middle
+
 .info
+	width 270px
+	height 150px
+	display inline-block
+	vertical-align middle
 	.email, .linkedin, .github
 		color $light-post-link-color
 		&:hover
@@ -22,6 +32,7 @@
 	    	color $dark-post-link-hover-color
 	    	text-decoration none
 	    	transition color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease
+
 .card
 	width 340px
 	height 300px
@@ -35,6 +46,13 @@
 	padding-top 0px
 	display inline-block
 	vertical-align middle
+	transition-duration: .3s
+	transition-property: transform
+	transition-timing-function: ease-out
+	&:active,
+	&:focus,
+	&:hover
+		transform: scale(1.05)
 
 	.title
 		text-align center
