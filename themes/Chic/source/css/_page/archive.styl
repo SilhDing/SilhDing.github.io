@@ -12,22 +12,21 @@
     display inline-block
     text-decoration none
     overflow hidden
-    //text-overflow ellipsis
-    white-space nowrap
+    text-overflow ellipsis
+    border-left: 1px solid $light-font-color
+    padding-left: 10px
     &:hover
       color $light-global-link-hover-color
       background-color transparent
-      transform: scale(1.1)  // zoom out the icon
     
     .dark-theme &
       color $dark-global-link-color
       text-decoration none
-      transition color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease
+      border-left: 1px solid $dark-font-color
 
       &:hover
         color $dark-global-link-hover-color
         text-decoration none
-        transition color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease
 
   .archive-item-date
     float right
