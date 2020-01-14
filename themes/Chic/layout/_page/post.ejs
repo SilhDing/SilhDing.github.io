@@ -26,25 +26,47 @@
         </div>
 
         <% if(theme.post_copyright_enable){ %>
+
             <section class="post-copyright">
+                <span><b>Categories:</b></span>
+                <span class="copyright-item">
+                    <% if(page.categories.length!==0){%>
+                    <% page.categories.forEach(item=>{ %>
+                        #<a href="<%- url_for(item.path) %>"><%- item.name %></a>
+                    <% }) %>
+                        <% } %>
+                </span>
+                <br>
+                <span><b>Tags:</b></span>
+                <span class="copyright-item">
+                    <% if(page.tags.length!==0){%>
+                    <% page.tags.forEach(item=>{ %>
+                        #<a href="<%- url_for(item.path) %>"><%- item.name %></a>
+                    <% }) %>
+                        <% } %>
+                </span>
+
                 <% if(theme.post_copyright_author_enable){ %>
                     <p class="copyright-item">
-                        <span>Author:</span>
+                        <span><b>Author:</b></span>
                         <span><%- config.author %></span>
                     </p>
                 <% } %>
+
                 <% if(theme.post_copyright_permalink_enable){ %>
                     <p class="copyright-item">
-                        <span>Permalink:</span>
+                        <span><b>Permalink:</b></span>
                         <span><a href="<%- page.permalink %>"><%- page.permalink %></a></span>
                     </p>
                 <% } %>
+
                 <% if(theme.post_copyright_license_enable){ %>
                     <p class="copyright-item">
-                        <span>License:</span>
+                        <span><b>License:</b></span>
                         <span><%- theme.post_copyright_license_text %></span>
                     </p>
                 <% } %>
+
                 <% if(theme.post_copyright_slogan_enable){ %>
                      <p class="copyright-item">
                          <span>Slogan:</span>
@@ -54,35 +76,11 @@
 
             </section>
         <% } %>
-        <section class="post-tags">
-            <div>
-                <span><b>Categories:</b></span>
-                <span class="category">
-                    <% if(page.categories.length!==0){%>
-                    <% page.categories.forEach(item=>{ %>
-                        <a href="<%- url_for(item.path) %>">#<%- item.name %></a>
-                    <% }) %>
-                        <% } %>
-                </span>
-            </div>
-
-            <div>
-                <span><b>Tags:</b></span>
-                <span class="tag">
-                    <% if(page.tags.length!==0){%>
-                    <% page.tags.forEach(item=>{ %>
-                        <a href="<%- url_for(item.path) %>">#<%- item.name %></a>
-                    <% }) %>
-                        <% } %>
-                </span>
-            </div>
-            <div>
-                <a href="javascript:window.history.back();">↵ Back</a>
-                <span> &nbsp;&nbsp;&nbsp; </span>
-                <a href="<%- config.root %>">❏ Home</a>
-            </div>
-            
-        </section>
+        <div>
+            <a href="javascript:window.history.back();">↵ Back</a>
+            <span> &nbsp;&nbsp;&nbsp;</span>
+            <a href="<%- config.root %>">❏ Home</a>
+        </div>
         <br>
         <section class="post-nav">
             <% if(post.prev){ %>
