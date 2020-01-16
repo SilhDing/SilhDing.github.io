@@ -23,7 +23,7 @@
 
         <div class="post-content">
             <%- page.content %>
-        </div>
+        </div>              
 
         <% if(theme.post_copyright_enable){ %>
 
@@ -76,12 +76,42 @@
 
             </section>
         <% } %>
+        
+                            
         <div>
             <a href="javascript:window.history.back();">↵ Back</a>
             <span> &nbsp;&nbsp;&nbsp;</span>
             <a href="<%- config.root %>">❏ Home</a>
         </div>
         <br>
+        <br>
+
+        <div id="comment">
+        <div id="disqus_thread"></div>
+        <script>
+
+        /**
+        *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables*/
+        /*
+        var disqus_config = function () {
+        this.page.url = PAGE_URL;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = PAGE_IDENTIFIER; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        };
+        */
+        (function() { // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+        s.src = 'https://silhding.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+        })();
+        </script>
+        <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+        </div>
+        <br>
+        <br>
+
+
         <section class="post-nav">
             <% if(post.prev){ %>
                 <a class="prev" rel="prev" href="<%- url_for(post.prev.path)%>"><%- post.prev.title%></a>
@@ -93,4 +123,5 @@
 
 
     </article>
+    <script id="dsq-count-scr" src="//silhding.disqus.com/count.js" async></script>
 </div>

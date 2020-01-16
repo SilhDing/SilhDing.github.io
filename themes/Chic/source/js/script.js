@@ -45,6 +45,12 @@ document.ready(
             // mobile
             document.getElementById("mobile-toggle-theme").innerText = "· Dark"
         }
+        var refresh = function() {
+            var comment_block = document.getElementById("disqus_thread")
+            if (comment_block != null) {
+                window.location.reload();
+            }
+        }
         _Blog.toggleTheme = function () {
             if (isDark) {
                 document.getElementsByTagName('body')[0].classList.add('dark-theme');
@@ -61,8 +67,9 @@ document.ready(
                 } else {
                     document.getElementsByTagName('body')[0].classList.add('dark-theme');
                 }
-                window.localStorage &&
+                window.localStorage && 
                 window.localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light',)
+                refresh();
             })
             // moblie
             document.getElementById('mobile-toggle-theme').addEventListener('click', () => {
@@ -78,6 +85,7 @@ document.ready(
                 }
                 window.localStorage &&
                 window.localStorage.setItem('theme', document.body.classList.contains('dark-theme') ? 'dark' : 'light',)
+                refresh();
             })
         };
         _Blog.toggleTheme();
