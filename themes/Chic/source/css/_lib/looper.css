@@ -53,7 +53,7 @@ input[type="radio"]:not(:checked) + label:after {
     box-shadow: 0.2px 0.2px 1px 0.5px rgb(180,180,180);
 }
 .switch_default:checked + label{
-    background-color: #1ABC9C;
+    background-color: #1E90FF;
     box-shadow:none;
 }
 .switch_default:checked + label:after{
