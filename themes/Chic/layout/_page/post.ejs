@@ -23,7 +23,14 @@
 
         <div class="post-content">
             <%- page.content %>
-        </div>              
+        </div>       
+
+        <br>
+        <br>
+
+        <div style="text-align:center;font-weight:bold"><h2>Comments</h2></div>
+        <div id="vssue"></div>
+        <div style="text-align:center;font-weight:bold"><a onclick="myFunction()" id="comment-switch">Unfold Comments</a></div>       
 
         <% if(theme.post_copyright_enable){ %>
 
@@ -84,14 +91,7 @@
             <a href="<%- config.root %>">❏ Home</a>
             
         </div>
-        <br>
-        <br>
-        <br>
-        <br>
-        
 
-        <div id="vssue"></div>
-        <div style="text-align:center;font-weight:bold"><a onclick="myFunction()" id="comment-switch">Unfold Comments</a></div>
         <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
         <script src="https://unpkg.com/vssue/dist/vssue.github.min.js"></script>
         <script>
