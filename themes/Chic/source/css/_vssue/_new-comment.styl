@@ -59,12 +59,13 @@
     padding 15px
     font-size $vssue-font-size
     font-family $vssue-font-family
-    background-color lighten($vssue-theme-color, 95%)
+    background-color $vssue-input-bg-color
+    .dark-theme &
+      background-color $vssue-input-bg-color-dark
     border 0px solid $vssue-border-color
     border-radius 5px
     &:disabled
       cursor not-allowed
-      background-color lighten($vssue-border-color, 30%)
     &:focus
       background-color #ffffff
       border-color lighten($vssue-theme-color, 50%)
