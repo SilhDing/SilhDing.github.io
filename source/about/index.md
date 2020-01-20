@@ -3,21 +3,6 @@ title: About Me
 date: 2020-01-10 20:44:42
 ---
 
-<!-- <br>
-<br>
-
-<img src="me.jpeg" alt="drawing" width="200" style="float: left; margin-right: 60px;margin-left: 100px;"/> 
-<br>
-<br>
-
-**Yihang (Ian) Ding** 丁一航
-I am a software engineer at Apple.
-就职于苹果的软件工程师。
-[E-mail](mailto:dingyihang1994@gmail.com) | [LinkedIn](https://www.linkedin.com/in/yihangding/) | [GitHub](https://github.com/SilhDing)
-<br>
-<br>
-<br> -->
-
 ## Education
 >**Carnegine Mellon University**, Pittsburgh PA, 12/2019
 >M.S. in Electrical and Computer Engineering
