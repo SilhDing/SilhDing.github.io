@@ -1,0 +1,97 @@
+.page
+  padding-top 0
+  .post-content
+    margin 0
+    padding-top 0
+  .post-title
+  	margin-top 0px
+  	margin-bottom 0px
+  .post-line
+  	fill $light-post-link-color
+
+.img
+	width 270px
+	display inline-block
+	vertical-align middle
+
+.info
+	width 270px
+	height 150px
+	display inline-block
+	vertical-align middle
+	.email, .linkedin, .github
+		color $light-post-link-color
+		&:hover
+    	color $light-post-link-hover-color
+    	text-decoration none
+    	transition color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease
+
+    .dark-theme &
+      color $dark-post-link-color
+			&:hover
+	    	color $dark-post-link-hover-color
+	    	text-decoration none
+	    	transition color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease
+
+.card
+	width 340px
+	height 300px
+	margin 20px
+	background $light-post-blockquote-background-color
+	border-top: 2px solid $light-post-blockquote-border-color
+	.dark-theme &
+     background $dark-post-blockquote-background-color
+     border-top: 2px solid $dark-post-blockquote-border-color
+  	//box-shadow 1px 1px 2px rgba(0,0,0,0.125)
+	padding-top 0px
+	display inline-block
+	vertical-align middle
+	transition-duration: .3s
+	transition-property: transform
+	transition-timing-function: ease-out
+	&:active,
+	&:focus,
+	&:hover
+		transform: scale(1.05)
+
+	.title
+		text-align center
+		vertical-align middle 
+		width 350px
+		height 60px
+		padding 10px
+		font-weight bold
+		font-size 18px
+		display table-cell
+		vertical-align middle
+
+	.text
+		width 300px
+		height 150px
+		margin-left 20px
+		margin-right 20px
+
+	.link
+		.link2
+			width 350px
+			height 70px
+			display table-cell
+			vertical-align middle
+			color $light-post-link-color
+			&:hover
+	    	color $light-post-link-hover-color
+	    	text-decoration none
+	    	transition color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease
+
+	    .dark-theme &
+	      color $dark-post-link-color
+				&:hover
+		    	color $dark-post-link-hover-color
+		    	text-decoration none
+		    	transition color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease
+			border-top: 1px solid rgba(0,0,0,0.1)
+			.dark-theme &
+		     border-top: 1px solid rgba(255,255,255,0.3)
+
+
+		

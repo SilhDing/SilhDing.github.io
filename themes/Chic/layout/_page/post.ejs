@@ -1,0 +1,167 @@
+<div class="container">
+    <%# toc %>
+    <%if(theme.post_toc_enable && toc(page.content).length!==0){%>
+        <%- partial('_partial/toc') %>
+    <%}%>
+    <br>
+    <%# article %>
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title"><%= page.title %></h1>
+            <% if(theme.post_meta_enable){ %>
+                <div class="post-meta">
+
+                    <% if(page.date && theme.post_date_enable){ %>
+                        <span class="post-time">
+                        <%- date(page.date, theme.date_format)  %>&nbsp;&nbsp;<%- time(page.date, theme.time_format)%>, by <%- config.author %><br>
+                        </span>
+                    <% } %>
+                    <br>
+
+                    <% if(page.categories.length!==0 && theme.post_category_enable){ %>
+                        <span class="post-category">
+                    Categories:
+                            <% page.categories.forEach(item=>{ %>
+                                <<a href="<%- url_for(item.path) %>"><%- item.name %></a>>
+                            <% }) %>
+                        </span>
+                    <% } %>
+                    <br>
+
+                    <% if(page.tags.length!==0){ %>
+                        <span class="post-tag">
+                    Tags:
+                            <% page.tags.forEach(item=>{ %>
+                                #<a href="<%- url_for(item.path) %>"><%- item.name %></a>
+                            <% }) %>
+                        </span>
+                    <% } %>
+
+                </div>
+            <% } %>
+        </header>
+
+        <div class="post-content">
+            <%- page.content %>
+        </div>       
+
+        <br>
+        <br>
+
+        <div style="text-align:center;font-weight:bold"><h2>Comments</h2></div>
+        <div id="vssue"></div>
+        <div style="text-align:center;font-weight:bold"><a onclick="myFunction()" id="comment-switch">Unfold Comments</a></div>       
+
+        <% if(theme.post_copyright_enable){ %>
+
+            <section class="post-copyright">
+                <span><b>Categories:</b></span>
+                <span class="copyright-item">
+                    <% if(page.categories.length!==0){%>
+                    <% page.categories.forEach(item=>{ %>
+                        #<a href="<%- url_for(item.path) %>"><%- item.name %></a>
+                    <% }) %>
+                        <% } %>
+                </span>
+                <br>
+                <span><b>Tags:</b></span>
+                <span class="copyright-item">
+                    <% if(page.tags.length!==0){%>
+                    <% page.tags.forEach(item=>{ %>
+                        #<a href="<%- url_for(item.path) %>"><%- item.name %></a>
+                    <% }) %>
+                        <% } %>
+                </span>
+
+                <% if(theme.post_copyright_author_enable){ %>
+                    <p class="copyright-item">
+                        <span><b>Author:</b></span>
+                        <span><%- config.author %></span>
+                    </p>
+                <% } %>
+
+                <% if(theme.post_copyright_permalink_enable){ %>
+                    <p class="copyright-item">
+                        <span><b>Permalink:</b></span>
+                        <span><a href="<%- page.permalink %>"><%- page.permalink %></a></span>
+                    </p>
+                <% } %>
+
+                <% if(theme.post_copyright_license_enable){ %>
+                    <p class="copyright-item">
+                        <span><b>License:</b></span>
+                        <span><%- theme.post_copyright_license_text %></span>
+                    </p>
+                <% } %>
+
+                <% if(theme.post_copyright_slogan_enable){ %>
+                     <p class="copyright-item">
+                         <span>Slogan:</span>
+                         <span><%- theme.post_copyright_slogan_text %></span>
+                     </p>
+                <% } %>
+
+            </section>
+        <% } %>
+        
+                            
+        <div>
+            <a href="javascript:window.history.back();">↵ Back</a>
+            <span> &nbsp;&nbsp;&nbsp;</span>
+            <a href="<%- config.root %>">❏ Home</a>
+            
+        </div>
+
+        <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+        <script src="https://unpkg.com/vssue/dist/vssue.github.min.js"></script>
+        <script>
+          new Vue({
+            el: '#vssue',
+
+            render: h => h('Vssue', {
+              props: {
+                // here set the title of issue of current page
+                title: location.pathname,
+
+                // here set the options for your OAuth App
+                options: {
+                  owner: 'SilhDing',
+                  repo: 'SilhDing.github.io',
+                  clientId: 'a400ed2ef2f4c24a9015',
+                  clientSecret: '5fc6a590741afcb45b5ea2051aab87872c95d472', // only required for some of the platforms
+                },
+              }
+            })
+          })
+          function myFunction() {
+              var x = document.getElementsByClassName("vssue-comments")[0];
+              if (x == undefined) {
+                return ;
+              }
+              var property = x.style.getPropertyValue("display");
+              if (property === "block") {
+                x.style.setProperty("display","none");
+                document.getElementById("comment-switch").innerHTML="Unfold Comments";
+              } else {
+                x.style.setProperty("display","block");
+                document.getElementById("comment-switch").innerHTML="Fold Comments";
+              }
+            }
+        </script>
+
+        <br>
+        <br>
+
+
+        <section class="post-nav">
+            <% if(post.prev){ %>
+                <a class="prev" rel="prev" href="<%- url_for(post.prev.path)%>"><%- post.prev.title%></a>
+            <% } %>
+            <% if(post.next){ %>
+            <a class="next" rel="next" href="<%- url_for(post.next.path)%>"><%- post.next.title%></a>
+            <% } %>
+        </section>
+
+
+    </article>
+</div>
