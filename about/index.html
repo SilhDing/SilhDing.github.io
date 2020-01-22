@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Yihang (Ian) Ding">
+
+
+    <meta name="subtitle" content="Glad you reach here.">
+
+
+
+
+<title>About Me | Yihang&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.png">
+
+
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+SC:300,600|Lora:400,400i,700,700i&display=swap" rel="stylesheet">
+
+<!--
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif:400,400i,600,600i|Noto+Serif+SC:400,600&display=swap" rel="stylesheet">
+-->
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo">
+            <a href="/">楽しんでね。| Yihang&#39;s Nest</a>
+            </div>
+
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">Résumé</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">楽しんでね。| Yihang&#39;s Nest</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">Résumé</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+
+        <div class="main">
+            
+<div class="container">
+    <div class="post-wrap page" style="text-align:center;">
+        <br>
+        <br>
+        <h1 class="post-title">About Me</h1>
+    </div>
+</div>
+
+<br>
+
+<div class="container" style="text-align:center;">
+    <div class="post-wrap img">
+        <img src="me.jpeg" alt="drawing" height="250" />
+    </div>
+    <div class="post-wrap info">
+        <p style="vertical-align: middle"><b>Yihang (Ian) Ding</b> 丁一航</p>
+        <p>I am a software engineer at Apple. <br>现就职于苹果的软件工程师。</p>
+        <a class="email" href="mailto:dingyihang1994@gmail">E-mail</a> | 
+        <a class="linkedin" href="https://www.linkedin.com/in/yihangding/" target="_blank" rel="noopener">LinkedIn</a> | 
+        <a class="github" href="https://github.com/SilhDing" target="_blank" rel="noopener">GitHub</a>
+    </div>
+</div>
+
+
+<div class="container">
+	
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+    <article class="post-wrap page">
+        <section class="post-content">
+            <h2 id="Education"><a href="#Education" class="headerlink" title="Education"></a>Education</h2><blockquote>
+<p><strong>Carnegine Mellon University</strong>, Pittsburgh PA, 12/2019<br>M.S. in Electrical and Computer Engineering</p>
+</blockquote>
+<blockquote>
+<p><strong>Huazhong University of Science and Technology</strong>, Wuhan China, 06/2016<br>B.Eng. in Optoelectronics Information Engineering with Distinction</p>
+</blockquote>
+<h2 id="Skills"><a href="#Skills" class="headerlink" title="Skills"></a>Skills</h2><p><strong>Programming Language</strong>: Java, Python, C, C++, Markdown<br><strong>Tool</strong>: AWS, Spark, TensorFlow, Node.js, Docker, Jenkins, Git, Django, MySQL, Linux<br><strong>Interests</strong>: backend system, Java software design, reliable distributed system</p>
+<h2 id="Experience"><a href="#Experience" class="headerlink" title="Experience"></a>Experience</h2><p><img src="apple_logo.svg" alt="drawing" width="50" height="50" style="float: center;"/> <p style="text-align: center;"> <strong>Software Engineer in Apple SEG</strong> <br> <em>03/2020 - present, Cupertino CA</em> </p> </p>
+<blockquote>
+<ul>
+<li>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Fusce eget urna vitae velit eleifend interdum at ac nisi.</li>
+<li>Lorem ipsum dolor sit amet, <strong>consectetur adipiscing elit</strong>. Fusce eget urna vitae velit eleifend interdum at ac nisi.</li>
+<li>(wait for employment)</li>
+</ul>
+</blockquote>
+<p><img src="google_logo.svg" alt="drawing" width="180" height="70" style="float: center; margin-top: 50px;" /> <p style="text-align: center;"> <strong>Software Engineer Intern in Google Ads</strong> <br> <em>05/2019 - 08/2019, Kirkland WA</em> </p> </p>
+<blockquote>
+<ul>
+<li>Designed a new type of suggestion (to exclude low-performance audience list of line items) on advertisers’ spending to improve ads targeting performance, and completed a detailed product feature design documentation.</li>
+<li>Implemented a new data aggregation dimension and modified existing data aggregation/segmentation pipeline with Google’s parallel computing framework (C++) to support new dimension and new suggestion type.</li>
+<li>Developed three new algorithms (C++) that generate audience list exclusion suggestions for eligible line items, further improved these algorithms based on users’ needs and real data patterns obtained by advanced GoogleSQL query, and wrote a full set of tests to evaluate the validity and effectiveness of these algorithms.</li>
+<li>~5% line items are eligible to get suggestions (average performance improvement is 60% based on the history data), which is much better than the effectiveness of all other existing suggestion types of DV360.</li>
+</ul>
+</blockquote>
+<p><img src="iqiyi_logo.png" alt="drawing" width="200" height="70" style="float: center; margin-top: 50px;" /> <p style="text-align: center;"> <strong>Software Engineer Intern in iQIYI Cloud Infrastructure Team</strong> <br> <em>04/2018 - 07/2018, Beijing China</em> </p> </p>
+<blockquote>
+<ul>
+<li>Improved features of data classification and aggregation in the picture production monitoring system (a Python Django web app) to track statuses of picture production tasks from multiple data centers during different periods.</li>
+<li>Designed some new front-end pages for more intuitive visualization (i.e., table, histogram and dynamic graphs) of vast amounts of deeply nested data, and supported one-click data export (Excel table) from web pages.</li>
+<li>Wrote Dockerfile and build docker images of production monitoring application, and deployed it in QIYI App Engine (an internal container service) to achieve continuous running, automatic alarming and error reporting.</li>
+<li>Developed a CI/CD system for video production application (Jenkins and GitLab) to realize the automation of production pipelines (build, integrate, test and report) triggered by GitLab events or manual operations.</li>
+</ul>
+</blockquote>
+<h2 id="Projects"><a href="#Projects" class="headerlink" title="Projects"></a>Projects</h2>
+        </section>
+    </article>
+</div>
+
+
+<div class="post-wrap page" style="text-align:center;">
+    <div class="post-wrap card">
+        <div class="title">
+            Carcassonne Game in Java
+        </div> 
+        <div class="text"> The multi-player Carcassonne Board Game implemented in Java.
+        </div>
+        <div class="link"><a class="link2" href="/2020/01/20/carcassonne-1/">Click for More</a></div>
+    </div>
+    <div class="post-wrap card">
+        <div class="title">
+            Carcassonne Game in Java
+        </div> 
+        <div class="text"> TODO.
+        </div>
+        <div class="link"><a class="link2" href="/">Click for More (TODO)</a></div>
+    </div>
+    <div class="post-wrap card">
+        <div class="title">
+            Carcassonne Game in Java
+        </div> 
+        <div class="text"> TODO.
+        </div>
+        <div class="link"><a class="link2" href="/">Click for More (TODO)</a></div>
+    </div>
+    <div class="post-wrap card">
+        <div class="title">
+            Carcassonne Game in Java
+        </div> 
+        <div class="text"> TODO.
+        </div>
+        <div class="link"><a class="link2" href="/">Click for More (TODO)</a></div>
+    </div>
+    <div class="post-wrap card">
+        <div class="title">
+            Carcassonne Game in Java
+        </div> 
+        <div class="text"> TODO.
+        </div>
+        <div class="link"><a class="link2" href="/">Click for More (TODO)</a></div>
+    </div>
+    <div class="post-wrap card">
+        <div class="title">
+            Carcassonne Game in Java
+        </div> 
+        <div class="text"> TODO.
+        </div>
+        <div class="link"><a class="link2" href="/">Click for More (TODO)</a></div>
+    </div>
+</div>
+<br>
+<br>
+<br>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Yihang (Ian) Ding | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>
