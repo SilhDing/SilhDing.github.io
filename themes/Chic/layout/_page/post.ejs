@@ -13,7 +13,27 @@
 
                     <% if(page.date && theme.post_date_enable){ %>
                         <span class="post-time">
-                        <%- date(page.date, theme.date_format)  %>&nbsp;&nbsp;<%- time(page.date, theme.time_format)%><br>
+                        <%- date(page.date, theme.date_format)  %>&nbsp;&nbsp;<%- time(page.date, theme.time_format)%>, by <%- config.author %><br>
+                        </span>
+                    <% } %>
+                    <br>
+
+                    <% if(page.categories.length!==0 && theme.post_category_enable){ %>
+                        <span class="post-category">
+                    Categories:
+                            <% page.categories.forEach(item=>{ %>
+                                <<a href="<%- url_for(item.path) %>"><%- item.name %></a>>
+                            <% }) %>
+                        </span>
+                    <% } %>
+                    <br>
+
+                    <% if(page.tags.length!==0){ %>
+                        <span class="post-tag">
+                    Tags:
+                            <% page.tags.forEach(item=>{ %>
+                                #<a href="<%- url_for(item.path) %>"><%- item.name %></a>
+                            <% }) %>
                         </span>
                     <% } %>
 

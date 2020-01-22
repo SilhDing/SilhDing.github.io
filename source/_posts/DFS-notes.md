@@ -2,10 +2,10 @@
 title: DFS总结2
 date: 2020-01-10 14:40:09
 tag: 
-    - leetcode
-    - algorithm
+    - "leetcode"
+    - "algorithm"
 categories:
-    - technique
+    - "technique"
 ---
 
 ## DFS 大全2

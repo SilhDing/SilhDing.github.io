@@ -1,8 +1,8 @@
 ---
-title: 《少年的你》：太爱前几分钟的质感和镜头了
+title: "《少年的你》：太爱前几分钟的质感和镜头了"
 date: 2020-01-14 00:41:16
-tags: movie
-categories: life
+tags: "movie"
+categories: "life"
 ---
 
 实在是太爱前几分钟的镜头和质感了。像极了日本同题材电影《告白》。
