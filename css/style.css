@@ -1382,6 +1382,7 @@ a
 }
 .vssue .vssue-header .vssue-header-powered-by {
   float: right;
+  font-style: italic;
   color: #a9a9b3;
 }
 .vssue .vssue-new-comment {
@@ -1420,9 +1421,6 @@ a
   .vssue .vssue-new-comment .vssue-new-comment-body {
     margin-left: 70px;
   }
-}
-.vssue .vssue-new-comment .vssue-new-comment-body textarea {
-  font-style: italic;
 }
 .vssue .vssue-new-comment .vssue-new-comment-body .vssue-new-comment-loading {
   position: absolute;
