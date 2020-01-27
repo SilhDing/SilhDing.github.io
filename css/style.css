@@ -1421,6 +1421,9 @@ a
     margin-left: 70px;
   }
 }
+.vssue .vssue-new-comment .vssue-new-comment-body textarea {
+  font-style: italic;
+}
 .vssue .vssue-new-comment .vssue-new-comment-body .vssue-new-comment-loading {
   position: absolute;
   top: 50%;
