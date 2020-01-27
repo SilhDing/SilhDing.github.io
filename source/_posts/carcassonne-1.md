@@ -1,6 +1,6 @@
 ---
 title: "Project: Carcassonne Game in Java"
-date: 2020-01-20 16:11:15
+date: 2019-11-1 16:11:15
 tags:
     - "design"
 categories:
@@ -64,12 +64,12 @@ As the game contains multiple objects, coupling between each object should be lo
 
 ### Object Model
 
-(**Note**: due to the CMU academic integrity policy, this part cannot be publicized as it is a part of homework's solution. If you are **NOT** taking this course **AND** you will **NOT** take this course in the future, please leave comments or contact me with e-mail if you want more information about this part.)
+(**Note**: due to the CMU academic integrity policy, this part cannot be publicized as it is a part of homework's solution. If you are **NOT** taking this course currently **AND** you will **NOT** take this course in the future, please leave comments or contact me by e-mail in case you want more information about this part.)
 
 ### Hierarchy and structure
 
-(**Note**: due to the CMU academic integrity policy, this part cannot be publicized as it is a part of homework's solution. If you are **NOT** taking this course **AND** you will **NOT** take this course in the future, please leave comments or contact me with e-mail if you want more information about this part.)
+(**Note**: due to the CMU academic integrity policy, this part cannot be publicized as it is a part of homework's solution. If you are **NOT** taking this course currently **AND** you will **NOT** take this course in the future, please leave comments or contact me by e-mail in case you want more information about this part.)
 
 ### Design Highlights
 
-(**Note**: due to the CMU academic integrity policy, this part cannot be publicized as it is a part of homework's solution. If you are **NOT** taking this course **AND** you will **NOT** take this course in the future, please leave comments or contact me with e-mail if you want more information about this part.)
+(**Note**: due to the CMU academic integrity policy, this part cannot be publicized as it is a part of homework's solution. If you are **NOT** taking this course currently **AND** you will **NOT** take this course in the future, please leave comments or contact me by e-mail in case you want more information about this part.)
