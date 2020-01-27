@@ -1,5 +1,5 @@
 ---
-title: "Project: Social Network Data Process and Visualization Framework"
+title: "Project: Social Network Data Visualization and Analysis Framework"
 date: 2019-11-29 16:44:50
 tags:
     - "design"
