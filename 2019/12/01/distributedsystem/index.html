@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Yihang (Ian) Ding">
+
+
+    <meta name="subtitle" content="Glad you reach here.">
+
+
+
+
+<title>Project: A Distributed, Reliable and Fault-tolerant Banking System | Yihang&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.png">
+
+
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+SC:300,600|IBM+Plex+Serif:300,300i,600,600i&display=swap" rel="stylesheet">
+
+<!--
+<link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif:400,400i,600,600i|Noto+Serif+SC:400,600&display=swap" rel="stylesheet">
+-->
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo">
+            <a href="/">楽しんでね。| Yihang&#39;s Nest</a>
+            </div>
+
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">Résumé</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">楽しんでね。| Yihang&#39;s Nest</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">Résumé</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+    <br>
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Project: A Distributed, Reliable and Fault-tolerant Banking System</h1>
+            
+                <div class="post-meta">
+
+                    
+                        <span class="post-time">
+                        December 1, 2019&nbsp;&nbsp;17:53:35, by Yihang (Ian) Ding<br>
+                        </span>
+                    
+                    <br>
+
+                    
+                        <span class="post-category">
+                    Categories:
+                            
+                                <<a href="/categories/technique/">technique</a>>
+                            
+                                <<a href="/categories/technique/course/">course</a>>
+                            
+                                <<a href="/categories/technique/course/project/">project</a>>
+                            
+                        </span>
+                    
+                    <br>
+
+                    
+                        <span class="post-tag">
+                    Tags:
+                            
+                                #<a href="/tags/design/">design</a>
+                            
+                        </span>
+                    
+
+                </div>
+            
+        </header>
+
+        <div class="post-content">
+            <p>Designning and implementing a distributed and fault-tolerant system is always interesting but <strong>challenging</strong> and <strong>complicated</strong>.</p>
+<p>In this team project, we designed and implemented a comprehensive distributed banking system. However, the application part is simple in our project as we want to mainly focus on the design and implementation of distributed system and principles of strong consistency. Below are some highlights or features of our system:</p>
+<ul>
+<li>Industrial standard architecture (but simplified) of ditributed system;</li>
+<li>Support <strong>active replication</strong> and <strong>passive replications</strong> schemes;</li>
+<li>Implement total ordering to ensure strong consistency;</li>
+<li>Tolerant to changes of membership (i.e., able to handle the cases where new replicas join or existing replicas fail);</li>
+<li>Implement web UI for each component;</li>
+<li>Support some basic banking operations, e.g., create an account, deposit, withdraw, etc.</li>
+<li>…</li>
+</ul>
+<h1 id="Design-Overview"><a href="#Design-Overview" class="headerlink" title="Design Overview"></a>Design Overview</h1><p>In this section, we are going to give an brief introduction of our system.</p>
+<h2 id="Terminology"><a href="#Terminology" class="headerlink" title="Terminology"></a>Terminology</h2><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RM</td>
+<td>replication manager</td>
+</tr>
+<tr>
+<td>GFD</td>
+<td>global fault detector</td>
+</tr>
+<tr>
+<td>LFD</td>
+<td>local fault detector</td>
+</tr>
+<tr>
+<td>Address</td>
+<td>the IP and port number of a service (e.g. the RM, GFD, LFD or a replica)</td>
+</tr>
+<tr>
+<td>Replica status</td>
+<td>whether the replica is <strong>NEW</strong> (a new replica that is syncing up) or <strong>READY</strong> (the replica is up and running).</td>
+</tr>
+<tr>
+<td>Local replica status</td>
+<td>the replica status of all the replicas that are managed by a LFD.</td>
+</tr>
+<tr>
+<td>Global replica status</td>
+<td>the replica status of all the replicas that are managed by a GFD.</td>
+</tr>
+<tr>
+<td>Replication configuration</td>
+<td>the addresses of reachable replicas, the replication style, the primary replica if passive, and etc.</td>
+</tr>
+<tr>
+<td>Reachable replica</td>
+<td>in the distributed system settings, it is hard to say if a replica is “running” or not, since it can happen that a replica is still running but can’t be reached by a LFD or GFD. To avoid such ambiguity, we would say that a replica is “unreachable”.</td>
+</tr>
+<tr>
+<td>Service info</td>
+<td>the replication configuration in the client’s point of view, including the addresses of replicas that the client needs to reach. In passive replication, a client only needs to reach the primary replica but in active replication, it needs to reach all active replicas.</td>
+</tr>
+</tbody></table>
+<h2 id="Hierarchy-and-Components"><a href="#Hierarchy-and-Components" class="headerlink" title="Hierarchy and Components"></a>Hierarchy and Components</h2><p>We used a simplified version of industry standard distributed system. The picture below shows a brief structure of the system.</p>
+<p><img src="system.svg" alt="system"></p>
+<p>Please note that each element in the picture (e.g., RM, GFD) would be a physical machine or a virtual machine or even a process. To simplify the system, we make RM and GFD on one physical machine. A LFD and several replicas would be included in a cluster, which, in our case, is in fact a physical machine.</p>
+<p>We will give detailed description of each component in the picture above.</p>
+<h3 id="Replication-Manager"><a href="#Replication-Manager" class="headerlink" title="Replication Manager"></a>Replication Manager</h3><p>The replication manager maintains a table of all replicas and their addresses (called replica status table), and also the replication style (either passive or active) and which is the primary replica in passive replication.</p>
+<p>The replication manager also maintains a sequence number counter that monotonically increases.</p>
+<p>The global fault detector periodically polls the status of all replicas and reports changes to the replication manager. The changes can be addition or removal of replicas. The replication manager is responsible for reacting appropriately to the changes. For example, in passive replication, if the primary replica is removed from the membership, the replication manager is responsible for choosing a new primary replica.</p>
+<p>The replication manager assumes that the global fault detector never crashes.</p>
+<h3 id="Global-Fault-Detector"><a href="#Global-Fault-Detector" class="headerlink" title="Global Fault Detector"></a>Global Fault Detector</h3><p>The global fault detector maintains a list of addresses of local fault detectors and the status of all replicas at the last check. <strong>It will never directly contact any replicas</strong>.</p>
+<p>The global fault detector periodically asks all local fault detectors for replica status. The interval (a.k.a. the fault detection interval) is configured via a configuration file or command line argument. If there are any changes between the new status and the previous one, it reports these changes to the replication manager.</p>
+<p>That a replica becomes unreachable and that a local fault detector becomes unreachable both mean related replicas are removed from the membership. The GFD doesn’t distinguish between these two cases.</p>
+<p>If a local fault detector is unreachable for one time, it is immediately removed from the list and all associated replicas under that local fault detector are considered as leaving the cluster. This is to avoid a local fault detector from fluctuating between reachable and unreachable due to temporary network malfunctioning.</p>
+<h3 id="Local-Fault-Detector"><a href="#Local-Fault-Detector" class="headerlink" title="Local Fault Detector"></a>Local Fault Detector</h3><p>The local fault detector maintains a list of addresses of replicas that it monitors (which can be only one).</p>
+<p>Each time the global fault detector queries replica status, it asks all the replicas on its list for their status and returns the result to the global fault detector.</p>
+<p>If a replica is unreachable for one time, it is immediately removed from the list.</p>
+<p>Please note that we used a 2-tier mechanism for failure detection (LFD and GFD), which could be efficient when there are many replicas across the whole system. A single fault detector, which manages all replicas, would show poor scalability.</p>
+<h3 id="Replica"><a href="#Replica" class="headerlink" title="Replica"></a>Replica</h3><p>Replicas maintains the state of the application and responds to queries of the local fault detector.</p>
+<p>When a new replica is added to the cluster, the replica will notify its LFD, and LFD will later noptify GFD about this update. When the replication manager detects the addition of this replica via the report of the GFD, it sends an <code>updateReplicationConfig</code> to the new replica as well as all other replicas to trigger synchronization (the new replica can download checkpoints and logs from any other replicas).</p>
+<h1 id="Interaction"><a href="#Interaction" class="headerlink" title="Interaction"></a>Interaction</h1><p>A critical part in a distributed system is <strong>how can your system cope with a new replica or failed replica</strong>. In this section, we’ll cover some cases you might be interested in.</p>
+<h2 id="Startup"><a href="#Startup" class="headerlink" title="Startup"></a>Startup</h2><p>In order to simplify our implementation, all components in our system will be started manually. The GFD and RM will be first started. GFD is configured with the address of the RM and its monitoring list is initially empty.</p>
+<p>When a LFD is started, the LFD calls /addLocalFaultDetector of the GFD to add itself to the monitoring list of the GFD.</p>
+<p>When a replica is started, the replica calls /addReplica of the LFD to add itself to the monitoring list of the LFD.</p>
+<p>Next time that GFD polls replica status, it will detect the presence of the new replicas or absence of old replicas and reports this change to the RM.</p>
+<h2 id="Replica-Status-Polling"><a href="#Replica-Status-Polling" class="headerlink" title="Replica Status Polling"></a>Replica Status Polling</h2><p>The GFD performs replica status polling to know the liveness of all replicas and reports any changes since the last check to the replication manager.</p>
+<p>The frequency of the GFD performing this polling is determined by the fault detection interval, which is part of the configuration file of GFD and can be modified by the RM.</p>
+<h3 id="Detect-a-Failed-Replica"><a href="#Detect-a-Failed-Replica" class="headerlink" title="Detect a Failed Replica"></a>Detect a Failed Replica</h3><p>When a replica fails or becomes unreachable, LFD will first be aware the issue and notify the GFD about this update. The GFD would notify the RM and RM would later send the new replication configuration that has removed the failed replica to all reachable replicas.</p>
+<p>You may refer to the UML sequence diagram for more accurate description.</p>
+<p><img src="polling_1.svg" alt="polling_1"></p>
+<h3 id="Detect-a-New-Replica"><a href="#Detect-a-New-Replica" class="headerlink" title="Detect a New Replica"></a>Detect a New Replica</h3><p>When a replica is started (note it could be a previously failed replica and now it recovers), it will first report to its LFD (a new replica will always configured with the address of its LFD). LFD will deliver this message to GFD, who will also notify RM if there are changes in replica configuration.</p>
+<p>On the RM’s side, when a new replica is detected, the RM broadcasts the replication configuration containing the new replica to all reachable replicas. After knowing other replicas, the new replica can download checkpoints and logs from any up and running replica.</p>
+<p>When the primary replica is unreachable in passive replication, the RM chooses a new primary and broadcasts the new configuration to all reachable replicas. (We will give more information for this part later)</p>
+<p>The sequence interaction diagram shows how the GFD conducts replica status polling and what would happen if a new replica is detected.</p>
+<p><img src="polling_2.svg" alt="polling_2"></p>
+<h2 id="Client-Operation"><a href="#Client-Operation" class="headerlink" title="Client Operation"></a>Client Operation</h2><p>When a client initializes a request, the request will go through many components and trigger various behaviors, which could be <strong>highly complicated and interactive</strong>. Our goal in processing clients’ requests is to guarantee strong consistency across all replicas by implementing <strong>total ordering</strong>. In addition, we are also suposed to design and implement different workflows under different replication style/schemes (active or passive). We will skip this section and give more explaination when we talk about replication styles later.</p>
+<h1 id="Request-Handling"><a href="#Request-Handling" class="headerlink" title="Request Handling"></a>Request Handling</h1><p>Up to now we already know how the system keeps detecting new or failed replicas. However, you may still have questions:</p>
+<ol>
+<li>How do you handle a request while ensuring strong consistency?</li>
+<li>Consider a case where there are multiple clients that may send reqeusts simultaneously. How do you implement total ordering to guarantee consistency?</li>
+<li>Consider a case where the whole system have been running for a while and have handled some request. Now a new replica joins. How does it synchronize to the most recent state. In other words, how do you implement logging and checkpointing?</li>
+</ol>
+<p>No worry. Before we start, let’s dive deep into the replication style.</p>
+<h2 id="Replication-Style"><a href="#Replication-Style" class="headerlink" title="Replication Style"></a>Replication Style</h2><p>In this project, we support two different replication styles.</p>
+<h3 id="Active-Style"><a href="#Active-Style" class="headerlink" title="Active Style"></a>Active Style</h3><p>In active replication style, once a client send a request, <strong>ALL</strong> replicas will have to execute the request and, if necessary, make state changes. Active replication style promises faster receovery from faults but it normally requires more memory and processing costs.</p>
+<p>If many client send requests simultaneously, it is highly possible that differnet replicas will receive different order of requests. In this case, strong consistency might be compromised, and we need <strong>total ordering</strong> to address this concern. We will talk about it later.</p>
+<h3 id="Passive-Style"><a href="#Passive-Style" class="headerlink" title="Passive Style"></a>Passive Style</h3><p>In passive replication style, only the <strong>primary replica</strong> will receive and handle this request. For other replicas (a.k.a <strong>secondary replicas</strong>), they will only get checkpoints from primary replica periodically (the frequency is determined by a parameter called <em>checkpointing interval</em> which can be modified while the system is running). Passive replication style requires less memory and processing costs, but may take longer to receover from faults/failures.</p>
+<p>Total ordering will be trivial here as there is only one replica which really executes requests. However, it may complicate other parts. For example, if the primary replica fails, how can we determine a new replica as the primary replica? Some consensus protocols might be helpful (e.g., PAXOS), but remember: <em>implementing a consensus protocol would be highly complicated and painful.</em></p>
+<p>No worry. We will introduce our solution later.</p>
+<h2 id="Total-Ordering"><a href="#Total-Ordering" class="headerlink" title="Total Ordering"></a>Total Ordering</h2><p>Here are many ways to implement total ordering in active replication style. Let’s list some:</p>
+<ol>
+<li>Ask every client to grab a <strong><em>sequence number</em></strong> from RM or another agency every time it wants to send a request. The request and its assigned sequence number will be delivered to all replicas, and replica will handle requests in the order of their sequence number (like what we do in TCP protocol).</li>
+<li>Ask all clients to send requests to RM (or another agency) and let the RM decide the ordering of requests. Replicas will get requests from RM.</li>
+</ol>
+<p>However, these schemes might be fragile if we consider some extreme cases:</p>
+<ol>
+<li>In the first scheme, what if a client grabs a sequence number and holds it for a long time before sending a request? What may happen is that replicas will block in order to wait for that request’s arrival.</li>
+<li>In the second scheme, what if we have many replicas sending requests? Scalability would be an issue and the RM (or the agency receiving all requests) would become the bottleneck.</li>
+</ol>
+<p>We would use a new scheme instead in our peoject. This scheme only involves replicas themselves and it is easy to implement.</p>
+<p>(TODO)</p>
+<h2 id="Checkpointing"><a href="#Checkpointing" class="headerlink" title="Checkpointing"></a>Checkpointing</h2><h2 id="Assumptions"><a href="#Assumptions" class="headerlink" title="Assumptions"></a>Assumptions</h2><h1 id="Web-UI"><a href="#Web-UI" class="headerlink" title="Web UI"></a>Web UI</h1><h2 id="GFD"><a href="#GFD" class="headerlink" title="GFD"></a>GFD</h2><h2 id="LFD"><a href="#LFD" class="headerlink" title="LFD"></a>LFD</h2><h2 id="RM"><a href="#RM" class="headerlink" title="RM"></a>RM</h2><h2 id="Replica-1"><a href="#Replica-1" class="headerlink" title="Replica"></a>Replica</h2>
+        </div>       
+
+        <br>
+        <br>
+
+        <div style="text-align:center;font-weight:bold"><h2>Comments</h2></div>
+        <div id="vssue"></div>
+        <div style="text-align:center;font-weight:bold"><a onclick="myFunction()" id="comment-switch">Unfold Comments</a></div>       
+
+        
+
+            <section class="post-copyright">
+                <span><b>Categories:</b></span>
+                <span class="copyright-item">
+                    
+                    
+                        #<a href="/categories/technique/">technique</a>
+                    
+                        #<a href="/categories/technique/course/">course</a>
+                    
+                        #<a href="/categories/technique/course/project/">project</a>
+                    
+                        
+                </span>
+                <br>
+                <span><b>Tags:</b></span>
+                <span class="copyright-item">
+                    
+                    
+                        #<a href="/tags/design/">design</a>
+                    
+                        
+                </span>
+
+                
+                    <p class="copyright-item">
+                        <span><b>Author:</b></span>
+                        <span>Yihang (Ian) Ding</span>
+                    </p>
+                
+
+                
+                    <p class="copyright-item">
+                        <span><b>Permalink:</b></span>
+                        <span><a href="http://silhding.github.io/2019/12/01/distributedsystem/">http://silhding.github.io/2019/12/01/distributedsystem/</a></span>
+                    </p>
+                
+
+                
+                    <p class="copyright-item">
+                        <span><b>License:</b></span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+
+                
+
+            </section>
+        
+        
+                            
+        <div>
+            <a href="javascript:window.history.back();">↵ Back</a>
+            <span> &nbsp;&nbsp;&nbsp;</span>
+            <a href="/">❏ Home</a>
+            
+        </div>
+
+        <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+        <script src="https://unpkg.com/vssue/dist/vssue.github.min.js"></script>
+        <script>
+          new Vue({
+            el: '#vssue',
+
+            render: h => h('Vssue', {
+              props: {
+                // here set the title of issue of current page
+                title: location.pathname,
+
+                // here set the options for your OAuth App
+                options: {
+                  owner: 'SilhDing',
+                  repo: 'SilhDing.github.io',
+                  clientId: 'a400ed2ef2f4c24a9015',
+                  clientSecret: '5fc6a590741afcb45b5ea2051aab87872c95d472', // only required for some of the platforms
+                },
+              }
+            })
+          })
+          function myFunction() {
+              var x = document.getElementsByClassName("vssue-comments")[0];
+              if (x == undefined) {
+                return ;
+              }
+              var property = x.style.getPropertyValue("display");
+              if (property === "block") {
+                x.style.setProperty("display","none");
+                document.getElementById("comment-switch").innerHTML="Unfold Comments";
+              } else {
+                x.style.setProperty("display","block");
+                document.getElementById("comment-switch").innerHTML="Fold Comments";
+              }
+            }
+        </script>
+
+        <br>
+        <br>
+
+
+        <section class="post-nav">
+            
+                <a class="prev" rel="prev" href="/2020/01/10/DFS-notes/">DFS总结2</a>
+            
+            
+            <a class="next" rel="next" href="/2019/11/29/socialnetwork/">Project: Social Network Data Visualization and Analysis Framework</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Yihang (Ian) Ding | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

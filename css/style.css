@@ -888,6 +888,7 @@ a
   padding-top: 2rem;
   text-align: left;
 }
+.post-content h1,
 .post-content h2,
 .post-content h3,
 .post-content h4,
@@ -1379,6 +1380,9 @@ a
 }
 .dark-theme .vssue .vssue-header {
   border-bottom: 1px solid #909196;
+}
+.vssue .vssue-header .vssue-header-comments-count {
+  display: none;
 }
 .vssue .vssue-header .vssue-header-powered-by {
   float: right;
