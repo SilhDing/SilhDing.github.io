@@ -50,7 +50,7 @@ Please note that each element in the picture (e.g., RM, GFD) would be a physical
 
 We will give detailed description of each component in the picture above.
 
-### Replication Manager (RM)
+### Replication Manager
 
 The replication manager maintains a table of all replicas and their addresses (called replica status table), and also the replication style (either passive or active) and which is the primary replica in passive replication.
 
@@ -60,7 +60,7 @@ The global fault detector periodically polls the status of all replicas and repo
 
 The replication manager assumes that the global fault detector never crashes.
 
-### Global Fault Detector (GFD)
+### Global Fault Detector
 
 The global fault detector maintains a list of addresses of local fault detectors and the status of all replicas at the last check. **It will never directly contact any replicas**.
 
@@ -70,7 +70,7 @@ That a replica becomes unreachable and that a local fault detector becomes unrea
 
 If a local fault detector is unreachable for one time, it is immediately removed from the list and all associated replicas under that local fault detector are considered as leaving the cluster. This is to avoid a local fault detector from fluctuating between reachable and unreachable due to temporary network malfunctioning.
 
-### Local Fault Detector (LFD)
+### Local Fault Detector
 
 The local fault detector maintains a list of addresses of replicas that it monitors (which can be only one).
 
@@ -112,7 +112,7 @@ When a replica fails or becomes unreachable, LFD will first be aware the issue a
 
 You may refer to the UML sequence diagram for more accurate description.
 
-**Here should be an UML diagram.**
+![polling_1](polling_1.svg)
 
 ### Detect a New Replica
 
@@ -124,7 +124,7 @@ When the primary replica is unreachable in passive replication, the RM chooses a
 
 The sequence interaction diagram shows how the GFD conducts replica status polling and what would happen if a new replica is detected.
 
-**Here should be an UML diagram.**
+![polling_2](polling_2.svg)
 
 ## Client Operation
 
@@ -158,6 +158,37 @@ In passive replication style, only the **primary replica** will receive and hand
 Total ordering will be trivial here as there is only one replica which really executes requests. However, it may complicate other parts. For example, if the primary replica fails, how can we determine a new replica as the primary replica? Some consensus protocols might be helpful (e.g., PAXOS), but remember: *implementing a consensus protocol would be highly complicated and painful.*
 
 No worry. We will introduce our solution later.
+
+## Total Ordering
+
+Here are many ways to implement total ordering in active replication style. Let's list some:
+
+1. Ask every client to grab a ***sequence number*** from RM or another agency every time it wants to send a request. The request and its assigned sequence number will be delivered to all replicas, and replica will handle requests in the order of their sequence number (like what we do in TCP protocol).
+2. Ask all clients to send requests to RM (or another agency) and let the RM decide the ordering of requests. Replicas will get requests from RM.
+
+However, these schemes might be fragile if we consider some extreme cases:
+
+1. In the first scheme, what if a client grabs a sequence number and holds it for a long time before sending a request? What may happen is that replicas will block in order to wait for that request's arrival.
+2. In the second scheme, what if we have many replicas sending requests? Scalability would be an issue and the RM (or the agency receiving all requests) would become the bottleneck.
+
+We would use a new scheme instead in our peoject. This scheme only involves replicas themselves and it is easy to implement.
+
+(TODO)
+
+## Checkpointing
+
+## Assumptions
+
+# Web UI
+
+## GFD
+
+## LFD
+
+## RM
+
+## Replica
+
 
 
 
