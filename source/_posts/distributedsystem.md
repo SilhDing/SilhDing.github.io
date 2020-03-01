@@ -88,7 +88,7 @@ When a new replica is added to the cluster, the replica will notify its LFD, and
 
 # Interaction
 
-A critical part in a distributed system is **how can your system cope with a new replica or failed replica**. In this section, we'll cover some cases you might be interested in.
+In this project, we use **HTTP-based** messages for communication between different components. That is to say, each component may act as a HTTP server, a HTTP client, or both. A clear and rigid workflow is also critical in order to make sure the system behaves as we expect. We will cover some cases that you might be interested in and explain the mechanism/workflow behind them.
 
 ## Startup
 
@@ -163,8 +163,8 @@ No worry. We will introduce our solution later.
 
 Here are many ways to implement total ordering in active replication style. Let's list some:
 
-1. Ask every client to grab a ***sequence number*** from RM or another agency every time it wants to send a request. The request and its assigned sequence number will be delivered to all replicas, and replica will handle requests in the order of their sequence number (like what we do in TCP protocol).
-2. Ask all clients to send requests to RM (or another agency) and let the RM decide the ordering of requests. Replicas will get requests from RM.
+1. Ask every client to grab a ***sequence number*** from RM or another agency every time it wants to send a request. The request and its assigned sequence number will then be delivered to all replicas, and replica will handle requests in the order of request's sequence number (like what we do in TCP protocol).
+2. Ask all clients to send requests to RM (or another agency) and let the RM decide the order of requests to process. Replicas will get requests from RM.
 
 However, these schemes might be fragile if we consider some extreme cases:
 
@@ -173,11 +173,154 @@ However, these schemes might be fragile if we consider some extreme cases:
 
 We would use a new scheme instead in our peoject. This scheme only involves replicas themselves and it is easy to implement.
 
-(TODO)
+### Polite Client Assumption
+
+First, we have the following assumptions:
+
+- The RM first notifies all clients of the new replication configuration, then notifies all replicas of the new config.
+- Whenever the client knows there is a replica whose state is NEW (which means the synchronization for this NEW replica is undergoing and have not finished), it stops sending requests until all replicas are READY. ***You will later see that this assumption is strong and it greatly simplifies the implementation of total ordering.***
+
+### Handling Client Requests
+
+Let’s first talk about how a replica handles a client request.
+
+By *Polite Client Assumption*, we know that a new replica never receives client requests. A replica only receives requests when it is in ready state.
+
+The procedure is:
+
+1. Put the client request in the ***RequestPool*** and waits for it to complete. When this thread is waiting, other threads do consensus and request processing work. When everything is done, this thread is woken up with the result.
+2. Return the result to the client.
+
+The RequestPool is a bridge between the client side and the consensus side. The client side doesn’t care how the consensus is done, and the consensus side doesn’t care where the request comes from and where it goes to.
+
+So now we have a **clear separation** between client request handling and consensus protocol.
+
+### Executor Thread
+
+Before talking about consensus protocol, let’s first assume that we already have a total order by running consensus. Now how do we actually process those requests?
+
+The truth is that **the replica has a long-running Executor thread. The thread runs a while(true) loop that checks if it has any work to do repeatedly**.
+
+It has an internal counter `nextProcLid` that is the next log ID to process. We use log ID (or Lid) to refer to the *index of a message in the total order*.
+
+It also needs to read a global variable `lastCommitLid` that is the last committed log ID (which means you can process all the logs up to this lid, but not those after this lid). For now, we can assume that `lastCommitLid` is always the ID of the last log entry in its log. Later, we’ll talk about why it is not.
+
+The thread work as follows:
+
+1. Check if `nextProcLid <= lastCommitLid` and there is a request in the RequestPool with the log ID equal to `nextProcLid`. If false, then we have processed all committed requests, so we have nothing to do.
+2. If false, we sleep 100 ms and go to step 1. If true, we process that request, hand over the response to the RequestPool and increment `nextProcLid`. By giving the response to the RequestPool, the Executor thread wakes up the client request thread that is waiting for it.
+3. Go to step 1. We want to process as many as possible.
+
+The RequestPool has an API that allows us to find a request by the log ID. The log ID is not assigned by the client request thread. It is set by the consensus protocol.
+
+Now we have already talked about how to handle client requests and how to process a request. All the “request-related” things has been discussed. The only thing left is how to achieve consensus on the order of requests.
+
+In the rest of the section, we will focus our eyes only on the request ID (which is generated uniquely by the client) and the log ID. We will ignore the content of the requests.
+
+### Prosper and Acceptor
+
+A replica can be either a ***proposer*** or an ***acceptor***, but not both.
+
+- A proposer dictates the order of messages.
+- An acceptor accepts whatever the proposer says.
+
+The proposer has a Proposer thread running in the background.
+
+The Proposer thread has an internal counter `nextProposeLid` that is the next log id to propose.
+
+The Proposer thread also has an internal hash map `lastLidMap` whose key is a replicaId, and whose value is the lastLid of that replica (the ID of the last log that replica has). 
+
+The proposer periodically executes this:
+
+1. Get all unassigned requests from the RequestPool. An unassigned request has no lid. After it is proposed, it is assigned a lid. So we ensure that a request can be proposed only once.
+2. Assign `nextProposeLid` to an unassigned request and then increment `nextProposeLid`, repeat for all unassigned requests. This is how the requests in the RequestPool are assigned. 
+3. Append these `requestId` to the local log that it has. `requestId` is the unique identifier generated by the client in the request. The index of the requestId in the log is its lid.
+4. Send `appendLog(lastCommitId, logs)` to all ready acceptors; logs start from `lastLidMap[replicaId]+1` for each replica. After doing `appendLog`, all ready replicas are informed of the assignments. But these new logs are not committed yet.
+5. Set `lastCommitId` to the last lid in its log. After informing all replicas, we can commit these logs. This value will be updated to all replicas in the next round.
+
+Periodically, even if there is no unassigned request, the proposer will still send an `appendLog(lastCommitId, [])` to all replicas (to inform them of the new commit ID, for example).
+
+The acceptor reacts to appendLog request from the proposer by doing the following things:
+
+- Assign `lastCommitId` to the value in `appendLog`.
+- If the RequestPool has the requests, assign the lids to the requests.
+- If not, tell the RequestPool to save the pair `(lid, requestId)` somewhere and assign the lids to those requests when it sees the requests later.
+
+By doing so, the Executor thread in the acceptor will eventually process the request.
+
+### New Proposer Confirmation
+
+**When a new replica joins the cluster, the RM assigns a `replicaRank` to the replica.** The replicaRank is an integer increasing from 0. It marks when a replica joins the cluster. New replicas have greater ranks.
+
+Whenever a replica receives an `updateReplicationConfig` request from the RM, ***it recognizes the replica with the smallest rank as the proposer***.
+
+Since a new proposer will appear only AFTER the old proposer crashes, there will never be two proposers at the same time. There will be times when there is no proposer at all, but it’s okay. Eventually, there will be a proposer.
+
+We also know that the transition is one-directional: an acceptor can become a proposer, but a proposer can never become an acceptor (it’s a dictator for life).
+
+Whenever there is a proposer change, the new proposers and the acceptors will perform a proposer confirmation process.
+
+1. The proposer sends `confirm(lastLid)` to all ready acceptors (a) to tell all replicas the last log ID that the proposer has and (b) to ask them to tell the proposer the last log ID that they have. The new proposer might not be the one who has the longest log.
+2. Each acceptor responds with the latest log ID it has to the proposer; if an acceptor has longer logs, it also put these additional logs in the response. 
+3. Upon receiving all responses, for all acceptors’ responses,
+    - If an acceptor has a longer log, the proposer will append the missing part to its log. Now the proposer has the longest log.
+    - Set lastLidMap[replicaId] to the lid in the response. Next time the proposer will send logs to this replica from this position.
+4. If the RequestPool has no unassigned requests for now, put a ***NoOp(do-nothing)*** request in the pool. The proposer might have some assigned but uncommitted requests. If we don’t commit them, the clients might be blocked. However, the way we commit them is not to modify the `lastCommitLid` directly, but to propose a NoOp request, which in turn triggers the `appendLog` procedure, committing the NoOp request and all the uncommitted requests ahead of it.
+
+After the new proposer finishes the confirmation, it will start the Proposer thread. There might be some unassigned requests left when it was an acceptor, the new proposer will propose these requests eventually. No requests will be lost.
+
+Up to now, you might be confused with the description above. Let's address some questions again.
+
+> **Q: Why do we need a `lastCommitLid`?**
+
+There are **three parts** in the log:
+
+- the first part is what is committed and processed;
+- the second part is what is committed but unprocessed (the executor hasn’t process them though it is able to do so);
+- the third part is what is uncommitted (the executor is not allowed to process them).
+
+Why can’t we assume all logs are committed?
+
+Think of this scenario of three replicas: the proposer appended the log X to acceptor A, but before appending to acceptor B, crashed. Acceptor A crashed simultaneously (a.k.a. two simultaneous faults). Acceptor B becomes the new proposer.
+
+You see the problem?
+
+Acceptor B has no possibility knowing that X is in the log. It may propose something different, for example an unassigned request Y, before re-proposing X. But since acceptor A knows X, it might already have returned the response to the client.
+
+Now we have an **inconsistency**: the client thought X happened before Y, but in the new “world”, the new proposer said Y happened before X!
+
+The way to avoid this from happening is to commit (allowing processing a request) ***only after all replicas know the log***, which is a typical consensus behavior (you may compare it with 2-phase commit or PAXOS). That’s why we need a `lastCommitLid`.
+
+In other words, uncommitted logs are changeable during proposer changes.
+ 
+
+>  **Q: Why do we need a NoOp request?**
+
+This issue raises from committing.
+
+Let’s look at a new proposer. It has some assigned but uncommitted requests. These uncommitted requests block the clients who are waiting for responses. And in turn, since the clients are blocked, they can’t send new requests.
+
+And now comes the problem: the proposer can commit only when receiving new requests! It's deadlock.
+
+To avoid it from happening, if the proposer has no unassigned requests, it proposes a NoOp request that does nothing. By the time the NoOp request is committed, all the requests before the NoOp are committed as well! Remember lastCommitLid means that **ALL** the requests before and equal to that lid are committed.
+
+### New Replica
+
+Let’s first recap the ***Polite Client Assumption***. No client interactions during new replica synchronization.
+
+Upon receiving updateReplicationConfig, the proposer checks if there is a NEW replica that it sees for the first time. If so, it starts the following synchronization step.
+
+1. The proposer first asks if the NEW replica is still in the NEW state. The latency of information propagation can cheat. That’s why we need to confirm the state of the new replica.
+2. If the replica says READY, the proposer internally marks it as READY and finish. If the replica says NEW, do the following. By internally marking as READY, the proposer will ignore any state of that replica in later updateReplicationConfig. There might be some delay for it to become ready.
+3. **The proposer waits until all the requests are processed**. This is to ensure that its state is the newest state. If it has some requests left undone, its state is earlier than latest.
+4. The proposer checkpoints the state. It contains the balance of all accounts and the last processed log ID and the last committed log ID.
+5. The proposer sends the checkpoint to the new replica.
+6. The new replica accepts and recovers the state from the checkpoint. **Now the new replica is in the same state as the proposer.**
+7. The new replica switches to READY state. If the old proposer crashes, the new proposer will ask if the new replica is still new first (this is a corner case that we might ignore).
+8. The proposer internally marks the replica as READY and will never perform the synchronization on that replica again, even if later `updateReplicationConfig` says it is still NEW (due to the latency of fault detectors).
+
 
 ## Checkpointing
-
-## Assumptions
 
 # Web UI
 
