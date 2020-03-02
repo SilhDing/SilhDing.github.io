@@ -1066,6 +1066,21 @@ a
   font-size: 20px;
   font-color: light-font-color;
 }
+.comments-fold button {
+  outline: none;
+  cursor: pointer;
+  padding: 10px 20px;
+  font-size: 1;
+  font-weight: bold;
+  color: #1e90ff;
+  background-color: transparent;
+  border: 2px solid #1e90ff;
+  border-radius: 10px;
+}
+.dark-theme .comments-fold button {
+  color: #eee;
+  border: 1.5px solid #eee;
+}
 .post-copyright {
   margin-top: 5rem;
   border-top: 1px solid #e8e8e8;
@@ -1117,7 +1132,8 @@ a
 .post-content pre code {
   font-size: 14px;
 }
-.post-content ul li code {
+.post-content ul li code,
+.post-content ol li code {
   font-size: 14px;
 }
 .post-content h1 code,
@@ -1258,7 +1274,7 @@ a
   outline: none;
   cursor: pointer;
   padding: 10px 20px;
-  font-size: 1.05;
+  font-size: 1;
   font-weight: bold;
   color: #1e90ff;
   background-color: transparent;
@@ -1273,13 +1289,25 @@ a
 .vssue .vssue-button:disabled .vssue-icon {
   fill: #e8e8e8;
 }
+.dark-theme .vssue .vssue-button:disabled {
+  color: #909196;
+  border: 2px solid #909196;
+}
 .vssue .vssue-button:not(:disabled).vssue-button-default {
   color: #a9a9b3;
   border-color: #a9a9b3;
 }
+.dark-theme .vssue .vssue-button:not(:disabled).vssue-button-default {
+  color: #ec1e1e;
+  border: 2px solid #ec1e1e;
+}
 .vssue .vssue-button:not(:disabled).vssue-button-primary {
   color: #1e90ff;
   border-color: #1e90ff;
+}
+.dark-theme .vssue .vssue-button:not(:disabled).vssue-button-primary {
+  color: #eee;
+  border: 2px solid #eee;
 }
 .vssue .vssue-icon {
   width: 1em;
@@ -1488,7 +1516,7 @@ a
   color: #a9a9b3;
 }
 .vssue .vssue-comments {
-  display: none;
+  display: block;
 }
 .vssue .vssue-comments .vssue-comment {
   margin: 15px 0;

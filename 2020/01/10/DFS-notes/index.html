@@ -339,7 +339,7 @@
 
         <div style="text-align:center;font-weight:bold"><h2>Comments</h2></div>
         <div id="vssue"></div>
-        <div style="text-align:center;font-weight:bold"><a onclick="myFunction()" id="comment-switch">Unfold Comments</a></div>       
+        <div class="comments-fold" style="text-align:center;font-weight:bold"><button onclick="myFunction()" id="comment-switch">Hide Comments</button></div>       
 
         
 
@@ -425,12 +425,12 @@
                 return ;
               }
               var property = x.style.getPropertyValue("display");
-              if (property === "block") {
-                x.style.setProperty("display","none");
-                document.getElementById("comment-switch").innerHTML="Unfold Comments";
-              } else {
+              if (property === "none") {
                 x.style.setProperty("display","block");
-                document.getElementById("comment-switch").innerHTML="Fold Comments";
+                document.getElementById("comment-switch").innerHTML="Hide Comments";
+              } else {
+                x.style.setProperty("display","none");
+                document.getElementById("comment-switch").innerHTML="Show Comments";
               }
             }
         </script>
