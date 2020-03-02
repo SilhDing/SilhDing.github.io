@@ -9,6 +9,8 @@ categories:
     - "project"
 ---
 
+![bank](bank.png)
+
 Designning and implementing a distributed and fault-tolerant system is always interesting but **challenging** and **complicated**.
 
 In this team project, we designed and implemented a comprehensive distributed banking system. However, the application part is simple in our project as we want to mainly focus on the design and implementation of distributed system and principles of strong consistency. Below are some highlights or features of our system:
