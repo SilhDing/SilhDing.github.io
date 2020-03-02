@@ -213,6 +213,8 @@ The thread work as follows:
 2. If false, we sleep 100 ms and go to step 1. If true, we process that request, hand over the response to the RequestPool and increment `nextProcLid`. By giving the response to the RequestPool, the Executor thread wakes up the client request thread that is waiting for it.
 3. Go to step 1. We want to process as many as possible.
 
+![executor-flow](executor_thread.svg)
+
 The RequestPool has an API that allows us to find a request by the log ID. The log ID is not assigned by the client request thread. It is set by the consensus protocol.
 
 Now we have already talked about how to handle client requests and how to process a request. All the “request-related” things has been discussed. The only thing left is how to achieve consensus on the order of requests.
@@ -242,6 +244,8 @@ The proposer periodically executes this:
 
 Periodically, even if there is no unassigned request, the proposer will still send an `appendLog(lastCommitId, [])` to all replicas (to inform them of the new commit ID, for example).
 
+![proposer_workflow](proposer_thread.svg)
+
 The acceptor reacts to appendLog request from the proposer by doing the following things:
 
 - Assign `lastCommitId` to the value in `appendLog`.
@@ -270,6 +274,8 @@ Whenever there is a proposer change, the new proposers and the acceptors will pe
 4. If the RequestPool has no unassigned requests for now, put a ***NoOp(do-nothing)*** request in the pool. The proposer might have some assigned but uncommitted requests. If we don’t commit them, the clients might be blocked. However, the way we commit them is not to modify the `lastCommitLid` directly, but to propose a NoOp request, which in turn triggers the `appendLog` procedure, committing the NoOp request and all the uncommitted requests ahead of it.
 
 After the new proposer finishes the confirmation, it will start the Proposer thread. There might be some unassigned requests left when it was an acceptor, the new proposer will propose these requests eventually. No requests will be lost.
+
+![new_proposer](new_proposer.svg)
 
 Up to now, you might be confused with the description above. Let's address some questions again.
 
@@ -321,6 +327,7 @@ Upon receiving updateReplicationConfig, the proposer checks if there is a NEW re
 7. The new replica switches to READY state. If the old proposer crashes, the new proposer will ask if the new replica is still new first (this is a corner case that we might ignore).
 8. The proposer internally marks the replica as READY and will never perform the synchronization on that replica again, even if later `updateReplicationConfig` says it is still NEW (due to the latency of fault detectors).
 
+![new_replica](new_replica.svg)
 
 ## Checkpointing
 
