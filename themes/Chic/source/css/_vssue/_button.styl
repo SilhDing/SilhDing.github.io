@@ -2,7 +2,7 @@
   outline none
   cursor pointer
   padding 10px 20px
-  font-size 1.05
+  font-size 1
   font-weight bold
   color $vssue-theme-color
   background-color transparent
@@ -14,10 +14,20 @@
     border-color $vssue-border-color
     .vssue-icon
       fill $vssue-border-color
+    .dark-theme &
+      color $vssue-border-color-dark
+      border 2px solid $vssue-border-color-dark
   &:not(:disabled)
     &.vssue-button-default
       color $vssue-text-light-color
       border-color $vssue-text-light-color
+      .dark-theme &
+        color #EC1E1E
+        border 2px solid #EC1E1E
     &.vssue-button-primary
       color $vssue-theme-color
       border-color $vssue-theme-color
+      .dark-theme &
+        color $vssue-theme-color-dark
+        border 2px solid $vssue-theme-color-dark
+
