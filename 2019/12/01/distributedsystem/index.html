@@ -367,6 +367,7 @@
 <li>If false, we sleep 100 ms and go to step 1. If true, we process that request, hand over the response to the RequestPool and increment <code>nextProcLid</code>. By giving the response to the RequestPool, the Executor thread wakes up the client request thread that is waiting for it.</li>
 <li>Go to step 1. We want to process as many as possible.</li>
 </ol>
+<p><img src="executor_thread.svg" alt="executor-flow"></p>
 <p>The RequestPool has an API that allows us to find a request by the log ID. The log ID is not assigned by the client request thread. It is set by the consensus protocol.</p>
 <p>Now we have already talked about how to handle client requests and how to process a request. All the “request-related” things has been discussed. The only thing left is how to achieve consensus on the order of requests.</p>
 <p>In the rest of the section, we will focus our eyes only on the request ID (which is generated uniquely by the client) and the log ID. We will ignore the content of the requests.</p>
@@ -387,6 +388,7 @@
 <li>Set <code>lastCommitId</code> to the last lid in its log. After informing all replicas, we can commit these logs. This value will be updated to all replicas in the next round.</li>
 </ol>
 <p>Periodically, even if there is no unassigned request, the proposer will still send an <code>appendLog(lastCommitId, [])</code> to all replicas (to inform them of the new commit ID, for example).</p>
+<p><img src="proposer_thread.svg" alt="proposer_workflow"></p>
 <p>The acceptor reacts to appendLog request from the proposer by doing the following things:</p>
 <ul>
 <li>Assign <code>lastCommitId</code> to the value in <code>appendLog</code>.</li>
@@ -410,6 +412,7 @@
 <li>If the RequestPool has no unassigned requests for now, put a <strong><em>NoOp(do-nothing)</em></strong> request in the pool. The proposer might have some assigned but uncommitted requests. If we don’t commit them, the clients might be blocked. However, the way we commit them is not to modify the <code>lastCommitLid</code> directly, but to propose a NoOp request, which in turn triggers the <code>appendLog</code> procedure, committing the NoOp request and all the uncommitted requests ahead of it.</li>
 </ol>
 <p>After the new proposer finishes the confirmation, it will start the Proposer thread. There might be some unassigned requests left when it was an acceptor, the new proposer will propose these requests eventually. No requests will be lost.</p>
+<p><img src="new_proposer.svg" alt="new_proposer"></p>
 <p>Up to now, you might be confused with the description above. Let’s address some questions again.</p>
 <blockquote>
 <p><strong>Q: Why do we need a <code>lastCommitLid</code>?</strong></p>
@@ -446,6 +449,7 @@
 <li>The new replica switches to READY state. If the old proposer crashes, the new proposer will ask if the new replica is still new first (this is a corner case that we might ignore).</li>
 <li>The proposer internally marks the replica as READY and will never perform the synchronization on that replica again, even if later <code>updateReplicationConfig</code> says it is still NEW (due to the latency of fault detectors).</li>
 </ol>
+<p><img src="new_replica.svg" alt="new_replica"></p>
 <h2 id="Checkpointing"><a href="#Checkpointing" class="headerlink" title="Checkpointing"></a>Checkpointing</h2><h1 id="Web-UI"><a href="#Web-UI" class="headerlink" title="Web UI"></a>Web UI</h1><h2 id="GFD"><a href="#GFD" class="headerlink" title="GFD"></a>GFD</h2><h2 id="LFD"><a href="#LFD" class="headerlink" title="LFD"></a>LFD</h2><h2 id="RM"><a href="#RM" class="headerlink" title="RM"></a>RM</h2><h2 id="Replica-1"><a href="#Replica-1" class="headerlink" title="Replica"></a>Replica</h2>
         </div>       
 
