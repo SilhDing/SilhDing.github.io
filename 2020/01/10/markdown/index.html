@@ -48,6 +48,45 @@
     
     
         
+            <!-- MathJax配置，可通过单美元符号书写行内公式等 -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+    "HTML-CSS": {
+        preferredFont: "TeX",
+        availableFonts: ["STIX","TeX"],
+        linebreaks: { automatic:true },
+        EqnChunk: (MathJax.Hub.Browser.isMobile ? 10 : 50)
+    },
+    tex2jax: {
+        inlineMath: [ ["$", "$"], ["\\(","\\)"] ],
+        processEscapes: true,
+        ignoreClass: "tex2jax_ignore|dno",
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    },
+    TeX: {
+        equationNumbers: { autoNumber: "AMS" },
+        noUndefined: { attributes: { mathcolor: "red", mathbackground: "#FFEEEE", mathsize: "90%" } },
+        Macros: { href: "{}" }
+    },
+    messageStyle: "none"
+    });
+</script>
+<!-- 给MathJax元素添加has-jax class -->
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Queue(function() {
+        var all = MathJax.Hub.getAllJax(), i;
+        for(i=0; i < all.length; i += 1) {
+            all[i].SourceElement().parentNode.className += ' has-jax';
+        }
+    });
+</script>
+<!-- 通过连接CDN加载MathJax的js代码 -->
+<script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js?config=TeX-MML-AM_CHTML">
+</script>
+
+
+        
     
 
 
@@ -225,6 +264,10 @@
 should be okay as well!</code></pre><h1 id="This-is-code"><a href="#This-is-code" class="headerlink" title="This is code"></a>This is <code>code</code></h1><h2 id="This-is-code-1"><a href="#This-is-code-1" class="headerlink" title="This is code"></a>This is <code>code</code></h2><h3 id="This-is-code-2"><a href="#This-is-code-2" class="headerlink" title="This is code"></a>This is <code>code</code></h3><h4 id="This-is-code-3"><a href="#This-is-code-3" class="headerlink" title="This is code"></a>This is <code>code</code></h4><h5 id="This-is-code-4"><a href="#This-is-code-4" class="headerlink" title="This is code"></a>This is <code>code</code></h5><ul>
 <li>this is <code>code</code></li>
 </ul>
+<p>Test mathjax:</p>
+<p>$$f(x) = a_1x^n + a_2x^{n-1} + a_3x^{n-2}$$</p>
+<p>$$\left \lbrace \sum_{i=0}^n i^3 = \frac{(n^2+n)(n+6)}{9} \right \rbrace$$</p>
+<p>$$\left[<br>\begin{matrix}<br>V_A \\<br>V_B \\<br>V_C \\<br>\end{matrix}<br>\right] =<br>\left[<br>\begin{matrix}<br>1 &amp; 0 &amp; L \\<br>-cosψ &amp; sinψ &amp; L \\<br>-cosψ &amp; -sinψ &amp; L<br>\end{matrix}<br>\right]<br>\left[<br>\begin{matrix}<br>V_x \\<br>V_y \\<br>W \\<br>\end{matrix}<br>\right] $$</p>
 <h1 id="中文标题"><a href="#中文标题" class="headerlink" title="中文标题"></a>中文标题</h1><p>Can you test ‘??’ and “??”.</p>
 <p><em>你好</em><br><em>hello</em><br><strong>hello</strong><br><strong>你好</strong><br><strong>这句话应该被加粗。</strong><br>他姐说，“你这样有意思吗”？我濡染布置但怎！么办……好被。<br>“How can you do this?”</p>
 <p><strong><em>OK, I’m okay!</em></strong><br><strong><em>我一点都不好！</em></strong></p>
