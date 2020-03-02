@@ -14,7 +14,7 @@
 
 
 
-<title>Project: Carcassonne Game in Java | Yihang&#39;s Blog</title>
+<title>Asian Language Display Test | Yihang&#39;s Blog</title>
 
 
 
@@ -185,13 +185,13 @@
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">Project: Carcassonne Game in Java</h1>
+            <h1 class="post-title">Asian Language Display Test</h1>
             
                 <div class="post-meta">
 
                     
                         <span class="post-time">
-                        November 1, 2019&nbsp;&nbsp;16:11:15, by Yihang (Ian) Ding<br>
+                        October 1, 2019&nbsp;&nbsp;23:24:24, by Yihang (Ian) Ding<br>
                         </span>
                     
                     <br>
@@ -200,23 +200,12 @@
                         <span class="post-category">
                     Categories:
                             
-                                <<a href="/categories/technique/">technique</a>>
-                            
-                                <<a href="/categories/technique/course/">course</a>>
-                            
-                                <<a href="/categories/technique/course/project/">project</a>>
+                                <<a href="/categories/test/">test</a>>
                             
                         </span>
                     
                     <br>
 
-                    
-                        <span class="post-tag">
-                    Tags:
-                            
-                                #<a href="/tags/design/">design</a>
-                            
-                        </span>
                     
 
                 </div>
@@ -224,40 +213,23 @@
         </header>
 
         <div class="post-content">
-            <p><img src="0.jpg" alt="game-pic"></p>
-<p>In this individual project, the calssical board game <a href="https://en.wikipedia.org/wiki/Carcassonne_(board_game)" target="_blank" rel="noopener">Carcassonne</a> is designed and implemented in Java.</p>
-<p>The project is a course project of CMU 17-514, which is mostly about object oriented design and Java software design. The project contains a full cycle of software design and development, which means it also involves GUI design/implementation, testing and deployment.</p>
-<p><strong>Note</strong>: due to the CMU academic integrity rules, the project codes cannot be publicized.</p>
-<h2 id="Game-Overview"><a href="#Game-Overview" class="headerlink" title="Game Overview"></a>Game Overview</h2><p>Once you run the program, you will first be required to enter the number of players:</p>
-<p><img src="1.png" alt="game-init"></p>
-<p>You are required to enter names of all palyers. The number of players should be between 2 and 5 (both inclusive).</p>
-<p>Say now we have three players: Alice, Bob, and Evil. Then we start the game.</p>
-<p><img src="2.png" alt="game-start"></p>
-<p>Below is the main interface of the game:</p>
-<p><img src="3.png" alt="game-main"></p>
-<p>In the real board game, there exists a deck and each player is supposed to get a tile from the top of the deck in turn, and then put the tile on the game board accordingly. We aslo simulate the real game experience through the GUI design:</p>
-<ul>
-<li><strong>Current Player</strong>: the player who is supposed to get a tile from the deck and put it on the game board;</li>
-<li><strong>Current Tile</strong>: the tile on the top of the tile, which is assigned to the current player. It can be rotated (90 degree, clockwise) by clicking the button “Rotate Tile”;</li>
-<li><strong>Action</strong>: action which the current player needs to take right now. It could be:<ul>
-<li>“Please put a tile”: the player now should place the tile on the board. The tile may be rotated by the player. The “+” sign on the grid represents the positions that the tile can be placed on if the tile will not be rotated anymore;</li>
-<li>“Please put a meeple”: the player now should put a meeple on the tile which is just previously placed on the board. Once a meeple is placed, a small solid circle is drawn on the board, in the same color of the player’s name. If a pattern is completed, meeples on that pattern will be revoked.</li>
-<li>“Please skip puuting a meeple”: if will happen if there are not any available positions, or the current players has no meeples right now. In this case, the player should click the button “Skipping Putting a Meeple” below to finish the current round.</li>
-</ul>
-</li>
-<li><strong>Scores</strong>: real-time scores and number of available meeples for each player.</li>
-</ul>
-<p>Note it is also possible that a tile cannot be placed on any positions, even if it is rotated. In this case, simply click the button “Skip the Current tile” to drop the current tile and get the next tile.</p>
-<p>The picture below is a screenshot of the main interface. The grid will automatically extend if necessary.</p>
-<p><img src="4.png" alt="game-process"></p>
-<p>Once all tiles are used (dropped or placed), the game is over, and the final ranking will appear on the sidebar.</p>
-<p><img src="5.png" alt="game-over"></p>
-<h2 id="Software-Design-and-Patterns"><a href="#Software-Design-and-Patterns" class="headerlink" title="Software Design and Patterns"></a>Software Design and Patterns</h2><p>In a Java project, it is highly important to use some suitable design patterns and some strategies, in consideration of robostness, flexibility and extensibility.</p>
-<h3 id="Design-Goal"><a href="#Design-Goal" class="headerlink" title="Design Goal"></a>Design Goal</h3><p>The design goal in this project is to construct a comprehensive system that contains all concepts in the game and is able to execute all operations during the game. It should also correctly records the state of the game and return the correct results once the game is over.</p>
-<p>As the game contains multiple objects, coupling between each object should be low, which may be helpful for debugging and implementation. Thus, each object should have clear responsibility and appropriate size of information, which should be helpful for implementation of algorithm in the future.</p>
-<h3 id="Object-Model"><a href="#Object-Model" class="headerlink" title="Object Model"></a>Object Model</h3><p>(<strong>Note</strong>: due to the CMU academic integrity policy, this part cannot be publicized as it is a part of homework’s solution. If you are <strong>NOT</strong> taking this course currently <strong>AND</strong> you will <strong>NOT</strong> take this course in the future, please leave comments or contact me by e-mail in case you want more information about this part.)</p>
-<h3 id="Hierarchy-and-structure"><a href="#Hierarchy-and-structure" class="headerlink" title="Hierarchy and structure"></a>Hierarchy and structure</h3><p>(<strong>Note</strong>: due to the CMU academic integrity policy, this part cannot be publicized as it is a part of homework’s solution. If you are <strong>NOT</strong> taking this course currently <strong>AND</strong> you will <strong>NOT</strong> take this course in the future, please leave comments or contact me by e-mail in case you want more information about this part.)</p>
-<h3 id="Design-Highlights"><a href="#Design-Highlights" class="headerlink" title="Design Highlights"></a>Design Highlights</h3><p>(<strong>Note</strong>: due to the CMU academic integrity policy, this part cannot be publicized as it is a part of homework’s solution. If you are <strong>NOT</strong> taking this course currently <strong>AND</strong> you will <strong>NOT</strong> take this course in the future, please leave comments or contact me by e-mail in case you want more information about this part.)</p>
+            <h1 id="简体中文"><a href="#简体中文" class="headerlink" title="简体中文"></a>简体中文</h1><p>“滚滚长江东逝水，浪花淘尽英雄。是非成败转头空，青山依旧在，几度夕阳红。白发渔樵江渚上，惯看秋月春风。一壶浊酒喜相逢，古今多少事，都付笑谈中。<br>是非成败转头空，青山依旧在，惯看秋月春风。一壶浊酒喜相逢，古今多少事，滚滚长江东逝水，浪花淘尽英雄。 几度夕阳红。白发渔樵江渚上，都付笑谈中…….”</p>
+<h2 id="重点"><a href="#重点" class="headerlink" title="重点"></a>重点</h2><p><strong>天地玄黄 宇宙洪荒 日月盈昃 辰宿列张 寒来暑往 秋收冬藏</strong></p>
+<p>闰馀成岁 律吕调阳 云腾致雨 露结为霜 金生丽水 玉出昆冈</p>
+<p><em>剑号巨阙 珠称夜光 果珍李柰 菜重芥姜 海咸河淡 鳞潜羽翔</em></p>
+<p>龙师火帝 鸟官人皇 始制文字 <strong><em>乃服衣裳</em></strong> 推位让国 有虞陶唐</p>
+<h1 id="繁體中文"><a href="#繁體中文" class="headerlink" title="繁體中文"></a>繁體中文</h1><p>過事會原港出式灣量燈也特度我大人，信家著的的訴。更點角的名紅一此人聯，多時行民消去屋學望安，教得天，精是壓考，著經詩了重工從化物。車那超望理禮多還電到拉看依朋史地要盡國任；沒已廣，畫著者決車……了說了，精樹中手是包名樣而政致為組為來先國然日。完性麼才分會，子中一西，了自親、環羅中子！學人有算：感受洋，多全見紀兩專絕人果，色聞員重。關人經物動業戰者洲？必簡包的務想必現兒的青和備的。</p>
+<p><strong>動因非象得來，消是資，林自在會？</strong></p>
+<blockquote>
+<p>對是生輕紙轉他牛心來存便直會義型們……性裡前出氣香隨發會，來變果內在了排品現之的為人團位位。之學散公。</p>
+</blockquote>
+<h1 id="日本語"><a href="#日本語" class="headerlink" title="日本語"></a>日本語</h1><p>載やり戦本新歩フリだ倍詳シル治都テラセエ特長イ知朝カラ子光ヘケニ南始ヨ直除こねろを朝人ッけ算念ーすが暮購ホヲノア実広カフチ右48奥連者ーごにそ。事リ聞秀ロサハマ劇4種カ豊案そじ領厳ナ挑首フて金本組81南ぴだド卒質委キス持勝江ケミヨエ企作禁じ能会ウスキ大図床鋭仰そとふ。</p>
+<p><strong>動ンフえゅ探団1関ち下下ラ底24与店</strong>建8価かぱぞ更適かみ告方カケリヌ戒碁ヨアオ経職フサネウ政人ヲユ示逮ろぎ聞松ユネノカ創資ム意直しさわぎ革謙は細功タア縄冬ホ念偽刀穂駒リくどぎ。近のりもび推聞もやっゅ心62禁ひゅ要検せよぴフ暮遅コリモ変産イツソ奇目ス質県事そへじ出岐っ阪伊夕市努下ぼべみへ効2資壁佐語たこ。</p>
+<p>舞爆ノモウヒ期演雪シ月咳ごぱレわ集躍稿ヱ段味ムタカア採9心ヤア喜13身ま開属ヘ補改ハムネ員更そ届賛登ろすを会性しだずす銀藤ごほさ念画リニ央憂昌詩とあき。然ッて経使でづ閣昭ネオタ込皮チ索森けれ書74考ドび作打どじレせ類人ト水垣確フソリヌ価出ふ研地ぞンさぎ政響きちんす転慢ッ粘高座旋ルづき宙票岡確町さげろレ。</p>
+<p>拓分ヲ松済ソウヤ暮長タチ図奈3台きとぽゆ契王てせはっ総浦ノテリス省月21旧よち媛雪ゅス医掃邸釈を。購37見つ付養ヤラヌト由要ぜひゅド被匠イ済南ムロ判投レヱ花2席とち審表フか落作ユクスレ基死チエフヤ崎要ゆ森考ーぞ。刊点きまえり渕包整フツヤ務原む従首ろこ軽強作風び件写ヨカリ永朗キフ量否ろを水入月っつみと向育ト藤職じわ平顔シヒ連趣ナ願倉のほつず各発阜ばゃぐひ。</p>
+<h1 id="한국어"><a href="#한국어" class="headerlink" title="한국어"></a>한국어</h1><p>두기 굳세게 무한한 사랑의 것이다. 이것은 것은 뜨고, 노래하며 무엇이 철환하였는가 일월과 위하여서, 행복스럽고 보는 고행을 갑 청춘의 위하여서. 눈이 아름다우냐? 있는 싶이 없으면 든 있으랴? 눈에 청춘의 용기가 것은 영락과 기쁘며. 무한한 과실이 이상은 듣기만 든 것이다, 보이는 풀밭에 무엇을 인생을 동산에는 것이다. 얼음과 장식하는 아니한 있다.</p>
+<p><strong>눈에 주며, 반짝이는 찬미를 능히 이상 뼈 생생하며. 같으며. 동산에는 가치를 불러 그리하였는가?</strong>남는 보배를 현저하게 청춘 얼마나 사막이다. 이상 많이 인간의 얼마나 용감하고 피고 힘있다, 귀는 노래하며 못할 속에서 사막이다, 가치를 있다, 살았으며.</p>
+<p><em>날카로우나 살았으며, 곳으로 인간은 그들은 있으랴? 얼음이 천하를 같이 오직 새가 것은 칼이다</em>. 봄날의 위하여 기관과 주며. 남는 풀이 고동을 생명을 청춘이 산야에 내는 피다. 실로 천하를 무엇이 열매를 청춘을 사막이다. 가지에 힘있다. 생명을 수 풀이 것은 그들의 피는 봄날의 따뜻한 피다, 두손을 예수는 쓸쓸한 할지니.</p>
 
         </div>       
 
@@ -275,11 +247,7 @@
                 <span class="copyright-item">
                     
                     
-                        #<a href="/categories/technique/">technique</a>
-                    
-                        #<a href="/categories/technique/course/">course</a>
-                    
-                        #<a href="/categories/technique/course/project/">project</a>
+                        #<a href="/categories/test/">test</a>
                     
                         
                 </span>
@@ -287,10 +255,6 @@
                 <span><b>Tags:</b></span>
                 <span class="copyright-item">
                     
-                    
-                        #<a href="/tags/design/">design</a>
-                    
-                        
                 </span>
 
                 
@@ -303,7 +267,7 @@
                 
                     <p class="copyright-item">
                         <span><b>Permalink:</b></span>
-                        <span><a href="http://silhding.github.io/2019/11/01/carcassonne-1/">http://silhding.github.io/2019/11/01/carcassonne-1/</a></span>
+                        <span><a href="http://silhding.github.io/2019/10/01/asianlang/">http://silhding.github.io/2019/10/01/asianlang/</a></span>
                     </p>
                 
 
@@ -370,10 +334,8 @@
 
         <section class="post-nav">
             
-                <a class="prev" rel="prev" href="/2019/11/29/socialnetwork/">Project: Social Network Data Visualization and Analysis Framework</a>
+                <a class="prev" rel="prev" href="/2019/11/01/carcassonne-1/">Project: Carcassonne Game in Java</a>
             
-            
-            <a class="next" rel="next" href="/2019/10/01/asianlang/">Asian Language Display Test</a>
             
         </section>
 
