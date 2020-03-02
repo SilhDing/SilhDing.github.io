@@ -5,6 +5,7 @@ tag:
     - "markdown"
 category:
     - "test"
+mathjax: true
 ---
 
 # Markdown: Syntax
@@ -21,6 +22,34 @@ I want to test `size` should be okay!
 ##### This is `code`
 
 - this is `code`
+
+Test mathjax:
+
+$$f(x) = a_1x^n + a_2x^{n-1} + a_3x^{n-2}$$
+
+$$\left \lbrace \sum_{i=0}^n i^3 = \frac{(n^2+n)(n+6)}{9} \right \rbrace$$
+
+$$\left[
+\begin{matrix}
+V_A \\\\
+V_B \\\\
+V_C \\\\
+\end{matrix}
+\right] =
+\left[
+\begin{matrix}
+1 & 0 & L \\\\
+-cosψ & sinψ & L \\\\
+-cosψ & -sinψ & L
+\end{matrix}
+\right]
+\left[
+\begin{matrix}
+V_x \\\\
+V_y \\\\
+W \\\\
+\end{matrix}
+\right] $$
 
 # 中文标题
 Can you test '??' and "??".
