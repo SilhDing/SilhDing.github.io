@@ -329,9 +329,32 @@ Upon receiving updateReplicationConfig, the proposer checks if there is a NEW re
 
 ![new_replica](new_replica.svg)
 
+Up to now, you may have a more comprehensive understanding of how requests are handled and what would happen if some faults come to appear (e.g., the proposer fails, a replica joins). A very important note is that: **all contents discussed uo to now are only for active replication.** We have emphasized it many times in order to avoid confusion. What would be different in passive replication? We will talk about it now.
+
+## Passive Replication Highlights
+
+We will only highlight the differences between these two replication schemes.
+
+Let's first recall the definition of passive replication: only one replica (**primary replica**) will in fact execute the requests and all other replicas (**secondary replicas**) will periodically get checkpointing from the primary one.
+
+Under active replication style, the RM will send full membership info (i.e., information of all existing replicas) to all replicas and clients (we probably did not note this previously, but it is not late to day it now! ). However, in passive replication, **the RM should send clients only the information of primary replica, while still send full membership information to all replicas**. With this trick, our client will not (and should not) be aware of the current replication method: all it has to do is to just send requests to replicas that are included in the config info.
+
+Wait, how can we determine who is the primary replica? It is similar to proposer-acceptor pattern in active style: **among all alive replicas, the one with the lowest rank number is always the primary replica.**
+
+Now only the primary replica would be able to receive requests from clients. The process to handle a request from a client would also be simpler compared with the active replication method. When the request pool is not empty, the primary replica would also do the following:
+
+1. Get a request from request pool (in the order of time), assign a lid for this request and increment `nextProposeLid`;
+2. Append these requestIds to the local log that it has;
+3. Send `(lid, request)` to all secondary replicas. The primary replica would try to process this request only after receiving ACKs from all secondary replicas. Note that, for secondary replicas, instead of immediately processing requests from primary replica, they will only store requests and states remain unchanged until checkpointing is conducted in the future;
+4. Primary replica returns results to clients and proceed to the next request.
+
 ## Checkpointing
 
+We keep a really simple application in the system: each back system is in fact a list of accounts, and each account contains user id and balance. Making a checkpoint is in fact dumping a data structure into JSON data, while parsing checkpoint reading JSON data. 
+
 # Web UI
+
+In order to monitor our system in a better way, we implement web UI for each component in our system. They might be naive and simple, but highly helpful.
 
 ## GFD
 
