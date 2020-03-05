@@ -450,7 +450,21 @@
 <li>The proposer internally marks the replica as READY and will never perform the synchronization on that replica again, even if later <code>updateReplicationConfig</code> says it is still NEW (due to the latency of fault detectors).</li>
 </ol>
 <p><img src="new_replica.svg" alt="new_replica"></p>
-<h2 id="Checkpointing"><a href="#Checkpointing" class="headerlink" title="Checkpointing"></a>Checkpointing</h2><h1 id="Web-UI"><a href="#Web-UI" class="headerlink" title="Web UI"></a>Web UI</h1><h2 id="GFD"><a href="#GFD" class="headerlink" title="GFD"></a>GFD</h2><h2 id="LFD"><a href="#LFD" class="headerlink" title="LFD"></a>LFD</h2><h2 id="RM"><a href="#RM" class="headerlink" title="RM"></a>RM</h2><h2 id="Replica-1"><a href="#Replica-1" class="headerlink" title="Replica"></a>Replica</h2>
+<p>Up to now, you may have a more comprehensive understanding of how requests are handled and what would happen if some faults come to appear (e.g., the proposer fails, a replica joins). A very important note is that: <strong>all contents discussed uo to now are only for active replication.</strong> We have emphasized it many times in order to avoid confusion. What would be different in passive replication? We will talk about it now.</p>
+<h2 id="Passive-Replication-Highlights"><a href="#Passive-Replication-Highlights" class="headerlink" title="Passive Replication Highlights"></a>Passive Replication Highlights</h2><p>We will only highlight the differences between these two replication schemes.</p>
+<p>Let’s first recall the definition of passive replication: only one replica (<strong>primary replica</strong>) will in fact execute the requests and all other replicas (<strong>secondary replicas</strong>) will periodically get checkpointing from the primary one.</p>
+<p>Under active replication style, the RM will send full membership info (i.e., information of all existing replicas) to all replicas and clients (we probably did not note this previously, but it is not late to day it now! ). However, in passive replication, <strong>the RM should send clients only the information of primary replica, while still send full membership information to all replicas</strong>. With this trick, our client will not (and should not) be aware of the current replication method: all it has to do is to just send requests to replicas that are included in the config info.</p>
+<p>Wait, how can we determine who is the primary replica? It is similar to proposer-acceptor pattern in active style: <strong>among all alive replicas, the one with the lowest rank number is always the primary replica.</strong></p>
+<p>Now only the primary replica would be able to receive requests from clients. The process to handle a request from a client would also be simpler compared with the active replication method. When the request pool is not empty, the primary replica would also do the following:</p>
+<ol>
+<li>Get a request from request pool (in the order of time), assign a lid for this request and increment <code>nextProposeLid</code>;</li>
+<li>Append these requestIds to the local log that it has;</li>
+<li>Send <code>(lid, request)</code> to all secondary replicas. The primary replica would try to process this request only after receiving ACKs from all secondary replicas. Note that, for secondary replicas, instead of immediately processing requests from primary replica, they will only store requests and states remain unchanged until checkpointing is conducted in the future;</li>
+<li>Primary replica returns results to clients and proceed to the next request.</li>
+</ol>
+<h2 id="Checkpointing"><a href="#Checkpointing" class="headerlink" title="Checkpointing"></a>Checkpointing</h2><p>We keep a really simple application in the system: each back system is in fact a list of accounts, and each account contains user id and balance. Making a checkpoint is in fact dumping a data structure into JSON data, while parsing checkpoint reading JSON data. </p>
+<h1 id="Web-UI"><a href="#Web-UI" class="headerlink" title="Web UI"></a>Web UI</h1><p>In order to monitor our system in a better way, we implement web UI for each component in our system. They might be naive and simple, but highly helpful.</p>
+<h2 id="GFD"><a href="#GFD" class="headerlink" title="GFD"></a>GFD</h2><h2 id="LFD"><a href="#LFD" class="headerlink" title="LFD"></a>LFD</h2><h2 id="RM"><a href="#RM" class="headerlink" title="RM"></a>RM</h2><h2 id="Replica-1"><a href="#Replica-1" class="headerlink" title="Replica"></a>Replica</h2>
         </div>       
 
         <br>
