@@ -3,6 +3,9 @@ title: About Me
 date: 2020-01-10 20:44:42
 ---
 
+
+<p style="text-align: center;">Contact me if you need a complete résumé!</p>
+
 ## Education
 >**Carnegine Mellon University**, Pittsburgh PA, 12/2019
 >M.S. in Electrical and Computer Engineering
@@ -17,21 +20,15 @@ date: 2020-01-10 20:44:42
 
 ## Experience
 <img src="apple_logo.svg" alt="drawing" width="50" height="50" style="float: center;"/> <p style="text-align: center;"> **Software Engineer in Apple SEG** <br> *03/2020 - present, Cupertino CA* </p> 
->- Lorem ipsum dolor sit amet, **consectetur adipiscing elit**. Fusce eget urna vitae velit eleifend interdum at ac nisi.
->- Lorem ipsum dolor sit amet, **consectetur adipiscing elit**. Fusce eget urna vitae velit eleifend interdum at ac nisi.
->- (wait for employment)
+>- Design and implement autocation software/platform for SEG RF team.
 
 <img src="google_logo.svg" alt="drawing" width="180" height="70" style="float: center; margin-top: 50px;" /> <p style="text-align: center;"> **Software Engineer Intern in Google Ads** <br> *05/2019 - 08/2019, Kirkland WA* </p> 
->- Designed a new type of suggestion (to exclude low-performance audience list of line items) on advertisers’ spending to improve ads targeting performance, and completed a detailed product feature design documentation.
->- Implemented a new data aggregation dimension and modified existing data aggregation/segmentation pipeline with Google’s parallel computing framework (C++) to support new dimension and new suggestion type.
->- Developed three new algorithms (C++) that generate audience list exclusion suggestions for eligible line items, further improved these algorithms based on users’ needs and real data patterns obtained by advanced GoogleSQL query, and wrote a full set of tests to evaluate the validity and effectiveness of these algorithms.
->- ~5% line items are eligible to get suggestions (average performance improvement is 60% based on the history data), which is much better than the effectiveness of all other existing suggestion types of DV360.
+>- Designed and implement a new type of suggestion (to exclude low-performance audience list of line items) on advertisers’ spending to improve ads targeting performance.
+>- C++ backend project; full cycle of feature development (data pipeline, algorithm, design doc, design review, test, deployment, etc.).
 
 <img src="iqiyi_logo.png" alt="drawing" width="200" height="70" style="float: center; margin-top: 50px;" /> <p style="text-align: center;"> **Software Engineer Intern in iQIYI Cloud Infrastructure Team** <br> *04/2018 - 07/2018, Beijing China* </p> 
->- Improved features of data classification and aggregation in the picture production monitoring system (a Python Django web app) to track statuses of picture production tasks from multiple data centers during different periods.
->-Designed some new front-end pages for more intuitive visualization (i.e., table, histogram and dynamic graphs) of vast amounts of deeply nested data, and supported one-click data export (Excel table) from web pages.
->-Wrote Dockerfile and build docker images of production monitoring application, and deployed it in QIYI App Engine (an internal container service) to achieve continuous running, automatic alarming and error reporting.
->-Developed a CI/CD system for video production application (Jenkins and GitLab) to realize the automation of production pipelines (build, integrate, test and report) triggered by GitLab events or manual operations.
+>- Improved features of data classification and aggregation in the picture production monitoring system (Python Django) to track statuses of picture production tasks; a full stack project.
+>-Used Docker/Jenkis/GitLab to develop pipeline in order to achieve CI/CD.
 
 ## Projects
 
