@@ -2905,7 +2905,7 @@ a
 .markdown-body code {
   padding: 2px 4px;
   background: #f7f7f7;
-  font-family: Menlo, Monaco, Consolas, Courier New, monospace;
+  font-family: Source Code Pro, Menlo, Monaco, Consolas, Courier New, monospace;
   font-size: 12px;
 }
 .post-content pre,
@@ -2913,7 +2913,7 @@ a
   padding: 10px;
   overflow: auto;
   background: #f7f7f7;
-  font-family: Menlo, Monaco, Consolas, Courier New, monospace;
+  font-family: Source Code Pro, Menlo, Monaco, Consolas, Courier New, monospace;
 }
 .post-content pre code,
 .markdown-body pre code {
