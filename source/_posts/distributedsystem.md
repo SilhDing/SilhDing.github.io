@@ -358,12 +358,24 @@ In order to monitor our system in a better way, we implement web UI for each com
 
 ## GFD
 
+[TODO]
+![gfd-ui](gfd_ui.png)
+
 ## LFD
+[TODO]
+![lfd-ui](lfd_ui.png)
 
 ## RM
+[TODO]
+![rm-ui](rm_ui.png)
 
 ## Replica
+[TODO]
+![replica-active_primary](r_active_1.png)
 
+## Client
+[TODO]
+![client-main](client_main_ui.png)
 
 
 
