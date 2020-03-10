@@ -418,8 +418,28 @@ However, if we switch the replication style from active to passive, things would
 ![replica-passive-second](r_passive_2.png)
 
 ## Client
-[TODO]
+
+For web UI of client, we used some elements from Bootstrap. The picture below is the main interface of this UI.
+
 ![client-main](client_main_ui.png)
+
+On the main interface you will see the system status: either **"Ready for Request"** or **Service Not Available**. Note that the status will be "Ready for Request" only when all replicas are under "READY" states.
+
+You may also see a list of replicas and their information. Please note that, under active style, all replicas will be listed here; while there will be only one replica (the primary one) under passive style. Thus, you might not know the current replication style just via this interface. In fact, this is what we want: the client should never care the replica style. If we switch the replication style to passive (but still run 2 replicas), the client UI will be different:
+
+![client-main-passive](client_main_ui_passive.png)
+
+We also show the most 20 logs on the UI. It shows all messages sent from this client, and the response from corresponding replicas. Remember clients will always send a request to all replicas it knows (but, once again, it will only know the presence of primary replica under passive style). 
+
+You may also execute some basic operations on back account. Once you sumbit the operation, you will be directed to the main interface and the result (success or failure) of this operation will pop up here.
+
+UI for "deposit":
+![client_deposit](client_deposit.png)
+
+Results of "deposit":
+![client_return](client_success.png)
+
+We also implemented a button "Start Testing" on the main UI, so a client can continuously send requests to replicas without manually clicking buttons. This feature is mainly used for testing.
 
 
 
