@@ -490,7 +490,16 @@
 <p>However, if we switch the replication style from active to passive, things would be different: primary replica will periodically get checkpoints and sent them to all other replica, so primary replica will have a list of “get” checkpoint messages and other replicas will have a list of “set”; lists will keep growing as long as the system is still running. See pictures below for demo.</p>
 <p><img src="r_passive_1.png" alt="replica-passive-primary"></p>
 <p><img src="r_passive_2.png" alt="replica-passive-second"></p>
-<h2 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h2><p>[TODO]<br><img src="client_main_ui.png" alt="client-main"></p>
+<h2 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h2><p>For web UI of client, we used some elements from Bootstrap. The picture below is the main interface of this UI.</p>
+<p><img src="client_main_ui.png" alt="client-main"></p>
+<p>On the main interface you will see the system status: either <strong>“Ready for Request”</strong> or <strong>Service Not Available</strong>. Note that the status will be “Ready for Request” only when all replicas are under “READY” states.</p>
+<p>You may also see a list of replicas and their information. Please note that, under active style, all replicas will be listed here; while there will be only one replica (the primary one) under passive style. Thus, you might not know the current replication style just via this interface. In fact, this is what we want: the client should never care the replica style. If we switch the replication style to passive (but still run 2 replicas), the client UI will be different:</p>
+<p><img src="client_main_ui_passive.png" alt="client-main-passive"></p>
+<p>We also show the most 20 logs on the UI. It shows all messages sent from this client, and the response from corresponding replicas. Remember clients will always send a request to all replicas it knows (but, once again, it will only know the presence of primary replica under passive style). </p>
+<p>You may also execute some basic operations on back account. Once you sumbit the operation, you will be directed to the main interface and the result (success or failure) of this operation will pop up here.</p>
+<p>UI for “deposit”:<br><img src="client_deposit.png" alt="client_deposit"></p>
+<p>Results of “deposit”:<br><img src="client_success.png" alt="client_return"></p>
+<p>We also implemented a button “Start Testing” on the main UI, so a client can continuously send requests to replicas without manually clicking buttons. This feature is mainly used for testing.</p>
 
         </div>       
 
