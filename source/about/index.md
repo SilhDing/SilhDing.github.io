@@ -3,7 +3,6 @@ title: About Me
 date: 2020-01-10 20:44:42
 ---
 
-
 <p style="text-align: center;">Contact me if you need a complete résumé!</p>
 
 ## Education
