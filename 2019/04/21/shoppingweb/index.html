@@ -14,7 +14,7 @@
 
 
 
-<title>Project: A Distributed and Scalable Online Shop Web Server | Yihang&#39;s Blog</title>
+<title>Project: A Distributed and Auto-Scalable Online Shop Web Server | Yihang&#39;s Blog</title>
 
 
 
@@ -115,11 +115,73 @@
             <div class="container">
     
     
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
     <br>
     
     <article class="post-wrap">
         <header class="post-header">
-            <h1 class="post-title">Project: A Distributed and Scalable Online Shop Web Server</h1>
+            <h1 class="post-title">Project: A Distributed and Auto-Scalable Online Shop Web Server</h1>
             
                 <div class="post-meta">
 
@@ -159,9 +221,14 @@
             
         </header>
 
-        <div class="post-content">
-            <p>[TODO]</p>
 
+        <div class="post-content">
+            <img src="head.jpeg" alt="drawing" width="500"/>
+
+<p>If you have ever get along with AWS EC2, you must know that the most critical feature it provides is load balancing, which is capable of automatically killing or launching machines (or VMs) according to the real-time metrics (e.g., CPU utilization). In this project, we also wanted to do something similar.</p>
+<p>We implemented a distributed web server which can emulated online shopping (browse buy). The system consists of multiple tiers, and is able to scale in or out accordingly, depending on the current QPS.</p>
+<p>Please note that it is a small project, and there is, in fact, no any real shopping applications, we as want to mainly pay attention to design and implementation of scalability and system hisrarchy. </p>
+<h1 id="System-Hierarchy"><a href="#System-Hierarchy" class="headerlink" title="System Hierarchy"></a>System Hierarchy</h1>
         </div>       
 
         <br>
@@ -287,7 +354,7 @@
         </div>
         <footer id="footer" class="footer">
     <div class="copyright">
-        <span>© Yihang (Ian) Ding | Powered by <a href="https://hexo.io" target="_blank">Hexo</a> & <a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></span>
+        <span>© Yihang (Ian) Ding | Powered by <i><a href="https://hexo.io" target="_blank">Hexo</a></i> & <i><a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></i></span>
     </div>
 </footer>
 

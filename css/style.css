@@ -1575,12 +1575,12 @@ a
   padding: 15px;
   border: 0px solid #e8e8e8;
   background-color: #e9f4ff;
-  border-top: none;
+  border-top: 1px solid #e8e8e8;
   border-bottom: none;
 }
 .dark-theme .vssue .vssue-comments .vssue-comment .vssue-comment-main {
   border: 0px solid #909196;
-  border-top: none;
+  border-top: 1px solid #909196;
   border-bottom: none;
   background-color: #3e3e3e;
 }
