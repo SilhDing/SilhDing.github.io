@@ -1556,13 +1556,13 @@ a
   overflow: hidden;
   border-top-left-radius: 5px;
   border-top-right-radius: 5px;
-  border: 0px solid #e8e8e8;
+  border: 1px solid #a5d3ff;
   background-color: #e9f4ff;
   border-bottom: none;
   border-bottom: none;
 }
 .dark-theme .vssue .vssue-comments .vssue-comment .vssue-comment-header {
-  border: 0px solid #909196;
+  border: 1px solid #909196;
   border-bottom: none;
   background-color: #3e3e3e;
 }
@@ -1573,16 +1573,14 @@ a
 }
 .vssue .vssue-comments .vssue-comment .vssue-comment-main {
   padding: 15px;
-  border: 0px solid #e8e8e8;
-  background-color: #e9f4ff;
-  border-top: 1px solid #e8e8e8;
-  border-bottom: none;
+  border: 1px solid #a5d3ff;
+  border-top: 0px solid #a5d3ff;
+  border-bottom: 0px solid #a5d3ff;
 }
 .dark-theme .vssue .vssue-comments .vssue-comment .vssue-comment-main {
-  border: 0px solid #909196;
-  border-top: 1px solid #909196;
+  border: 1px solid #909196;
+  border-top: 0px solid #909196;
   border-bottom: none;
-  background-color: #3e3e3e;
 }
 .vssue .vssue-comments .vssue-comment .vssue-comment-main .vssue-edit-comment-input {
   resize: none;
@@ -1596,15 +1594,13 @@ a
   overflow: hidden;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
-  border: 0px solid #e8e8e8;
-  background-color: #e9f4ff;
+  border: 1px solid #a5d3ff;
   border-top: none;
   border-top: none;
 }
 .dark-theme .vssue .vssue-comments .vssue-comment .vssue-comment-footer {
-  border: 0px solid #909196;
+  border: 1px solid #909196;
   border-top: none;
-  background-color: #3e3e3e;
 }
 .vssue .vssue-comments .vssue-comment .vssue-comment-footer .vssue-comment-hint {
   cursor: default;
