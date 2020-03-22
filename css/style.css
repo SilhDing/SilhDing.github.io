@@ -868,20 +868,28 @@ a
 }
 .post-wrap .post-meta {
   color: rgba(85,85,85,0.529) !important;
+  border-bottom: 1px solid #e8e8e8;
 }
 .dark-theme .post-wrap .post-meta {
   color: #87878d !important;
+  border-bottom: 1px solid #909196;
 }
-.post-wrap .post-meta a {
+.post-wrap .post-content {
+  border-bottom: 1px solid #e8e8e8;
+}
+.dark-theme .post-wrap .post-content {
+  border-bottom: 1px solid #909196;
+}
+.post-wrap .post-content a {
   color: #1e90ff;
 }
-.dark-theme .post-wrap .post-meta a {
+.dark-theme .post-wrap .post-content a {
   color: #eee;
 }
-.post-wrap .post-meta a:hover {
+.post-wrap .post-content a:hover {
   color: #f08080;
 }
-.dark-theme .post-wrap .post-meta a:hover {
+.dark-theme .post-wrap .post-content a:hover {
   color: #f08080;
 }
 .post-content {
