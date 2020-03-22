@@ -21,8 +21,17 @@
       position relative
       .categories
         overflow hidden
-        a 
         display: inline-block
         position: relative
         margin: 5px 10px
         word-wrap: break-word
+        .category-title, .more-post-link
+          color $light-post-link-color
+          .dark-theme &
+            color $dark-font-color
+          &:hover
+            color $light-post-link-hover-color
+            .dark-theme &
+              color $dark-global-link-hover-color
+        .more-post-link
+          font-weight bold

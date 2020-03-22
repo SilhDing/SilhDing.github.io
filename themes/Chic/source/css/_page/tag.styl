@@ -4,7 +4,7 @@
   a 
     display: inline-block
     position: relative
-    margin: 5px 10px
+    margin: 10px 10px 10px 10px
     font-weight bold
     word-wrap: break-word
     transition-duration: .3s
@@ -22,6 +22,23 @@
       color: $light-font-secondary-color
       .dark-theme &
         color: $dark-global-link-hover-color
+
+    color $light-post-link-color
+    border 2px solid $light-post-link-color
+    padding 0px 7px
+    border-top-left-radius 10px
+    border-top-right-radius 10px
+    border-bottom-left-radius 10px
+    border-bottom-right-radius 10px
+    .dark-theme &
+      color $dark-font-color
+      border 2px solid $dark-font-color
+    &:hover
+      color $light-post-link-hover-color
+      border 2px solid $light-post-link-hover-color
+      .dark-theme &
+        color $dark-global-link-hover-color
+        border 2px solid $dark-global-link-hover-color
       
     
   

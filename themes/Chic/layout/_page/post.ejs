@@ -8,35 +8,39 @@
     <article class="post-wrap">
         <header class="post-header">
             <h1 class="post-title"><%= page.title %></h1>
+            <br>
             <% if(theme.post_meta_enable){ %>
                 <div class="post-meta">
 
                     <% if(page.date && theme.post_date_enable){ %>
                         <span class="post-time">
-                        <%- date(page.date, theme.date_format)  %>&nbsp;&nbsp;<%- time(page.date, theme.time_format)%>, by <%- config.author %><br>
+                        <i><%- date(page.date, theme.date_format)  %>&nbsp;&nbsp;<%- time(page.date, theme.time_format)%>, by <%- config.author %></i><br>
                         </span>
-                    <br>
+                    
                     <% } %>
 
                     <% if(page.categories.length!==0 && theme.post_category_enable){ %>
                         <span class="post-category">
-                    Categories:
+                    <b>Categories:
                             <% page.categories.forEach(item=>{ %>
                                 <<a href="<%- url_for(item.path) %>"><%- item.name %></a>>
-                            <% }) %>
+                            <% }) %></b>
                         </span>
                     <br>
                     <% } %>
 
                     <% if(page.tags.length!==0){ %>
                         <span class="post-tag">
-                    Tags:
+                        <b>Tags:
                             <% page.tags.forEach(item=>{ %>
                                 #<a href="<%- url_for(item.path) %>"><%- item.name %></a>
                             <% }) %>
+                        </b>
                         </span>
                     <br>
                     <% } %>
+
+                    
                     
                     <br>
                 </div>
@@ -63,7 +67,7 @@
                 <span class="copyright-item">
                     <% if(page.categories.length!==0){%>
                     <% page.categories.forEach(item=>{ %>
-                        #<a href="<%- url_for(item.path) %>"><%- item.name %></a>
+                        <<a href="<%- url_for(item.path) %>"><%- item.name %></a>>
                     <% }) %>
                         <% } %>
                 </span>

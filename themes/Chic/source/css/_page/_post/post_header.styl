@@ -16,21 +16,24 @@
     .dark-theme &
       color $dark-font-secondary-color !important
       border-bottom 1px solid $dark-border-color
+    a
+      color $light-post-link-color
+      .dark-theme &
+        color $dark-font-color
+      &:hover
+        color $light-post-link-hover-color
+        .dark-theme &
+          color $dark-post-link-hover-color
 
   .post-content
     border-bottom 1px solid $light-border-color
     .dark-theme &
       border-bottom 1px solid $dark-border-color
 
-    a
-      color $light-post-link-color
-      .dark-theme &
-        color $dark-post-link-color
-
-      &:hover
-        color $light-post-link-hover-color
-        .dark-theme &
-          color $dark-post-link-hover-color
+  .row
+    display flex
+  .column
+    flex 50%
         
       
     

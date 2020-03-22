@@ -3,7 +3,7 @@ title: "Project: A Distributed, Reliable and Fault-tolerant Banking System"
 date: 2019-12-01 17:53:35
 tags:
     - "design"
-    - "distributed system"
+    - "distributed"
 categories:
     - "technique" 
     - "course"
