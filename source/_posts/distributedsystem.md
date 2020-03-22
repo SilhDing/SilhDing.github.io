@@ -3,6 +3,7 @@ title: "Project: A Distributed, Reliable and Fault-tolerant Banking System"
 date: 2019-12-01 17:53:35
 tags:
     - "design"
+    - "distributed system"
 categories:
     - "technique" 
     - "course"
@@ -11,7 +12,11 @@ categories:
 
 ![bank](bank.png)
 
-Designing and implementing a distributed and fault-tolerant system is always interesting but **challenging** and **complicated**.
+In [a previous post](/2019/04/21/shoppingweb/), we have introduced a distributed system where:
+- Load balancing (scalability) is implemented;
+- Multi-tier hierarchy is exploited.
+
+However, this small project is far from enough: we still have a lot to learn in designing and implementing a more comprehensive distributed system. Now, we will do something more **interesting** and **challenging**.
 
 In this team project, we designed and implemented a comprehensive distributed banking system. However, the application part is simple in our project as we want to mainly focus on the design and implementation of the distributed system and principles of strong consistency. Below are some highlights or features of our system:
 
@@ -22,6 +27,8 @@ In this team project, we designed and implemented a comprehensive distributed ba
 - Implement web UI for each component;
 - Support some basic banking operations, e.g., create an account, deposit, withdraw, etc.
 - ...
+
+This project is the course project of CMU 18749 (Building Reliable Distributed Systems) which spanned the whole semester. Due to the CMU AIV policy, we will not release the codes of the project. If you have any question, please contact me or leave comments at the bottom of this page.
 
 # Design Overview
 
