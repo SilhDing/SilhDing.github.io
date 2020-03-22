@@ -15,8 +15,8 @@
                         <span class="post-time">
                         <%- date(page.date, theme.date_format)  %>&nbsp;&nbsp;<%- time(page.date, theme.time_format)%>, by <%- config.author %><br>
                         </span>
-                    <% } %>
                     <br>
+                    <% } %>
 
                     <% if(page.categories.length!==0 && theme.post_category_enable){ %>
                         <span class="post-category">
@@ -25,8 +25,8 @@
                                 <<a href="<%- url_for(item.path) %>"><%- item.name %></a>>
                             <% }) %>
                         </span>
-                    <% } %>
                     <br>
+                    <% } %>
 
                     <% if(page.tags.length!==0){ %>
                         <span class="post-tag">
@@ -35,8 +35,10 @@
                                 #<a href="<%- url_for(item.path) %>"><%- item.name %></a>
                             <% }) %>
                         </span>
+                    <br>
                     <% } %>
-
+                    
+                    <br>
                 </div>
             <% } %>
         </header>
@@ -44,13 +46,14 @@
 
         <div class="post-content">
             <%- page.content %>
+            <br>
         </div>       
 
         <br>
         <br>
 
         <div style="text-align:center;font-weight:bold"><h2>Comments</h2></div>
-        <div id="vssue"></div>
+        <div class="post-comment" id="vssue"></div>
         <div class="comments-fold" style="text-align:center;font-weight:bold"><button onclick="myFunction()" id="comment-switch">Hide Comments</button></div>       
 
         <% if(theme.post_copyright_enable){ %>

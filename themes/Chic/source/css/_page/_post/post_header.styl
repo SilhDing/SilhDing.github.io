@@ -12,8 +12,15 @@
 
   .post-meta
     color rgba(85, 85, 85, 0.52941) !important
+    border-bottom 1px solid $light-border-color
     .dark-theme &
       color $dark-font-secondary-color !important
+      border-bottom 1px solid $dark-border-color
+
+  .post-content
+    border-bottom 1px solid $light-border-color
+    .dark-theme &
+      border-bottom 1px solid $dark-border-color
 
     a
       color $light-post-link-color
