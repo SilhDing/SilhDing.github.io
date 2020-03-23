@@ -19,3 +19,25 @@ We implemented a distributed web server which can emulated online shopping (brow
 Please note that it is a small project, and there is, in fact, no any real shopping applications, we as want to mainly pay attention to design and implementation of scalability and system hisrarchy. 
 
 # System Hierarchy
+
+Refer to the picture below for the syste, hierarchy:
+
+![hierarchy](structure.svg)
+
+## Front-end Server
+
+The responsibility of front-end servers is to receive requests (but not process them). Thus, there should be something like "request pool" to store all requests. Who should be reponsible for maintaining this "pool"? In order to do that, we also divided all front-end servers into 2 categories:
+
+### Master
+
+The master front-end server is supposed to maintain a ***central queue*** which has all requests received by front-end servers. Please note, the master server itself will also receive reqeusts, just like slave servers (explain below). There is only and at least one master in our system. Another critical feature for master server is that it also takes charges of scaling in/out, according to the length of central queue.
+
+### Slave
+
+Slave front-end servers have less workload compared to the master. It will only receive requests and push them into the central queue on master front-end servers. There might be multiple slave masters.
+
+## Middle-end Server
+
+
+
+[TODO]
