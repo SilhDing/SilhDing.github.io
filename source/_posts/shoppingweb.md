@@ -49,7 +49,7 @@ Each middle-end server would continuously get a request from the master front-en
 
 When it comes to database and cache, consistency appears to the top priority. While read-only operations might be executed on cache directly, write operations might cause more trouble as we have to go all the way to the database, and might have to invalidate some cache entries as well. It would become more complex and troublesome if there are mutiple clients or caches in the system.
 
-In this project, we will not do anything about database and cache, not to mention any consistency models. We only wrote write a very simple interface to execute some operations on a cache. If you want to learn more about cache-realted technologies, you may refer to my another post on distributed system and file caching. (If you do not see such a post, probably I am still working on it)
+In this project, we will not do anything about database and cache, not to mention any consistency models. We only wrote a very simple interface to execute some operations on a cache. If you want to learn more about cache-realted technologies, you may refer to my another post on distributed system and file caching. (If you do not see such a post, probably I am still working on it)
 
 # Scalability
 
@@ -71,8 +71,10 @@ The number of front-end servers is dynamically adjusted by number of the middle-
 
 ## Benchmarking
 
-You may now be aware that we have many parameters in out system, and probably we need to conduct some experiments to determine the optimal values. That's right. We neen benchmarking and experiments to answer the following questions:
+You may now be aware that we have many parameters in out system, and probably we need to conduct some experiments to determine the optimal values. That's right. We need benchmarking and experiments to answer the following questions:
 
 1. What is the initial number for front-end server and middle-end server (based on the QPS)?
 2. What is value of timeout when a middle-end server tries to get a request from the master?
 3. What is the optimal ratio of front-end and middle-end servers? The optimal value might different under different load pattern.
+
+Thus, designing a auto-scalable system is not only about algorithma dn strategies. We also need to carefully study the load pattern and conduct some experiments to determine how we should tweark our system.
