@@ -646,13 +646,14 @@ header label {
 }
 .post-wrap .archive-item {
   margin-left: 1rem;
+  margin-top: 3px;
 }
 .archive-item-link {
   display: inline-block;
   text-decoration: none;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-left: 2px solid #161209;
+  border-left: 1.5px solid #161209;
   padding-left: 10px;
   margin-top: 3px;
   margin-bottom: 3px;
@@ -660,7 +661,7 @@ header label {
 }
 .archive-item-link:hover {
   color: #1e90ff;
-  border-left: 2px solid #1e90ff;
+  border-left: 1.5px solid #1e90ff;
   background-color: transparent;
   transform: scale(1.05);
 }
