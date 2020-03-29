@@ -198,7 +198,7 @@ html::-webkit-scrollbar-thumb:hover {
   background-color: #ddd;
 }
 body {
-  font-size: 13.5pt;
+  font-size: 14pt;
   font-weight: normal;
   line-height: 1.5em;
   background-color: #fff;
@@ -645,20 +645,22 @@ header label {
   padding-top: 2rem;
 }
 .post-wrap .archive-item {
-  margin-left: 2rem;
+  margin-left: 1rem;
 }
 .archive-item-link {
   display: inline-block;
   text-decoration: none;
   overflow: hidden;
   text-overflow: ellipsis;
-  border-left: 1px solid #161209;
+  border-left: 2px solid #161209;
   padding-left: 10px;
   margin-top: 3px;
   margin-bottom: 3px;
+  max-width: 570px;
 }
 .archive-item-link:hover {
   color: #1e90ff;
+  border-left: 2px solid #1e90ff;
   background-color: transparent;
   transform: scale(1.05);
 }
@@ -693,7 +695,7 @@ header label {
   line-height: 1.6em;
 }
 .post-wrap .categories-card .card-item {
-  font-size: 16px;
+  font-size: 17px;
   text-align: left;
   width: 45%;
   display: flex;
