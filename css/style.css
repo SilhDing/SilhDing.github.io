@@ -802,8 +802,8 @@ header label {
   vertical-align: middle;
 }
 .info {
-  width: 270px;
-  height: 150px;
+  width: 360px;
+  height: 250px;
   display: inline-block;
   vertical-align: middle;
 }
@@ -833,7 +833,7 @@ header label {
 }
 .card {
   width: 340px;
-  height: 300px;
+  height: 320px;
   margin: 20px;
   background: #e9f4ff;
   border-top: 2px solid #1e90ff;
@@ -858,17 +858,17 @@ header label {
   vertical-align: middle;
   width: 350px;
   height: 60px;
-  padding: 10px 20px;
+  padding: 20px 20px 10px 20px;
   font-weight: bold;
-  font-size: 18px;
   display: table-cell;
   vertical-align: middle;
 }
 .card .text {
   width: 300px;
-  height: 150px;
+  height: 160px;
   margin-left: 20px;
   margin-right: 20px;
+  font-size: 17px;
 }
 .card .link .link2 {
   width: 350px;
@@ -1083,7 +1083,7 @@ header label {
   cursor: zoom-in;
 }
 .post-content blockquote {
-  font-size: 1rem;
+  font-size: 1.1rem;
   display: block;
   margin: 1em 0;
   padding: 1em 1.2em 1em 1.2em;
