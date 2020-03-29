@@ -39,4 +39,9 @@ In this task, I was given an open repository of web crawled data (we only choose
 2. Discard all tokens that are not valid (e.g., invalid words contain characters rather than English letters and some simple characters);
 3. Standardize all valid tokens from step 2 (including stripping away some invalid leading or tailing characters, convert all characters to lower-case, etc.);
 4. Discard some documents whose length is lower than a limit;
-5. Remove "stop" words ;
+5. Remove "stop" words (stop words refer to common words, e.g., "a", "the");
+6. Remove typo words. Typo words can be identified by checking the number of documents that the word appears in. If the number is below a limit, we may treat this word as a typo.
+7. sort all words by their lexicographical order and give them index number starting from 0.
+8. Generate "word:count" pair for all words and computer statistic data of processed corpus.
+
+All steps listed above, in fact, do not require complex algorithms.
