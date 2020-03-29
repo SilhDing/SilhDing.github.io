@@ -949,6 +949,7 @@ header label {
 .post-content h6 {
   padding-top: 0.8em;
   padding-bottom: 0.3em;
+  line-height: 1.5em;
 }
 .post-content h1::before {
   content: "#";
