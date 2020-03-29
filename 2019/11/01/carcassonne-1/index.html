@@ -228,24 +228,24 @@
 
         <div class="post-content">
             <p><img src="0.jpg" alt="game-pic"></p>
-<p>In this individual project, the calssical board game <a href="https://en.wikipedia.org/wiki/Carcassonne_(board_game)" target="_blank" rel="noopener">Carcassonne</a> is designed and implemented in Java.</p>
+<p>In this individual project, the classical board game <a href="https://en.wikipedia.org/wiki/Carcassonne_(board_game)" target="_blank" rel="noopener">Carcassonne</a> is designed and implemented in Java.</p>
 <p>The project is a course project of CMU 17-514, which is mostly about object oriented design and Java software design. The project contains a full cycle of software design and development, which means it also involves GUI design/implementation, testing and deployment.</p>
 <p><strong>Note</strong>: due to the CMU academic integrity rules, the project codes cannot be publicized.</p>
 <h2 id="Game-Overview"><a href="#Game-Overview" class="headerlink" title="Game Overview"></a>Game Overview</h2><p>Once you run the program, you will first be required to enter the number of players:</p>
 <p><img src="1.png" alt="game-init"></p>
-<p>You are required to enter names of all palyers. The number of players should be between 2 and 5 (both inclusive).</p>
+<p>You are required to enter names of all players. The number of players should be between 2 and 5 (both inclusive).</p>
 <p>Say now we have three players: Alice, Bob, and Evil. Then we start the game.</p>
 <p><img src="2.png" alt="game-start"></p>
 <p>Below is the main interface of the game:</p>
 <p><img src="3.png" alt="game-main"></p>
-<p>In the real board game, there exists a deck and each player is supposed to get a tile from the top of the deck in turn, and then put the tile on the game board accordingly. We aslo simulate the real game experience through the GUI design:</p>
+<p>In the real board game, there exists a deck and each player is supposed to get a tile from the top of the deck in turn, and then put the tile on the game board accordingly. We also simulate the real game experience through the GUI design:</p>
 <ul>
 <li><strong>Current Player</strong>: the player who is supposed to get a tile from the deck and put it on the game board;</li>
 <li><strong>Current Tile</strong>: the tile on the top of the tile, which is assigned to the current player. It can be rotated (90 degree, clockwise) by clicking the button “Rotate Tile”;</li>
 <li><strong>Action</strong>: action which the current player needs to take right now. It could be:<ul>
 <li>“Please put a tile”: the player now should place the tile on the board. The tile may be rotated by the player. The “+” sign on the grid represents the positions that the tile can be placed on if the tile will not be rotated anymore;</li>
 <li>“Please put a meeple”: the player now should put a meeple on the tile which is just previously placed on the board. Once a meeple is placed, a small solid circle is drawn on the board, in the same color of the player’s name. If a pattern is completed, meeples on that pattern will be revoked.</li>
-<li>“Please skip puuting a meeple”: if will happen if there are not any available positions, or the current players has no meeples right now. In this case, the player should click the button “Skipping Putting a Meeple” below to finish the current round.</li>
+<li>“Please skip putting a meeple”: if will happen if there are not any available positions, or the current players has no meeples right now. In this case, the player should click the button “Skipping Putting a Meeple” below to finish the current round.</li>
 </ul>
 </li>
 <li><strong>Scores</strong>: real-time scores and number of available meeples for each player.</li>
@@ -255,7 +255,7 @@
 <p><img src="4.png" alt="game-process"></p>
 <p>Once all tiles are used (dropped or placed), the game is over, and the final ranking will appear on the sidebar.</p>
 <p><img src="5.png" alt="game-over"></p>
-<h2 id="Software-Design-and-Patterns"><a href="#Software-Design-and-Patterns" class="headerlink" title="Software Design and Patterns"></a>Software Design and Patterns</h2><p>In a Java project, it is highly important to use some suitable design patterns and some strategies, in consideration of robostness, flexibility and extensibility.</p>
+<h2 id="Software-Design-and-Patterns"><a href="#Software-Design-and-Patterns" class="headerlink" title="Software Design and Patterns"></a>Software Design and Patterns</h2><p>In a Java project, it is highly important to use some suitable design patterns and some strategies, in consideration of robustness, flexibility and extensibility.</p>
 <h3 id="Design-Goal"><a href="#Design-Goal" class="headerlink" title="Design Goal"></a>Design Goal</h3><p>The design goal in this project is to construct a comprehensive system that contains all concepts in the game and is able to execute all operations during the game. It should also correctly records the state of the game and return the correct results once the game is over.</p>
 <p>As the game contains multiple objects, coupling between each object should be low, which may be helpful for debugging and implementation. Thus, each object should have clear responsibility and appropriate size of information, which should be helpful for implementation of algorithm in the future.</p>
 <h3 id="Object-Model"><a href="#Object-Model" class="headerlink" title="Object Model"></a>Object Model</h3><p>(<strong>Note</strong>: due to the CMU academic integrity policy, this part cannot be publicized as it is a part of homework’s solution. If you are <strong>NOT</strong> taking this course currently <strong>AND</strong> you will <strong>NOT</strong> take this course in the future, please leave comments or contact me by e-mail in case you want more information about this part.)</p>
