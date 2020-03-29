@@ -33,10 +33,10 @@ how to add a category page:
                     <div class="card-item">
                         <div class="categories">
                             <a class="category-title" href="<%- url_for(category_item.path) %>">
-                                <h3>
+                                <h2>
                                     <i class="iconfont icon-category" style="padding-right:3px"></i>
                                     <%- category_item.name %>
-                                </h3>
+                                </h2>
                             </a>
                             <% category_item.posts.forEach((post_item, index = 0)=>{ %>
                                 <%# console.log(index) %>
