@@ -164,11 +164,11 @@ template {
 }
 @font-face {
   font-family: "source serif pro";
-  src: url("../fonts/source-serif-pro/SourceSerifPro-Light.otf");
+  src: url("../fonts/source-serif-pro/SourceSerifPro-Regular.otf");
 }
 @font-face {
   font-family: "source serif pro";
-  src: url("../fonts/source-serif-pro/SourceSerifPro-LightIt.otf");
+  src: url("../fonts/source-serif-pro/SourceSerifPro-It.otf");
   font-style: italic;
 }
 @font-face {
@@ -198,7 +198,7 @@ html::-webkit-scrollbar-thumb:hover {
   background-color: #ddd;
 }
 body {
-  font-size: 13pt;
+  font-size: 13.5pt;
   font-weight: normal;
   line-height: 1.5em;
   background-color: #fff;
@@ -1080,7 +1080,7 @@ header label {
   cursor: zoom-in;
 }
 .post-content blockquote {
-  font-size: 1.1rem;
+  font-size: 1rem;
   display: block;
   margin: 1em 0;
   padding: 1em 1.2em 1em 1.2em;

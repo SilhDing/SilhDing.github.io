@@ -20,11 +20,11 @@
 }
 @font-face {
   font-family: "source serif pro";
-  src: url("../fonts/source-serif-pro/SourceSerifPro-Light.otf");
+  src: url("../fonts/source-serif-pro/SourceSerifPro-Regular.otf");
 }
 @font-face {
   font-family: "source serif pro";
-  src: url("../fonts/source-serif-pro/SourceSerifPro-LightIt.otf");
+  src: url("../fonts/source-serif-pro/SourceSerifPro-It.otf");
   font-style: italic;
 }
 @font-face {
