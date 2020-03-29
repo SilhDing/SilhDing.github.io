@@ -4,7 +4,7 @@ date: 2019-11-29 16:44:50
 tags:
     - "design"
 categories:
-    - "technique" 
+    - "technique"
     - "course"
     - "project"
 ---
@@ -18,7 +18,7 @@ Social media posts share people's opinions, ideas and events in small pieces of 
 Our framework offers a feasible way to analyze social network posts data and query data based on user-defined requirements, as well as display the analysis result in multiple ways with extensible display plugins. Users may design and implement their own plugins, register them to the framework, and that's it! Our framework will bring all together to you.
 
 Across the project, we kept asking some questions to us:
-- How can you gurantee extensibility and flexibility if you want to design and implement a framework that might be used by many people across different domains?
+- How can you guarantee extensibility and flexibility if you want to design and implement a framework that might be used by many people across different domains?
 - "Maximizing reuse minimizes use." (*C. Szyoerski*) So how do you trade off between "use" and "reuse"?
 - Have you ever consider a proper name for your APIs?
 
@@ -79,9 +79,9 @@ The second one is the "Word Cloud Plugin", which shows the most frequent words a
 
 Another display is "Pie Chart Plugin". It categorizes all post entries by location (USA state), and shows the results in a pie chart. In addition, you can choose a US state and the plugin is able to show the top post from the state.
 
-![analysis-res-3](6.png) 
+![analysis-res-3](6.png)
 
-The display plugins are highly informative as they might provide much information about your dataset that is processed by our framework. 
+The display plugins are highly informative as they might provide much information about your dataset that is processed by our framework.
 
 For example, from the word cloud diagram, we found that the most frequent words are all politics-related (e.g., “impeachment”, “president”, “racists”, “voters”, ...) and some of the words are strongly related with President Trump’s personal tweets (e.g., “great”, “democrat”, “treason”, “liar”, ...). This observation is not surprising, as President Trump is famous for its speeches on Twitter and people are enthusiastic about making fun with his personal slogans.
 

@@ -1,7 +1,7 @@
 ---
 title: DFS总结2
 date: 2020-01-10 14:40:09
-tag: 
+tag:
     - "leetcode"
     - "algorithm"
 categories:
@@ -14,13 +14,13 @@ categories:
 
 ### 目录
 
-<font color=green>**Easy**</font> 
-<font color=orange>**Medium**</font> 
+<font color=green>**Easy**</font>
+<font color=orange>**Medium**</font>
 <font color=red>**Hard**</font>
 
 Problem | Notes | 自评
 ------------ | ------------- |-------
-<a href="#694">**694**</a> <font color=orange>**Medium**</font> Number of Distinct Islands| Typical DFS but could be tricly! | <font color=orange>**Medium**</font> Very smart and think about it carefully.
+<a href="#694">**694**</a> <font color=orange>**Medium**</font> Number of Distinct Islands| Typical DFS but could be tricky! | <font color=orange>**Medium**</font> Very smart and think about it carefully.
 <a href="#126">**126**</a> <font color=red>**Hard**</font> word ladder II| New BFS problems, the element in queue in a path! | <font color=red>**Hard**</font> It is easy to find shortest path with BFS, but how about finding multiple paths?
 <a href="#351">**351**</a> <font color=orange>**Medium**</font> Android Unlock Patterns| A very interesting problem but not so hard. | <font color=red>**Medium**</font> Some solutions are symmetric so you do not have to do DFS on every entry.
 <a href="#139">**139**</a> <font color=orange>**Medium**</font> Word Break| In fact it is a typical DFS problem with memo. | <font color=orange>**Medium**</font> You have to deeply REMEMBER this solution.
@@ -56,30 +56,30 @@ class Solution {
         for (int i = 0; i < grid.length; i++) {
             for (int j = 0; j < grid[0].length; j++) {
                 if (grid[i][j] == 0) continue;
-                
+
                 StringBuilder sb = new StringBuilder(); // origin
                 dfs(i, j, grid, sb, 'o'); // origin
                 set.add(sb.toString());
                 System.out.println(sb);
-                
+
             }
         }
         return set.size();
     }
-    
+
     private void dfs(int i, int j, int[][] grid, StringBuilder sb, char direction) {
         if (i < 0 || j < 0 || i >= grid.length || j >= grid[0].length || grid[i][j] == 0) return;
-        
+
         grid[i][j] = 0;
         sb.append(direction);
-        
+
         dfs(i-1, j, grid, sb, 'u');
         dfs(i+1, j, grid, sb, 'd');
         dfs(i, j-1, grid, sb, 'l');
         dfs(i, j+1, grid, sb, 'r');
-        
+
         sb.append('b'); // This is amazing!!!!!
-        
+
     }
 }
 ```
@@ -114,17 +114,17 @@ public:
     vector<vector<string>> res;
     int level = 1;
     int minLevel = INT_MAX;
-    
+
     vector<vector<string>> findLadders(string beginWord, string endWord, vector<string>& wordList) {
         // just like finding all possible paths?
         // maybe bfs?
         unordered_map<string, vector<int>> map;
         map[beginWord] = findNeighbor(beginWord, wordList);
         for (string& word: wordList) map[word] = findNeighbor(word, wordList);
-        
+
         // I think one problem with BFS is
         // how can you make sure that some elements can be visited more than once?
-        //basic idea, we mark the node is visited obly after the level is done
+        //basic idea, we mark the node is visited only after the level is done
         // thus, two different paths which reaching a node at same level can both
         // visit this node
         queue<vector<string>> q;
@@ -132,11 +132,11 @@ public:
         unordered_set<string> wordSet;
         unordered_set<string> visited;
         for (string& str: wordList) wordSet.insert(str);
-        
+
         while (q.size() > 0) {
             vector<string> curPath = q.front();
             q.pop();
-            
+
             if (curPath.size() > level) {
                 // enter new level
                 if (curPath.size() > minLevel) {
@@ -148,14 +148,14 @@ public:
                 for (string str: visited) wordSet.erase(str);
                 visited.clear();
             }
-            
+
             string lastWord = curPath.back();
             for(int i: map[lastWord]) {
                 string& newWord = wordList[i];
-                
+
                 // is visited?
                 if (wordSet.find(newWord) == wordSet.end()) continue;
-                
+
                 visited.insert(newWord);
                 // prepare a new path
                 vector<string> path = curPath;
@@ -170,8 +170,8 @@ public:
         }
         return res;
     }
-    
-    
+
+
     vector<int> findNeighbor(string& word, vector<string>& words) {
         // given a word, find neighbor
         vector<int> vec;
@@ -194,13 +194,13 @@ Share another java solution: we may firstly use BFS solution to get the distance
 
 ```java
 class Solution {
-    
+
     // bfs + dfs
     // bfs is responsible for find nodes and distance by level traversal
     // dfs is to find all results
-    
+
     List<List<String>> res;
-    
+
     public List<List<String>> findLadders(String beginWord, String endWord, List<String> wordList) {
         res = new LinkedList<>();
         Set<String> set = new HashSet<>(wordList);
@@ -214,8 +214,8 @@ class Solution {
         dfs(beginWord, endWord, distance, neighbors, list);
         return res;
     }
-    
-    private void bfs(String startWord, String endWord, Set<String> allWords, Map<String, Integer> distance, 
+
+    private void bfs(String startWord, String endWord, Set<String> allWords, Map<String, Integer> distance,
                      Map<String, Set<String>> neighbors) {
         // assume we have put start word in the start set
         distance.put(startWord, 0);
@@ -245,15 +245,15 @@ class Solution {
             level ++;
         }
     }
-    
-    private void dfs(String startWord, String endWord, Map<String, Integer> distance, 
+
+    private void dfs(String startWord, String endWord, Map<String, Integer> distance,
                      Map<String, Set<String>> neighbors, List<String> curList) {
-        
+
         if (startWord.equals(endWord)) {
             res.add(new LinkedList<>(curList));
             return ;
         }
-        
+
         Set<String> nexts = neighbors.get(startWord);
         if (nexts == null) return ;
         for (String next: nexts) {
@@ -263,11 +263,11 @@ class Solution {
             curList.remove(curList.size() - 1);
         }
     }
-    
+
     private ArrayList<String> getNeighbors(String node, Set<String> dict) {
         ArrayList<String> res = new ArrayList<String>();
         char chs[] = node.toCharArray();
-        
+
         for (char ch ='a'; ch <= 'z'; ch++) {
             for (int i = 0; i < chs.length; i++) {
                 if (chs[i] == ch) continue;
@@ -292,7 +292,7 @@ This is a very interesting problem, and guess what, it must come form Google! So
 
 ```java
 class Solution {
-    
+
     public int numberOfPatterns(int m, int n) {
         // OMG this question in sl interesting!
         // the basic work flow: recursion (backtracing)
@@ -310,23 +310,23 @@ class Solution {
         ans += dfs(1, 1, m, n, visited);
         return ans;
     }
-    
+
     private int dfs(int i, int j, int min, int max, boolean[][] visited) {
         // if (i < 0 || i>= 3 || j < 0 || j >= 3) return ;
-        
+
         int res = 0;
         int new_min = Math.max(0, min - 1);
         int new_max = max - 1;
-        
+
         if (new_min == 0) {
             res ++;
         }
         if (new_max == 0) {
             return res;
         }
-        
+
         visited[i][j] = true;
-        
+
         for (int x = 0; x < 3; x++) {
             for (int y = 0; y < 3; y++) {
                 if (visited[x][y]) continue;
@@ -334,13 +334,13 @@ class Solution {
                 if (middle == null || visited[middle[0]][middle[1]]) {
                     res += dfs(x, y, new_min, new_max, visited);
                 }
-                
+
             }
         }
         visited[i][j] = false;
         return res;
     }
-    
+
     private int[] getMiddle(int x0, int y0, int x1, int y1) {
         int sum = x0 + y0 + x1 + y1;
         if (sum % 2 == 1) return null;
@@ -367,16 +367,16 @@ class Solution {
         // the recursion situation is like O(n!)
         // use dp
         // Time complexity: O(s.length() * wordDict.size()) in worst case
-        int[] dp = new int[s.length()]; // dp[i] => substring(i) 
+        int[] dp = new int[s.length()]; // dp[i] => substring(i)
         Arrays.fill(dp, -1);
         return visit(s, 0, wordDict, dp);
     }
-    
+
     private boolean visit(String s, int index, List<String> words, int[] dp) {
         if (index >= s.length()) return true;
         if (dp[index] == 1) return true;
         else if (dp[index] == 0) return false;
-        
+
         // if dp[index] == -1 -> not visited
         for (String word: words) {
             if (s.startsWith(word, index)) {
@@ -384,7 +384,7 @@ class Solution {
                 if (visit(s, nextIndex, words, dp)) dp[index] = 1;
             }
         }
-        
+
         if (dp[index] == -1) dp[index] = 0;
         return dp[index] == 1;
     }
@@ -398,7 +398,7 @@ class Solution {
     public boolean wordBreak(String s, List<String> wordDict) {
         Set<String> set = new HashSet<>(wordDict);
         boolean[] dp = new boolean[s.length() + 1];
-        
+
         dp[0] = true;
         for (int i = 1; i <= s.length(); i++) {
             for (int j = 0; j < i; j++) {
@@ -428,21 +428,21 @@ class Solution {
         Map<String, List<String>> map = new HashMap<>();
         return visit(s, wordDict, map);
     }
-    
+
     public List<String> visit(String s, List<String> wordDict, Map<String, List<String>> map) {
-        
+
         List<String> list = new LinkedList<>();
-        
+
         if (s.length() == 0) {
             list.add("");
             return list;
         }
-        
+
         if (map.containsKey(s)) return map.get(s);
-        
+
         for (String str: wordDict) {
             if (s.startsWith(str)) {
-                
+
                 List<String> tmp = visit(s.substring(str.length()), wordDict, map);
                 for (String suffix: tmp) {
                     list.add(str + (suffix.length() > 0? " ": "") + suffix);
@@ -500,7 +500,7 @@ class Solution2 {
         dfs(s[0], s[1], dp);
         return dp[d[0]][d[1]] - 1;
     }
-    
+
     private void dfs(int i, int j, int[][] dp) {
         // we start from the start end, and visit all possible nodes in the current call
         // then update the dp matrix. We always choose the min distance
@@ -510,7 +510,7 @@ class Solution2 {
             int diffx = dirs[p], diffy = dirs[p+1];
             int x = i, y = j;
             int len = 0;
-            while (x + diffx >= 0 && x + diffx < m.length && y + diffy >= 0 && y + diffy < m[0].length 
+            while (x + diffx >= 0 && x + diffx < m.length && y + diffy >= 0 && y + diffy < m[0].length
                    && m[x+diffx][y+diffy] == 0) {
                 x += diffx; y += diffy;
                 len ++;
@@ -543,25 +543,25 @@ class Solution {
                 int diffx = dirs[p], diffy = dirs[p+1];
                 int x = i, y = j;
                 int len = cur[2];
-                while (x + diffx >= 0 && x + diffx < maze.length && y + diffy >= 0 && y + diffy < maze[0].length 
+                while (x + diffx >= 0 && x + diffx < maze.length && y + diffy >= 0 && y + diffy < maze[0].length
                        && maze[x+diffx][y+diffy] == 0) {
                     x += diffx; y += diffy;
                     len ++;
                 }
-                
+
                 // This is a way to reduce extra operation
                 if (len > distance[destination[0]][destination[1]]) continue;
-                
+
                 if (distance[x][y] != 0 && distance[x][y] > len) {
                     distance[x][y] = len;
                     if (x != destination[0] || y != destination[1]) queue.offer(new int[]{x, y, len});
                 }
             }
-            
+
         }
         int res = distance[destination[0]][destination[1]];
         return res == Integer.MAX_VALUE? -1: res;
-        
+
     }
 }
 ```
