@@ -17,7 +17,8 @@ date: 2020-01-10 20:44:42
 
 ## Experience
 <img src="apple_logo.svg" alt="drawing" width="50" height="50" style="float: center;"/> <p style="text-align: center;"> **Software Engineer in Apple SEG** <br> *03/2020 - present, Cupertino CA* </p>
->- Design and implement automation software/platform for SEG RF team.
+>- Design and implement RF automation software/platform for SEG RF team.
+>- Design and implement the central lab flow system which takes charge of membership, lab access, device statistics and test campaigns.
 
 <img src="google_logo.svg" alt="drawing" width="180" height="70" style="float: center; margin-top: 50px;" /> <p style="text-align: center;"> **Software Engineer Intern in Google Ads** <br> *05/2019 - 08/2019, Kirkland WA* </p>
 >- Designed and implement a new type of suggestion (to exclude low-performance audience list of line items) on advertisers’ spending to improve ads targeting performance.
@@ -25,6 +26,6 @@ date: 2020-01-10 20:44:42
 
 <img src="iqiyi_logo.png" alt="drawing" width="200" height="70" style="float: center; margin-top: 50px;" /> <p style="text-align: center;"> **Software Engineer Intern in iQIYI Cloud Infrastructure Team** <br> *04/2018 - 07/2018, Beijing China* </p>
 >- Improved features of data classification and aggregation in the picture production monitoring system (Python Django) to track statuses of picture production tasks; a full stack project.
->-Used Docker/Jenkins/GitLab to develop pipeline in order to achieve CI/CD.
+>- Used Docker/Jenkins/GitLab to develop pipeline in order to achieve CI/CD.
 
 ## Projects
