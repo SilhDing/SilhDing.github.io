@@ -31,6 +31,8 @@ You will gradually see that programming with Spark is never easy, especially whe
 
 Please note that, in this project, I also used HDFS and Amazon EC2 to manage our machines and distribute data/files, which, however, is not our focus, so I just exploited some existing framework/scripts for this part.
 
+<p style="color:#F13E3E">Due to the CMU academic integrity, some contents are disabled as they are directly related to my codes or design. Please contact me or leave comments if you want to learn more about this project and you will not take this course in the future!</p>
+
 # Preprocessing with Spark
 
 In this task, I was given an open repository of web crawled data (we only choose WET format file). These data should be processed following the steps below:
@@ -66,30 +68,15 @@ Here are some ideas I used for this task. They show great improvement in the per
 
 ### Reorder the Workflow
 
-Properly reordering the work flow may lead to lower computing cost. The work flow listed previously is obviously not the best one. For example,
-
-- We can remove English common words when we are finding and standardizing valid tokens; **then we have less words in `Reduce` operation later**.
-- We can remove domain-specific common words and typo in one step, as both needs to know the document frequency of the words.
-
-You could also try to further improve the work flow. But remember, always try to decrease the workload for next step, especially for `Reduce` operation which requires shuffle.
+<p style="color:#F13E3E">[Contents are disabled]</p>
 
 ### Consider Intermediate Results
 
 This trick is super helpful and effective.
 
-At first, let's talk about a sorting algorithm. We all know "merge sort" algorithm, which divides the array into many smaller subarrays, sort these subarrays then merge. It shows a principle called "divide and conquer".
+At first, let's talk about a sorting algorithm. We all know "merge sort" algorithm, which divides the array into many smaller subarrays, sort these subarrays then merge. It shows a principle called "divide and conquer". **This principle will give us some ideas in designing the program**.
 
-**This principle will give us some ideas in designing the program.** Say now we have multiple WET files, each containing many documents, and we want to count the corpus frequency (total appearance) and document frequency (number of documents that contain this word) of each word. A straightforward solution is:
-
-1. parse words in each document from each WET file and generate a tuple: `[word_name, appearance_in_doc, 1]` with map functions ("1" refer the document frequency is 1);
-2. reduce all tuples by `word_name` from step 1 and get statistics.
-
-This method will works well and give you accurate results. But it is not optimal. A better solution would be:
-
-1. parse words in all documents from a single WET, and **within the WET file**, generate a tuple for each **distinct** word: `[word_name, appearance_in_WET, document_appearance_in_WET]`; do this for each WET file.
-2. reduce all tuples from step 1 and get statistics.
-
-Why the second one is better? Because **we have preprocessed each WET** before getting the final results. In the first solution, `Reduce` have larger workload as a distinct word may have many corresponding tuples (e.g., if there are 50000 words in the corpus, we then will have 50000 pair before reducer works, but we may only have 2000 distinct words). If we have reduce the words (i.e., eliminate tuples with same `word_name` by merging them) in each WET file, the reducer surely has less work to do, and we will see a significant improvement in computing performance.
+<p style="color:#F13E3E">[Contents are disabled]</p>
 
 ### Distribute Workload Evenly
 
@@ -111,6 +98,77 @@ Though these tricks seem vert intuitive and easy to implement, they might not co
 
 Remember what I said at the beginning of this post: Spark has some additional advantages over MapReduce. The most important features that Spark brings to us is **in-memory processing**.
 
-This feature will be more prominent when the task is iterative: we may need to access or process the same data multiple times. Resilient Distributed Datasets (RDDs) enable multiple map operations in memory, while Hadoop MapReduce has to write interim results to a disk, which may involve some addition IO cost.
+This feature will be more prominent when the task is iterative: we may need to access or process the same data multiple times. Resilient Distributed Datasets (RDDs) enable multiple map operations in memory, while Hadoop MapReduce has to write interim results to a disk, which may involve some additional IO cost.
 
-Thus, here comes the second task: given a lot of training data and multiple nodes (instances), how can we efficiently train our machine learning model. The ML model itself may has a large amount of parameters.
+Thus, here comes the second task: given a lot of training data and multiple nodes (instances), how can we efficiently train our machine learning model in parallel. The ML model itself may has a large amount of parameters.
+
+
+The Ml model here is a simple logistic regression, and we are going to use gradient descent to update our model. This model starts with a random guess of the model parameter values and refines them over many iterations. In a single iteration, each data sample in the training set is processed to generate an incremental update to the model parameters. The model parameters updates are accumulated and not applied until the end of an iteration. **This algorithm enables us to implement a training workflow which involves many nodes:**
+
+- In an iteration, each node can compute and accumulate gradient independently;
+- The reducer can then accumulate updates from all mappers, get the final updates in the current iteration, update the parameter values, and broadcast new parameter values to all mappers;
+- Mappers start a new iteration.
+
+This workflow is really suitable for Spark: in each iteration, the nodes need to access the same training data and compute the gradient, as Spark can keep data in memory, nodes do not have to load data from disk through IO (this is what MapReduce does). The whole process would be much faster and more efficient.
+
+However, some problem will appear when you are writing you program: sometimes your program will encounter out-of-memory issue and then crashes, or it has to take a long time to finish its job.
+
+Compared with the first task, this task also forces you to figure out how you should manage the computing resources appropriately. Apparently, out-of-memory issue happens due to the exhaustion of memory. Is this because the memory stored too much data? Another question is, is there any other ways to make my program faster (in addition to the tips mentioned in the first task)?
+
+No worry. I will summarize some useful tricks.
+
+## Join-based Parameters Communication
+
+As we mentioned earlier, the number of ML features (parameters) may be huge (millions in this task). However, each data sample may not have so many nonzero values (probably only have tens of nonzero values). Also, processing each data sample only requires reading the weight values for its nonzero features and generating updates for its non-zero feature. Thus, **a node does not need to get all feature weights from the ML model.** This practice is critical in this project. In fact, trying to store a full copy of the weights or all updates on any of the machines will case failure: remember, memory is expensive and limited.
+
+In order to take advantage of this feature, we might exploit some methods, such as inverted indices (which is popular in many area such as search engine) to design a better workflow.
+
+## Ideas
+
+### A Better Workflow
+
+We have mentioned that workflow is very important in implementing a Spark program. But, in the previous example, we just reordered some tasks to reduce the work load. For a different task, the workflow might be much harder to design or improve.
+
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+### Optimization on `join`
+
+#### Partition
+
+When using `join` in your code, remember:
+
+***When joining an RDD of N partitions with an RDD of M partitions, the resulting RDD may contain N*M partitions. You may want to explicitly control the number of partitions for the resulting RDD.***
+
+So, if possible, remember to use some built-in APIs (e.g., `partitionBy`) to partition your RDDs again.
+
+#### Shuffle
+
+Shuffle in always expensive and "join" operation may also involve shuffle. However, ***When two RDDs are already partitioned by the same function, joining them does not require a shuﬄe***.
+
+Why? And what does this indicate?
+
+In fact, every time we create RDDs, we need to use some partitioner function to partition data and distribute data on all nodes. If two RDDs have the same partitioner functions, it indicate that data entries with same key will also reside on the same node; nodes then does not need to communicate with nodes to do "join", which leads to shuffle.
+
+The default partitioner function is hash function. But how can you make sure two RDDs have the same partitioner function?
+
+There are many possible cases where partitioner functions are changed. But the most important one is: ***if you applied any custom partitioning to your RDD (e.g. using `partitionBy`), using `map` or `flatMap` would "forget" that partitioner function.*** This is because Spark cannot know if the key is changed after `map`. Instead, `mapValues` is better as you could only change the value with this function.
+
+**A caveat**: always choose `mapValues` or `flatMapValues` if you don't intend to change the key.
+
+### Manage Your Resources
+
+You may see some out-of-memory (OOM) issue when running your spark program. This is because Spark by default will keep RDD in memory, when we need to create another RDD (by some action), they will also be placed in memory. E.g., in this task, we need to maintain a training data RDD while generating the updates RDD. What if the memory is limited?
+
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+### Find the Bottleneck
+
+Spark gives you the live monitoring web UI to help you track the task and find the bottleneck.
+
+Normally, the first thing to check is **job**. Clicking a job shows the details of this job, including its event timeline and a DAG visualization. You can easily figure out which operations belong to which stage and the locations where shuffle occurs.
+
+The web UI also shows statistics/metrics for tasks. You may also access status of each machine and check if any nodes are dead already. You can also detect any stragglers by checking the task numbers of each machine from the web UI.
+
+## Benchmark
+
+[TODO]
