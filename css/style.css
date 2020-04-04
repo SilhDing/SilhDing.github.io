@@ -531,7 +531,7 @@ header label {
 .pagination a,
 .pagination span {
   -webkit-font-smoothing: antialiased;
-  font-size: 12px;
+  font-size: 16px;
   color: #bfbfbf;
   letter-spacing: 0.1em;
   font-weight: 700;
