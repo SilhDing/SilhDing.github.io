@@ -1,5 +1,5 @@
 # Header
-# 
+#
 navname: "楽しんでね。| Yihang's Nest"
 
 # navigatior items
@@ -26,7 +26,7 @@ avatar: /image/avatar.jpeg
 links:
 #  Blog: /archives
 #  Category:
-#  Tags: 
+#  Tags:
 #  Link:
   Resume: /about
 #  Publish:
@@ -82,8 +82,8 @@ page_title_enable: true
 ## Hexo uses Moment.js to parse and display date
 ## You can customize the date format as defined in
 ## http://momentjs.com/docs/#/displaying/format/
-date_format: MMMM D, YYYY
-time_format: H:mm:ss
+date_format: MMM D, YYYY
+time_format: h:mm A
 
 # stylesheets loaded in the <head>
 stylesheets:
