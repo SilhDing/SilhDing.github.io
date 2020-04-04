@@ -1,6 +1,6 @@
 /** pagination **/
 
-.pagination 
+.pagination
   display flex
   flex-direction row
   justify-content center
@@ -10,33 +10,33 @@
   padding-top 2em
   a,span
     -webkit-font-smoothing antialiased
-    font-size 12px
+    font-size 16px
     color #bfbfbf
     letter-spacing 0.1em
     font-weight 700
     padding 5px 5px
     text-decoration none
     transition 0.3s
-  
+
   .page-number
     padding-bottom 3px
     margin 0 20px
     box-sizing border-box
     position relative
     display inline
-    &.disabled 
+    &.disabled
       display none
-    
-    &:hover a 
-      color  $light-pagination-link-active-color
-    
 
-    .dark-theme &:hover a 
+    &:hover a
+      color  $light-pagination-link-active-color
+
+
+    .dark-theme &:hover a
       color  $dark-pagination-link-active-color
-    
+
 
     &:before,
-    &:after 
+    &:after
       position absolute
       content ""
       width 0
@@ -44,38 +44,35 @@
       background $light-pagination-link-active-color
       transition 0.3s
       bottom 0px
-    
+
     .dark-theme &:before,
     .dark-theme &:after
       background $dark-pagination-link-active-color
-    
+
 
     &:before .current,
     &:after .current
       width 100%
-    
-    &:before 
+
+    &:before
       left 50%
-    
-    &:after 
+
+    &:after
       right 50%
-    
-    &:hover 
+
+    &:hover
       &:before,
-      &:after 
+      &:after
         width 50%
-      
-    
+
+
     &.current
       color $light-pagination-link-active-color
-      
+
 
       .dark-theme &
         color $dark-pagination-link-active-color
-      
+
       &:before,
-      &:after 
+      &:after
         width 60%
-      
-    
-  
