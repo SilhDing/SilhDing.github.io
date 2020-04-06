@@ -5,6 +5,8 @@ tags:
     - "system"
     - "network"
     - "distributed"
+    - "C"
+    - "Java"
 categories:
     - "technique"
     - "course"

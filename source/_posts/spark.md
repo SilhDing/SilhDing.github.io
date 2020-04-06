@@ -4,6 +4,7 @@ date: 2019-02-26 22:05:41
 tags:
     - "design"
     - "distributed"
+    - "Python"
 categories:
     - "technique"
     - "course"

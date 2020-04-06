@@ -3,6 +3,8 @@ title: "Project: Carcassonne Game in Java"
 date: 2019-11-1 16:11:15
 tags:
     - "design"
+    - "Java"
+    - "OOD"
 categories:
     - "technique"
     - "course"

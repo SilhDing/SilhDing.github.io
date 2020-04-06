@@ -4,6 +4,8 @@ date: 2019-12-01 17:53:35
 tags:
     - "design"
     - "distributed"
+    - "Java"
+    - "Python"
 categories:
     - "technique"
     - "course"
