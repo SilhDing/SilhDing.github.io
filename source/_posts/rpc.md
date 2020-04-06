@@ -106,5 +106,21 @@ We will use a "Least Recently Used" policy to decide which cache entries should 
 
 <p style="color:#F13E3E">[Contents are disabled]</p>
 
+### Concurrency
 
-[TODO]
+Some Java built-in libraries could be exploited to make data safe in concurrent condition. In addition, we always ensure there is only reader instance and multiple writer instances: multiple readers can read a single reader instance but each writer needs an exclusive writer instance. How can we achieve that?
+
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+### Consistency
+
+We will exploit an idea called "check on use" to make sure that the clients will not get stale contents. Specifically speaking, every time a client wants to read some contents from the proxy (cache), the proxy needs to connect the server and verify if the contents are most recent. In addition, if a client writes something new to a file (on proxy), the proxy should also make the changes on server side as well.
+
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+
+### Open-close Semantics
+
+Once a client opens a file, the client should have a fixed view of the file before "close", though some other clients are reading or writing this file at the same time. How can we achieve that?
+
+<p style="color:#F13E3E">[Contents are disabled]</p>
