@@ -79,8 +79,23 @@ You may ask, why we have to do this? ***This is because some programs on the cli
 
 # File Cache
 
-In the previous task, we already have a simply distributed system, where clients and servers could communicate via RPCs. Now, we will design and implement a cache between these two components.
+In the previous task, we already have a simply distributed system, where clients and servers could communicate via RPCs. Now, we will design and implement a cache in Java between these two components.
 
-Caching is a great technique for improving the performance of a distributed system. It can help reduce data transfers, and improve the latency of operations. This task will continue to use existing binary tools in task 1 and interpose on their C library calls.
+Caching is a great technique for improving the performance of a distributed system. It can help reduce data transfers, and improve the latency of operations. This task will continue to use existing binary tools in task 1 and interpose on their C library calls. Instead of directly connecting the server, clients now will only access the proxy (which contains a cache) to execute some operations:
+
+<img src="cache.png" alt="drawing" width="600"/>
+
+<br>
+
+Seems easy, right? Well, let's talk about some details on requirements.
+
+## Requirements
+
+Here are something we need to consider through this task.
+
+1. ***Cache policy***. Remember that a cache always have limited space, so you need to evict some cache entries under a policy you design;
+2. ***Concurrency***. The system must support multiple proxies and clients running simultaneously;
+3. ***Consistency***.  
+
 
 [TODO]
