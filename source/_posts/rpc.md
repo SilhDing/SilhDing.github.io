@@ -83,7 +83,7 @@ In the previous task, we already have a simply distributed system, where clients
 
 Caching is a great technique for improving the performance of a distributed system. It can help reduce data transfers, and improve the latency of operations. This task will continue to use existing binary tools in task 1 and interpose on their C library calls. Instead of directly connecting the server, clients now will only access the proxy (which contains a cache) to execute some operations:
 
-<img src="cache.png" alt="drawing" width="600"/>
+<img src="cache.jpg" alt="drawing" width="500"/>
 
 <br>
 
@@ -93,9 +93,18 @@ Seems easy, right? Well, let's talk about some details on requirements.
 
 Here are something we need to consider through this task.
 
-1. ***Cache policy***. Remember that a cache always have limited space, so you need to evict some cache entries under a policy you design;
-2. ***Concurrency***. The system must support multiple proxies and clients running simultaneously;
-3. ***Consistency***.  
+1. ***Cache policy***. Remember that a cache always have limited space, so we need to evict some cache entries under a policy we design;
+2. ***Concurrency***. The system must support multiple proxies and clients running simultaneously (especially when there are many writers);
+3. ***Consistency***. We have to make sure clients will not get stale contents;
+4. ***Atomicity***. If one client opens a client, it should be interrupted by other clients accessing the same file. In other words, clients will have a fixed view during the open-close session.
+
+## Design
+
+### LRU policy
+
+We will use a "Least Recently Used" policy to decide which cache entries should be evicted when the cache is full.
+
+<p style="color:#F13E3E">[Contents are disabled]</p>
 
 
 [TODO]
