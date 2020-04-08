@@ -115,6 +115,68 @@
             <div class="container">
     
     
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
     <br>
     
     <article class="post-wrap">
@@ -144,7 +206,45 @@
 
 
         <div class="post-content">
-            
+            <p><img src="book.jpg" alt="book"></p>
+<br>
+
+<p>If you are a Java programs, <strong><em>I highly recommend reading this book: Java Puzzler</em></strong>, by <em>Joshua Bloch</em> and <em>Neal Gafter</em>. This book will introduce many common traps, pitfalls and corner cases that you are highly likely to meet when programming with Java.</p>
+<p>This post is intended to summarize the most interesting and critical pitfalls recorded in this book. Trust me, you will be highly surprised with some of them.<br><br></p>
+<p><img src="pitfall.gif" alt="gif"></p>
+<br>
+This post will keep updating. Welcome to revisit!
+
+<h2 id="Expressive-Puzzlers"><a href="#Expressive-Puzzlers" class="headerlink" title="Expressive Puzzlers"></a>Expressive Puzzlers</h2><h3 id="The-Joy-of-Hex"><a href="#The-Joy-of-Hex" class="headerlink" title="The Joy of Hex"></a>The Joy of Hex</h3><p>What does the program print?</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">JoyOfHex</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(Long.toHexString(<span class="number">0x100000000L</span> + <span class="number">0xcafebabe</span>));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The most intuitive answer would be <code>1cafebabe</code>, right? However, if you run this program, it is in fact <code>cafebabe</code>.</p>
+<p>A very subtle feature for decimal literal is: <strong><em>decimal literals are all positive</em></strong>. This feature is not shared by hexadecimal or octal literals. To write a negative decimal literal, we always use a minus sign <code>-</code> in combination with a decimal literal. Thus, negative decimal constants are clearly identifiable by the presence of the minus sign. <strong><em>Hex and octal literals are negative if their high-order bit is <code>1</code></em></strong>.</p>
+<p>In this program, the number <code>0xcafebabe</code> is an <code>int</code> constant with its high-order bit set, so it is negative. The addition performed by the program is a mixed-type computation: the left operand is of type <code>long</code>. Java will promote the <code>int</code> value to a <code>long</code> value with a <em>widening primitive conversion</em>.</p>
+<p>Final computation will be: <code>0xffffffffcafebabeL + 0x0000000100000000L = 0x00000000cafebabeL</code></p>
+<h3 id="Swap-Meat"><a href="#Swap-Meat" class="headerlink" title="Swap Meat"></a>Swap Meat</h3><p>What does this program print?</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CleverSwap</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> x = <span class="number">1984</span>;  <span class="comment">//(0x7c0)</span></span><br><span class="line">        <span class="keyword">int</span> y = <span class="number">2001</span>;  <span class="comment">//(0x7d1)</span></span><br><span class="line">        x ^= y ^= x ^= y;</span><br><span class="line">        System.out.println(<span class="string">"x = "</span> + x + <span class="string">"; y = "</span> + y);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>As referred by its name, this program is supposed to swap the values of the variables <code>x</code> and <code>y</code>. However, you will find it fails, printing <code>x = 0; y = 1984</code>.</p>
+<p>The most natural way to swap two variables is to use a temporary variable:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> tmp = x;</span><br><span class="line">x = y;</span><br><span class="line">y = tmp;</span><br></pre></td></tr></table></figure>
+
+<p>It was discovered that one could avoid the temporary variable:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">x = x ^ y;</span><br><span class="line">y = y ^ x;</span><br><span class="line">x = y ^ x;</span><br><span class="line"><span class="comment">// promise me: don't do this in your program :)</span></span><br></pre></td></tr></table></figure>
+
+<p>In fact, it works. However, it is not recommended, as it is far less clear than its naive counterpart and far slower. Now, you might combine the three exclusive OR operations and make it into a single statement, like in the code.</p>
+<p>However, it is guaranteed not to work in Java, though might work in other languages (C, C++, …).</p>
+<p>Operands of operators are evaluated from left to right. To evaluate the expression <code>x ^= expr</code>, the value of <code>x</code> is sampled <strong>before</strong> <code>expr</code> is evaluated, and the exclusive OR of these two values is assigned to the variable <code>x</code>.</p>
+<p>The code below describes what in fact happens in the original program:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> tmp1 = x;  <span class="comment">// first appearance of x in the expression</span></span><br><span class="line"><span class="keyword">int</span> tmp2 = y;  <span class="comment">// first appearance of y</span></span><br><span class="line"><span class="keyword">int</span> tmp3 = x ^ y;  <span class="comment">// compute x ^ y</span></span><br><span class="line">x = tmp3;  <span class="comment">// last assignment: store x ^ y in x</span></span><br><span class="line">y = tmp2 ^ tmp3;  <span class="comment">// second assignment, store original x value in y</span></span><br><span class="line">x = tmp1 ^ y;  <span class="comment">// first assignment: store 0 in x</span></span><br></pre></td></tr></table></figure>
+
+<p>If you really want to make it work, you shoudl write it like:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">y = (x ^= (y ^= x)) ^ y;  <span class="comment">// NOT recommended!</span></span><br></pre></td></tr></table></figure>
+
+<p>A lesson: do not assign to the same variable more than once in a single expression.</p>
+<h3 id="Dos-Equis"><a href="#Dos-Equis" class="headerlink" title="Dos Equis"></a>Dos Equis</h3><p>Now look at an example of conditional operator. What does this program print?</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DosEquis</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">char</span> x = <span class="string">'X'</span>;</span><br><span class="line">        <span class="keyword">int</span> i = <span class="number">0</span>;</span><br><span class="line">        System.out.print(<span class="keyword">true</span> ? x : <span class="number">0</span>);</span><br><span class="line">        System.out.print(<span class="keyword">false</span> ? i : x);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
             <br>
         </div>       
 
