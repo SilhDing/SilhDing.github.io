@@ -117,3 +117,51 @@ public class DosEquis {
     }
 }
 ```
+
+Okay, this program seems trivial, and both `print` lines will print out `x`. However, if you run the program, it turns out to be `X88`.
+
+I would admit this is the most surprising behavior of Java I've ever seen.
+
+The answer lies in a dark corner of the specification for the conditional operator. ***Mixed-type computation can be confusing. Nowhere is this more apparent than in conditional expressions.***
+
+So, this problem is due to that these two expressions have different result types (one is `char` is one is `int`). There are three key points in determining the result type of a conditional expression:
+
+1. If the second and third operands have the same type, that is the type of the conditional expression;
+2. If one of the operands is of type *T* and *T* is `byte`, `short`, or `char` and the other operand is a constant expression of type `int` whose value is represented in type *T*, the type of the conditional expression is *T*.
+3. Otherwise, binary numeric promotion is applied to the operands types, and the type of the conditional expression is the promoted type of the second and third operands.
+
+Remember: use the same type for the second and third operands in conditional expressions.
+
+## Puzzlers with characters
+
+### Animal Farm
+
+What does this program print?
+```Java
+public class AnimalFarm {
+    public static void main(String[] args) {
+        final String pig = "length: 10";
+        final String dog = "length: " + pig.length();
+        System.out.println(pig == dog);
+    }
+}
+```
+
+Both strings will be `length: 10` in this case. Though the `==` operator does not test whether two objects are equal (it tests whether two object reference are identical), compile-time constants of type `String` are **interned**. So this program should print `True`, right?
+
+Unfortunately, no. ***This is because the second string is not initialized with constant expressions***, and they will not point to the a same object.
+
+### Escape Rout
+
+The following programs uses two Unicode escapes. What does this program print?
+
+```Java
+public class EscapeRout {
+    public static void main(String[] args) {
+        // \u0022 is the Unicode escape for double quote (")
+        System.out.println("a\u0022.length() + \u0022b".length());
+    }
+}
+```
+
+You probably guess the result is 16 or 26. However, it's 2.
