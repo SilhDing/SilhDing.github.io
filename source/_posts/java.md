@@ -359,3 +359,93 @@ To avoid this kind of problem, use familiar idioms and APIs whenever possible. I
 ## Loopy Puzzlers
 
 ### A Big Delight in Every Byte
+
+What does this program print?
+
+```Java
+public class BigDelight {
+    public static void main(String[] args) {
+        for (byte b = Byte.MIN_VALUE; b < Byte.MAX_VALUE; b++) {
+            if (b == 0x90)
+                System.out.println("Joy!");
+        }
+    }
+}
+```
+
+Okay, it seems that `b` goes through every value from `Byte.MIN_VALUE` to `Byte.MAX_VALUE` (exclusive). As a byte has 8 bits, so the min value is `0x90` while the max one is `0x7F`. What happens here?
+
+To figure it out, I should know what really happens in `b == 0x90`. The comparison of a `byte` to an `int` is a *mixed-type comparison*. Java will promote the `byte` to an `int` with a widening primitive conversion and compares the two `int` values. And remember, `byte` a ***signed*** value, and the conversion performs sign extension, promoting negative `byte` values to numerically equal `int` values. Thus, if we treat `b` as an `int`, its values are from `-128` to `+127`, while `0x90` is `+144`.
+
+Remember, avoid mixed-type comparisons, because they are inherently confusing, and there are many hidden cases we might not be aware of.
+
+### Shifty i's
+
+What does this program print?
+
+```Java
+public class Shifty {
+    public static void main(String[] args) {
+        int i = 0;
+        while (-1 << i != 0) {
+            i ++;
+        }
+        System.out.println(i);
+    }
+}
+```
+
+Okay, `-1` is an `int` value with all 32 bits set. The left-shift operator shifts zeros in from the right to fill the low-order bits vacated by the shift, since there are 32 bits in `-1`, `-1` will become 0 when `i` is `32`. Is it right? If you run this program, you will not see such a value printed but an infinite loop.
+
+Remember, ***shift operators use only the five low-order bits of their right operand as the shift distance, or six bits if the left operand is a `long`***. The applies to all three shift operators: `<<`, `>>` and `>>>`. So the shift distance is always between 0 and 31, or 0 and 63 if the left operand is a `long`.
+
+A good practice from this puzzler is, shift distances should, if possible, be constants.
+
+### Ghost of Looper
+
+Provide a declaration for `i` that turns this loop in to an infinite loop:
+
+```Java
+while (i != 0)
+    i >>>= 1;
+```
+
+To solve this puzzler, you should be aware that ***`>>>=`  is a compound assignment operator and they will silently perform narrowing primitive conversions.*** Narrow primitive conversions can lose information about the magnitude or precision of numeric values. Thus, if we declare `i` with `short i = -1`, the program will do the following:
+
+1. As `1` is an `int`, Java will promote `i` to type of `int`, which turns `0xffff` into `0xffffffff`.
+2. This value if then shifted to the right by one bit without sign extension to yield the `int` value `0x7fffffff`.
+3. In order to store the `int` value into the `short` variable, Java performs the dreaded narrowing primitive conversion, which simply lops off the high-order 16 bits of the value, which is `0xffff` again.
+
+Remember: do not use compound assignment operators on `short`, `byte`, or `char` variables.\\
+
+## Exceptional Puzzlers
+
+### Indecision
+
+What does this program print?
+
+```Java
+public class Indecisive {
+    public static void main(String[] args) {
+        System.out.println(decision());
+    }
+
+    static boolean decision() {
+        try {
+            return true;
+        } finally {
+            return false;
+        }
+    }
+}
+```
+
+We know that once it reaches a `return` statement in a function, the rest of the function will not execute anymore; on the other hand, `finally` block will always be executed. What is the fact?
+
+The answer is `false`. `return` statement is called *abrupt completion*. When both the `try` and the `finally` block complete abruptly, the abrupt completion in the `try` block is discarded, and the whole `try-finally` statement completes abruptly for the same reason as the `finally` block. In this program, the abrupt completion caused by the `return` statement is the `try` block is discarded, and the `try-finally` statement completes abruptly because of the `return` statement in the `finally` block.
+
+Remember, ***never exit a `finally` block with a `return`, `break`, `continue`, or `throw`, and never allow a checked exception to propagate out of a `finally block`***.
+
+### Exceptionally Arcane
+
+Look at the three programs below and expect their behavior.
