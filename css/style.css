@@ -1172,14 +1172,12 @@ header label {
 }
 .post-content code,
 .post-content pre {
-  line-height: 1.6em;
+  line-height: 1.4em;
   padding: 7px;
   font-size: 11.5pt;
   font-family: Consolas, Monaco, Menlo, Consolas, monospace;
 }
 .post-content code {
-  line-height: 1.6em;
-  font-size: 11.5pt;
   color: #c7254e;
   background: #f8f5ec;
 }
