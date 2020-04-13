@@ -1174,12 +1174,12 @@ header label {
 .post-content pre {
   line-height: 1.6em;
   padding: 7px;
-  font-size: 14px;
+  font-size: 11.5pt;
   font-family: Consolas, Monaco, Menlo, Consolas, monospace;
 }
 .post-content code {
   line-height: 1.6em;
-  font-size: 14px;
+  font-size: 11.5pt;
   color: #c7254e;
   background: #f8f5ec;
 }
@@ -1188,15 +1188,15 @@ header label {
   background: #f8f5ec;
 }
 .post-content p code {
-  font-size: 14px;
+  font-size: 11.5pt;
   margin: 3px 3px;
 }
 .post-content pre code {
-  font-size: 14px;
+  font-size: 11.5pt;
 }
 .post-content ul li code,
 .post-content ol li code {
-  font-size: 14px;
+  font-size: 11.5pt;
 }
 .post-content h1 code,
 .post-content h2 code,
