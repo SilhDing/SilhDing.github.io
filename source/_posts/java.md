@@ -226,7 +226,7 @@ public class Classifier {
         if ("qwertyuiopasdfghjklzxcvbnm".indexOf(ch) >= 0)
             return "LETTER ";
     /* (Operator not supported yet)
-        if ("+-*/&|!=".indexOf(ch) >= 0)
+        if ("+-*/&|!=\"".indexOf(ch) >= 0)
             return "OPERATOR ";
      */
         return "UNKNOWN ";
@@ -250,7 +250,7 @@ public class Classifier {
         if ("qwertyuiopasdfghjklzxcvbnm".indexOf(ch) >= 0)
             return "LETTER ";
     /* (Operator not supported yet)
-        if ("+-*/&|!=".indexOf(ch) >= 0)
+        if ("+-*/&|!=\"".indexOf(ch) >= 0)
             return "OPERATOR ";
      */
         return "UNKNOWN ";
@@ -448,4 +448,152 @@ Remember, ***never exit a `finally` block with a `return`, `break`, `continue`, 
 
 ### Exceptionally Arcane
 
-Look at the three programs below and expect their behavior.
+Look at the three programs below and expect their behaviors.
+
+```Java
+import java.io.IOException;
+public class Acrane1 {
+    public static void main(String[] args) {
+        try {
+            System.out.println("Hello World");
+        } catch (IOException e) {
+            System.out.println("Error");
+        }
+    }
+}
+```
+
+```Java
+public class Arcane2 {
+    public static void main(String[] args) {
+        try{
+            // Nothing here
+        } catch (Exception e) {
+            System.out.println("Exception");
+        }
+    }
+}
+```
+
+```Java
+interface Type1 {
+    void f() throws CloneNotSupportedException;
+}
+interface Type2 {
+    void f() throws InterruptedException;
+}
+interface Type3 extends Type1, Type2 {
+}
+public class Arcane3 implements Type3 {
+    public static void main(String[] args) {
+        Type3 t3 = new Arcane3();
+        t3.f();
+    }
+    @Override
+    public void f() {
+        System.out.println("?");
+    }
+}
+```
+
+You will get compile error in the first program, as the language specification says that **it is a compile-time error for a `catch` clause to catch a checked exception type E if the corresponding `try` clause can't throw an exception of some subtype of E**.
+
+By the same token, in the second program, it should not compile either, but it does. **`Catch` clauses that catch `Exception` or `Throwable` are legal regardless of the contents of the corresponding `try` clause**.
+
+Should the third program compile? Method `f` is declared to throw checked exceptions in `Type1` and `Type2`. Interface `Type3` inherits from `Type1` and `Type2`, so it would seem that invoking `f` on an object whose static type is `Type3` could potentially throw either of these exceptions. However, it is not true that `Type3.f` can throw either the exception declared on `Type1.f` or the one declared on `Type2.f`. **Each interface limits the set of checked exceptions that method `f` can throw**. The set of checked exceptions that a method can throw is the intersection of the sets of checked exceptions that it is declared to throw in all applicable types. Thus, the `f` method on an object whose static type is `Type3` can't throw any checked exceptions at all.
+
+### Hello, Goodbye
+
+What does this program print?
+
+```Java
+public class HelloGoodbye {
+    public static void main(String[] args) {
+        try {
+            System.out.println("Hello World");
+            System.exit(0);
+        } finally {
+            System.out.println("Goodbye world");
+        }
+    }
+}
+```
+
+Recall the puzzler "Indecision", you might remember that if there are abrupt completions in both `try` and `finally` block, we will follow the on in `finally` block. However, in this case, you will find that this program will only print `Hello World`.
+
+It is true that a `finally` is executed when a `try` block completes execution whether normally or abruptly. In this program, however, the `try` block does not complete execution at all. **The `System.exit` method halts the execution of the current thread and all others dead in their tracks.** The presence of a `finally` clause does not give a method special permission to continue executing.
+
+When `System.exit` is called, the virtual machine performs two cleanup tasks before shutting down. First, it executes all *shutdown hooks* that have been registered with `Runtime.addShutdownHook`. This is useful to release resources external to the VM. **Use shutdown hook for behavior that must occur before the VM exits**.
+
+```Java
+public class HelloGoodbye {
+    public static void main(String[] args) {
+        System.out.println("Hello world");
+        Runtime.getRuntime().addShutdownHook(
+            new Thread() {
+                public void run() {
+                    System.out.println("Goodbye world");
+                }
+            });
+        System.exit(0);
+    }
+}
+```
+
+The second cleanup task performed by the VM when `System.exit` is called concerns finalizers. If either `System.runFinalizerOnExit` or its evil twin `Runtime.runFimalizerOnExit` has been called, the VM runs the finalizers on all objects that have not yet been finalized. These methods were deprecated a log time ago and with good reason. **Never call `System.runFinalizersOnExit` or `Runtime.runFinalizersOnExit` for any reason: They are among the most dangerous methods in the Java libraries**.
+
+In summary, `System.exit` stops all program threads immediately: it does not cause `finally` blocks to execute, but it does run shutdown hooks before halting the VM.
+
+### The Reluctant Constructor
+
+Have you ever seen a `throws` clause in a constructor declaration? What does the program below print?
+
+```Java
+public class Reluctant {
+    private Reluctant internalInstance = new Reluctant();
+
+    public Reluctant() throws Exception {
+        throws new Exception("I'm not coming out!");
+    }
+
+    public static void main(String[] args) {
+        try {
+            Reluctant b = new Reluctant();
+            System.out.println("Surprise");
+        } catch (Exception e) {
+            System.out.println("I told you so!");
+        }
+    }
+}
+```
+
+It seems that the constructor will throw an exception when it is called, which is caught by the `try` clause in the main function. However, if you run this function, it throws a `StackOverflowError`. Why?
+
+The error indicates an infinite recursion. When you invoke a constructor, the **instance variable initializers run before the body of the constructor**. In this case, the initializer for the variable `internalInstance` invokes the constructor recursively. The constructor, in turn, initializes its own `internalInstance` field by invoking the `Reluctant` constructor again and so on, ad infinitum, which leads to an infinite recursion.
+
+In fact, do not assume that you will not write similar codes. It is very common for an object to contain instances of its own type.
+
+Remember: ***a constructor must declare any checked exceptions thrown by its instance initializers.***
+
+## Classy Puzzlers
+
+### The Case of the Confusing Constructor
+
+What does the program below print?
+
+```Java
+public class Confusing {
+    private Confusing(Object o) {
+        System.out.println("Object");
+    }
+    private Confusing(double[] dArray) {
+        System.out.println("double array");
+    }
+
+    public static void main(String[] args) {
+        new Confusing(null);
+    }
+}
+```
+
+Apparently, this is a problem on overloading. 
