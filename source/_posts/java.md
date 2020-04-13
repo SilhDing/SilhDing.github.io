@@ -136,52 +136,8 @@ Remember: use the same type for the second and third operands in conditional exp
 
 ### Animal Farm
 
-In our program, both constructors are applicable and accessible, but `Confusing(Object)` is less specific as accepts any parameter passed to `Confusing(Object)`. The key to understanding this puzzle is that the test for which method or constructors is most specific does not use the *actual parameters*: the parameters appearing in the invocation (e.g., null in this case).
-
-
-This puzzle should indicate some advices for you when you are writing some APIs: ensure your clients aren't forced to go to these extreme fashions of selecting among overloadings. Ideally, you should ***avoid*** overloading: use different names for different methods, which, however, it is not possible sometimes. For example, constructors don't have names, but you could make constructors private and providing public static libraries. If constructors have too many parameters, consider builder pattern.
-
-If you really have to do overload, make sure that all overloading accept mutually incompatible parameter types, ***so that no two are applicable at the same time***.
-
-### Well, Dog My Cats!
-
-
 What does this program print?
 
-```Java
-class Counter {
-    private static int count;
-    public static void increment() { count ++; }
-    public static int getCount() { return count; }
-}
-
-class Dog extends Counter {
-    public Dog() { }
-    public void woof() { increment(); }
-}
-
-class Cat extends Counter {
-    public Cat() { }
-    public void meow() { increment(); }
-}
-
-public class Ruckus {
-    public static void main(String[] args) {
-        Dog[] dogs = { new Dog(), new Dog() };
-        for (int i = 0; i < dogs.length; i++) {
-            dogs[i].woof();
-        }
-        Cat[] cats = {new Cat(), new Cat(), new Cat()};
-        for (int i = 0; i < cats.length; i++) {
-            cats[i].meow();
-        }
-        System.out.println(Dog.getCount() + " woofs");
-        System.out.println(Cat.getCount() + " meows");
-    }
-}
-```
-
-What does this program print?
 ```Java
 public class AnimalFarm {
     public static void main(String[] args) {
