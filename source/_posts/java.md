@@ -14,7 +14,7 @@ categories:
 
 If you are a Java programmer, ***I highly recommend reading this book: Java Puzzler***, by *Joshua Bloch* and *Neal Gafter*. This book will introduce many common traps, pitfalls and corner cases that you are highly likely to meet when programming with Java.
 
-This post is intended to summarize the most interesting and critical pitfalls recorded in this book. Trust me, you will be highly surprised with some of them.
+This post is intended to summarize the most interesting and critical pitfalls recorded in this book. Trust me, you will be highly surprised by some of them.
 <br>
 
 ![gif](pitfall.gif)

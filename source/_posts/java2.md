@@ -255,4 +255,72 @@ public class ColorPoint extends Point {
 }
 ```
 
-Apparently, the bug is because we use the value of variable `color` before it is initialized. So, always remember that ***it is possible to observe the value fo a final instance field before its value has been assigned***.
+Apparently, the bug is because we use the value of variable `color` before it is initialized. So, always remember that ***it is possible to observe the value of a final instance field before its value has been assigned***.
+
+In fact, this problem arises whenever a constructor calls a method that has been over-ridden in its subclass. A method invoked in this way always runs before the instance has been initialized, when its declared fields still have their default values. To avoid this problem, **never call overridable methods from constructors**.
+
+### Sum Fun
+
+What does this program print?
+
+```Java
+class Cache {
+    static {
+        initializeIfNecessary();
+    }
+
+    private static int sum;
+    public static int getSum() {
+        initializeIfNecessary();
+        return sum;
+    }
+
+    private static boolean initialized = false;
+    private static synchronized void initializeIfNecessary() {
+        if (!initialized) {
+            for (int i = 0; i < 100; i++)
+                sum += i;
+            initialized = true;
+        }
+    }
+}
+
+public class Client {
+    public static void main(String[] args) {
+        System.out.println(Cache.getSum());
+    }
+}
+```
+
+It seems that the author of this program apparently went to a lot of trouble to make sure that `sum` was initialized before use, and expected `Cache.sum` to be `4950`. However, the program tells you the sum is `9900`, fully twice the expected value.
+
+Obviously, the problem is because of the class initialization. Let's go through the whole process.
+
+Before it can invoke `Client.main`, the VM must initialize the class `Client`. The `Client.main` method invokes `Cache.getSum`. Before the `getSum` method can be executed, the VM must initialize the class `Cache`.
+
+Do you still remember the order of static initializers? It follows the order they appear in the source. The `Cache` class has two static initializers: the `static` block at the top of the class and the initializing of the static field `initialized`. The first one will be executed first, adding 4950 to `sum` (default value of `sum` is `0`) and setting `initialized` to `true`.
+
+The second initializer will com later. **The static initializer for the `initialized` field sets it back to `false`**, completing the class initialization of `Cache`. Thus, when calling `Cache.getSum()`, `sum` will be added with 4950 again.
+
+From the program, it infers that the programmer did not think about the order in which the initialization of the `Cache` class would take place, and was unable to decide between eager and lazy initialization. The author used both eager (`initializeIfNecessary()` in static block) and lazy initialization (`initializeIfNecessary()` in `getSum()`). Remember: ***use either eager initialization or lazy initialization, never both***.
+
+Instead, the code below is a better version for `Cache`.
+
+```Java
+class Cache {
+    private static final int sum = computeSum();
+
+    private static int computeSum() {
+        int result = 0;
+        for (int i = 0; i < 100l i++)
+            result += i;
+        return results;
+    }
+
+    public static int getSum() {
+        return sum;
+    }
+}
+```
+
+A goof lesson (which we mentioned previously): if you want to compute a value for a static field, you'd better write a static function to do it.
