@@ -324,3 +324,73 @@ class Cache {
 ```
 
 A goof lesson (which we mentioned previously): if you want to compute a value for a static field, you'd better write a static function to do it.
+
+### Creationism
+
+What does this program print?
+
+```Java
+public class Creator {
+    public static void main(String[] args) {
+        for (int i = 0; i < 100; i++)
+            Creature creature = new Creature();
+        System.out.println(Creature.getNum());
+    }
+}
+
+class Creature {
+    private static long num = 0;
+    public Creature() {
+        num ++;
+    }
+    public static long getNum() {
+        return num;
+    }
+}
+```
+
+Pretty trick, right? If you try to write this program on your favorite IDE, you will find that this program does not compile. My IDE will tell me "Declaration not allowed here" at line 5.
+
+I would say this puzzle is the most impressive and surprising one. Please notice that, line 5 is *a local variable declaration statement*. The syntax of the language does not allow a local variable declaration statement as the statement repeated by a `for`, `while`, or `do` loop. ***A local variable declaration can appear only as a statement directly within a block***. (A block is a pair of curly braces and the statements and declaration contained within it.)
+
+There are two ways to fix it:
+
+```java
+for (int i = 0; i < 100; i++) {
+    Creature creature = new Creature();
+}
+```
+
+```java
+for (int i = 0; i < 100; i++)
+    new Creature();
+```
+
+## Library Puzzlers
+
+### The Dating Game
+
+What does this program print?
+
+```Java
+public class DatingGame {
+    public static void main(String[] args) {
+        Calendar cal = Calendar.getInstance();
+        cal.set(1999, 12, 31);
+        System.out.println(cal.get(Calendar.YEAR) + " ");
+
+        Date d = cal.getTime();
+        System.out.println(d.getDay());
+    }
+}
+```
+
+It seems that the program should print `1999 31`. However, it prints `2000 1`. What is happening here?
+
+Our program illustrates a few of the problems with the `Date` and `Calendar` API. The program's first bug is in the method invocation `cal.set(1999, 12, 31)`. **`Date` represents January as 0, and `Calendar` perpetuates this mistake**. Therefore, this method invocation sets the calendar to the thirty-first day of the thirteenth month of 1999. But the standard (Gregorian) calendar has only 12 months; surely this method invocation should cause an `IllegalArgumentException`? **It should, but it doesn't**. The `Calendar` class silently substitutes the first month of the next year, in this case, 2000. This explains the first number printed by  our program (`2000`).
+
+Another bug is: **`Date.getDay` returns the day of the week represented by the `Date` instance, not the day of the month**. The returned value is 0-based, starting at Sunday.
+
+A good thing is some of these confusing methods are deprecated already, and you should avoid using these methods. In addition, be careful when using `Calendar` or `Date` (or even other classes); always consult the API documentation.
+
+### The Mod Squad
