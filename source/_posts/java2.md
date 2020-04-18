@@ -394,3 +394,103 @@ Another bug is: **`Date.getDay` returns the day of the week represented by the `
 A good thing is some of these confusing methods are deprecated already, and you should avoid using these methods. In addition, be careful when using `Calendar` or `Date` (or even other classes); always consult the API documentation.
 
 ### The Mod Squad
+
+What does this program print?
+
+```Java
+public class Mod {
+    public static void main(String[] args) {
+        final int MODULUS = 3;
+        int[] histogram = new int[MODULUS];
+
+        int i = Integer.MIN_VALUE;
+        do {
+            histogram[Math.abs(i) % MODULUS] ++;
+        } while (i ++ != Integer.MAX_VALUE);
+
+        for (int j = 0; j < MODULUS; j++) {
+            System.out.println(histogram[j] + " ");
+        }
+    }
+}
+```
+
+We expect to see number from each entry of `histogram` is roughly equal. However, if you run this code. You will get:
+
+```
+Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: Index -2 out of bounds for length 3
+	at src.Mod.main(Mod.java:8)
+```
+
+So `Math.abs(i)` returns a negative value? Let's go to the documentation for `Math.abs`. The method is supposed to always return non-negative value， but in one case, it does not. The documentation says: if the argument is equal to the value of `Integer.MIN_VALUE`, the result is that same value, which is negative.
+
+Please remember that `Math.abs()` is not guaranteed to return a non-negative value.
+
+### A strange Saga of a Suspicious sort
+
+What does this program print?
+
+```Java
+public class SuspiciousSort {
+    public static void main(String[] args) {
+        Random rnd = new Random();
+        Integer[] arr = new Integer[100];
+
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = rnd.nextInt();
+        }
+
+        Comparator<Integer> cmp = new Comparator<>() {
+            @Override
+            public int compare(Integer i1, Integer i2) {
+                return i2 - i1;
+            }
+        };
+
+        Arrays.sort(arr, cmp);
+        System.out.println(order(arr));
+    }
+
+    enum Order {ASCENDING, DESCENDING, CONSTANT, UNORDERED};
+
+    static Order order(Integer[] a) {
+        boolean ascending = false;
+        boolean descending = false;
+
+        for (int i = 1; i < a.length; i++) {
+            ascending |= (a[i] > a[i-1]);
+            descending |= (a[i] < a[i-1]);
+        }
+
+        if (ascending && !descending)
+            return Order.ASCENDING;
+        if (descending && ! ascending)
+            return Order.DESCENDING;
+        if (!ascending)
+            return Order.CONSTANT;
+        return Order.UNORDERED;
+    }
+}
+```
+
+In this program, we try to sort a random generated array with a self-defined comparator. Then, we use a static method `order` to determine the type of the order. From the code, the comparator is supposed to sort the array in descending order. However, if you run this code, you will find that the program will print `UNORDERED`. What happens here?
+
+There is a problem in the comparator. Seemingly this idiom always makes sense: if you have two numbers and you want a value whose sign indicates their order, compute their difference. However, the problem with this idiom us that a fixed-width integer is not big enough to hold the difference of two arbitrary integers of the same width. When you subtract two `int` or `long` values, the result can overflow, in which case it will have the wrong sign. Try the program below:
+
+```Java
+public class OverFlow {
+	public static void main(String[] args) {
+		int x = -2000000000;
+		int z = 2000000000;
+		System.out.println(x - z);
+	}
+}
+```
+
+Thus, subtracting two values to compare them might not be a good choice.
+
+<br>
+
+------------ END OF THIS POST ------------
+
+If you want to read more puzzlers, please go to [this](/2020/04/17/java3/) page!
