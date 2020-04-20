@@ -113,6 +113,11 @@
 
         <div class="main">
             <div class="post-wrap archive">
+	<br>
+	<h1> ✏ | Posts </h1>
+	<br>
+</div>
+<div class="post-wrap archive">
     
     
         
@@ -124,11 +129,299 @@
         <article class="archive-item">
             <a class="archive-item-link" href="/2019/12/01/distributedsystem/">Project: A Distributed, Reliable and Fault-tolerant Banking System</a>
             <span class="archive-item-date">Dec 1, 2019</span>
+            <!-- <span style=> <p><img src="bank.png" alt="bank"></p>
+<p>In <a href="/2019/04/21/shoppingweb/">a previous post</a>, we have introduced a distributed system where:</p>
+<ul>
+<li>Load balancing (scalability) is implemented;</li>
+<li>Multi-tier hierarchy is exploited.</li>
+</ul>
+<p>However, this small project is far from enough: we still have a lot to learn in designing and implementing a more comprehensive distributed system. Now, we will do something more <strong>interesting</strong> and <strong>challenging</strong>.</p>
+<p>In this team project, we designed and implemented a comprehensive distributed banking system. However, the application part is simple in our project as we want to mainly focus on the design and implementation of the distributed system and principles of strong consistency. Below are some highlights or features of our system:</p>
+<ul>
+<li>Industrial standard architecture (but simplified) of distributed system;</li>
+<li>Support <strong>active replication</strong> and <strong>passive replications</strong> schemes;</li>
+<li>Implement total ordering to ensure strong consistency;</li>
+<li>Tolerant to changes of membership (i.e., able to handle the cases where new replicas join or existing replicas fail);</li>
+<li>Implement web UI for each component;</li>
+<li>Support some basic banking operations, e.g., create an account, deposit, withdraw, etc.</li>
+<li>…</li>
+</ul>
+<p>This project is the course project of CMU 18749 (Building Reliable Distributed Systems) which spanned the whole semester. Due to the CMU AIV policy, we will not release the codes of the project. If you have any question, please contact me or leave comments at the bottom of this page.</p>
+<h1 id="Design-Overview"><a href="#Design-Overview" class="headerlink" title="Design Overview"></a>Design Overview</h1><p>In this section, we are going to give a brief introduction to our system.</p>
+<h2 id="Terminology"><a href="#Terminology" class="headerlink" title="Terminology"></a>Terminology</h2><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RM</td>
+<td>replication manager</td>
+</tr>
+<tr>
+<td>GFD</td>
+<td>global fault detector</td>
+</tr>
+<tr>
+<td>LFD</td>
+<td>local fault detector</td>
+</tr>
+<tr>
+<td>Address</td>
+<td>the IP and port number of a service (e.g. the RM, GFD, LFD or a replica)</td>
+</tr>
+<tr>
+<td>Replica status</td>
+<td>whether the replica is <strong>NEW</strong> (a new replica that is syncing up) or <strong>READY</strong> (the replica is up and running).</td>
+</tr>
+<tr>
+<td>Local replica status</td>
+<td>the replica status of all the replicas that are managed by an LFD.</td>
+</tr>
+<tr>
+<td>Global replica status</td>
+<td>the replica status of all the replicas that are managed by a GFD.</td>
+</tr>
+<tr>
+<td>Replication configuration</td>
+<td>the addresses of reachable replicas, the replication style, the primary replica if passive, etc.</td>
+</tr>
+<tr>
+<td>Reachable replica</td>
+<td>in the distributed system settings, it is hard to say if a replica is “running” or not, since it can happen that a replica is still running but can’t be reached by an LFD or GFD. To avoid such ambiguity, we would say that a replica is “unreachable”.</td>
+</tr>
+<tr>
+<td>Service info</td>
+<td>the replication configuration in the client’s point of view, including the addresses of replicas that the client needs to reach. In passive replication, a client only needs to reach the primary replica but in active replication, it needs to reach all active replicas.</td>
+</tr>
+</tbody></table>
+<h2 id="Hierarchy-and-Components"><a href="#Hierarchy-and-Components" class="headerlink" title="Hierarchy and Components"></a>Hierarchy and Components</h2><p>We used a simplified version of an industry-standard architecture. The picture below shows a brief structure of the system.</p>
+<p><img src="system.svg" alt="system"></p>
+<p>Please note that each element in the picture (e.g., RM, GFD) would be a physical machine or a virtual machine or even a process. To simplify the system, we make RM and GFD on one physical machine. An LFD and several replicas would be included in a cluster, which, in our case, is a physical machine.</p>
+<p>We will give a detailed description of each component in the picture above.</p>
+<h3 id="Replication-Manager"><a href="#Replication-Manager" class="headerlink" title="Replication Manager"></a>Replication Manager</h3><p>The replication manager maintains a table of all replicas and their addresses (called replica status table), and also the replication style (either passive or active) and which is the primary replica in passive replication.</p>
+<p>The replication manager also maintains a sequence number counter that monotonically increases.</p>
+<p>The global fault detector periodically polls the status of all replicas and reports changes to the replication manager. The changes can be addition or removal of replicas. The replication manager is responsible for reacting appropriately to the changes. For example, in passive replication, if the primary replica is removed from the membership, the replication manager is responsible for choosing a new primary replica.</p>
+<p>The replication manager assumes that the global fault detector never crashes.</p>
+<h3 id="Global-Fault-Detector"><a href="#Global-Fault-Detector" class="headerlink" title="Global Fault Detector"></a>Global Fault Detector</h3><p>The global fault detector maintains a list of addresses of local fault detectors and the status of all replicas at the last check. <strong>It will never directly contact any replicas</strong>.</p>
+<p>The global fault detector periodically asks all local fault detectors for replica status. The interval (a.k.a. the fault detection interval) is configured via a configuration file or command-line argument. If there are any changes between the new status and the previous one, it reports these changes to the replication manager.</p>
+<p>That a replica becomes unreachable and that a local fault detector becomes unreachable both mean related replicas are removed from the membership. The GFD doesn’t distinguish between these two cases.</p>
+<p>If a local fault detector is unreachable for one time, it is immediately removed from the list and all associated replicas under that local fault detector are considered as leaving the cluster. This is to avoid a local fault detector from fluctuating between reachable and unreachable due to temporary network malfunctioning.</p>
+<h3 id="Local-Fault-Detector"><a href="#Local-Fault-Detector" class="headerlink" title="Local Fault Detector"></a>Local Fault Detector</h3><p>The local fault detector maintains a list of addresses of replicas that it monitors (which can be only one).</p>
+<p>Each time the global fault detector queries replica status, it asks all the replicas on its list for their status and returns the result to the global fault detector.</p>
+<p>If a replica is unreachable for one time, it is immediately removed from the list.</p>
+<p>Please note that we used a 2-tier mechanism for failure detection (LFD and GFD), which could be efficient when there are many replicas across the whole system. A single fault detector, which manages all replicas, would show poor scalability.</p>
+<h3 id="Replica"><a href="#Replica" class="headerlink" title="Replica"></a>Replica</h3><p>Replicas maintain the state of the application and respond to queries of the local fault detector.</p>
+<p>When a new replica is added to the cluster, the replica will notify its LFD, and LFD will later notify GFD about this update. When the replication manager detects the addition of this replica via the report of the GFD, it sends a <code>updateReplicationConfig</code> to the new replica as well as all other replicas to trigger synchronization (the new replica can download checkpoints and logs from any other replicas).</p>
+<h1 id="Interaction"><a href="#Interaction" class="headerlink" title="Interaction"></a>Interaction</h1><p>In this project, we use <strong>HTTP-based</strong> messages for communication between different components. That is to say, each component may act as an HTTP server, an HTTP client, or both. A clear and rigid workflow is also critical to make sure the system behaves as we expect. We will cover some cases that you might be interested in and explain the mechanism/workflow behind them.</p>
+<h2 id="Startup"><a href="#Startup" class="headerlink" title="Startup"></a>Startup</h2><p>To simplify our implementation, all components in our system will be started manually. GFD and RM will be first started. GFD is configured with the address of the RM and its monitoring list is initially empty.</p>
+<p>When a LFD starts, the LFD calls /addLocalFaultDetector of the GFD to add itself to the monitoring list of the GFD.</p>
+<p>When a replica starts, the replica calls /addReplica of the LFD to add itself to the monitoring list of the LFD.</p>
+<p>Next time that GFD polls replica status, it will detect the presence of the new replicas or absence of old replicas and report this change to the RM.</p>
+<h2 id="Replica-Status-Polling"><a href="#Replica-Status-Polling" class="headerlink" title="Replica Status Polling"></a>Replica Status Polling</h2><p>The GFD performs replica status polling to know the liveness of all replicas and reports any changes since the last check to the replication manager.</p>
+<p>The frequency of the GFD performing this polling is determined by the fault detection interval, which is part of the configuration file of GFD and can be modified by the RM.</p>
+<h3 id="Detect-a-Failed-Replica"><a href="#Detect-a-Failed-Replica" class="headerlink" title="Detect a Failed Replica"></a>Detect a Failed Replica</h3><p>When a replica fails or becomes unreachable, LFD will first be aware of the issue and notify the GFD about this update. The GFD would notify the RM and RM would later send the new replication configuration that has removed the failed replica to all reachable replicas.</p>
+<p>You may refer to the UML sequence diagram for a more accurate description.</p>
+<p><img src="polling_1.svg" alt="polling_1"></p>
+<h3 id="Detect-a-New-Replica"><a href="#Detect-a-New-Replica" class="headerlink" title="Detect a New Replica"></a>Detect a New Replica</h3><p>When a replica is started (note it could be a previously failed replica and now it recovers), it will first report to its LFD (a new replica will always be configured with the address of its LFD). LFD will deliver this message to GFD, who will also notify RM if there are changes in the replica configuration.</p>
+<p>On the RM’s side, when a new replica is detected, the RM broadcasts the replication configuration containing the new replica to all reachable replicas. After knowing other replicas, the new replica can download checkpoints and logs from any up and running replica.</p>
+<p>When the primary replica is unreachable in passive replication, the RM chooses a new primary and broadcasts the new configuration to all reachable replicas. (We will give more information for this part later)</p>
+<p>The sequence interaction diagram shows how the GFD conducts replica status polling and what would happen if a new replica is detected.</p>
+<p><img src="polling_2.svg" alt="polling_2"></p>
+<h2 id="Client-Operation"><a href="#Client-Operation" class="headerlink" title="Client Operation"></a>Client Operation</h2><p>When a client initializes a request, the request will go through many components and trigger various behaviors, which could be <strong>highly complicated and interactive</strong>. Our goal in processing clients’ requests is to guarantee strong consistency across all replicas by implementing <strong>total ordering</strong>. In addition, we are also supposed to design and implement different workflows under different replication style/schemes (active or passive). We will skip this section and give more explanation when we talk about replication styles later.</p>
+<h1 id="Request-Handling"><a href="#Request-Handling" class="headerlink" title="Request Handling"></a>Request Handling</h1><p>Up to now we already know how the system keeps detecting new or failed replicas. However, you may still have questions:</p>
+<ol>
+<li>How do you handle a request while ensuring strong consistency?</li>
+<li>Consider a case where multiple clients may send requests simultaneously. How do you implement total ordering to guarantee consistency?</li>
+<li>Consider a case where the whole system has been running for a while and have handled some request. Now a new replica joins. How does it synchronize to the most recent state? In other words, how do you implement logging and checkpointing?</li>
+</ol>
+<p>No worry. Before we start, let’s dive deep into the replication style.</p>
+<h2 id="Replication-Style"><a href="#Replication-Style" class="headerlink" title="Replication Style"></a>Replication Style</h2><p>In this project, we support two different replication styles.</p>
+<h3 id="Active-Style"><a href="#Active-Style" class="headerlink" title="Active Style"></a>Active Style</h3><p>In active replication style, once a client sends a request, <strong>ALL</strong> replicas will have to execute the request and, if necessary, make state changes. Active replication style promises faster recovery from faults but it normally requires more memory and processing costs.</p>
+<p>If many clients send requests simultaneously, it is highly possible that different replicas will receive different orders of requests. In this case, strong consistency might be compromised, and we need <strong>total ordering</strong> to address this concern. We will talk about it later.</p>
+<h3 id="Passive-Style"><a href="#Passive-Style" class="headerlink" title="Passive Style"></a>Passive Style</h3><p>In passive replication style, only the <strong>primary replica</strong> will receive and handle this request. For other replicas (a.k.a <strong>secondary replicas</strong>), they will only get checkpoints from primary replica periodically (the frequency is determined by a parameter called <em>checkpointing interval</em> which can be modified while the system is running). Passive replication style requires less memory and processing costs but may take longer to recover from faults/failures.</p>
+<p>Total ordering will be trivial here as there is only one replica that executes requests. However, it may complicate other parts. For example, if the primary replica fails, how can we determine a new replica as the primary replica? Some consensus protocols might be helpful (e.g., PAXOS), but remember: <em>implementing a consensus protocol would be highly complicated and painful.</em></p>
+<p>No worry. We will introduce our solution later.</p>
+<h2 id="Total-Ordering"><a href="#Total-Ordering" class="headerlink" title="Total Ordering"></a>Total Ordering</h2><p>Here are many ways to implement total ordering in active replication style. Let’s list some:</p>
+<ol>
+<li>Ask every client to grab a <strong><em>sequence number</em></strong> from RM or another agency every time it wants to send a request. The request and its assigned sequence number will then be delivered to all replicas, and replicas will handle requests in the order of request’s sequence number (like what we do in TCP protocol).</li>
+<li>Ask all clients to send requests to RM (or another agency) and let the RM decide the order of requests to process. Replicas will get requests from RM.</li>
+</ol>
+<p>However, these schemes might be fragile if we consider some extreme cases:</p>
+<ol>
+<li>In the first scheme, what if a client grabs a sequence number and holds it for a long time before sending a request? What may happen is that replicas will block in order to wait for that request’s arrival.</li>
+<li>In the second scheme, what if we have many replicas sending requests? Scalability would be an issue and the RM (or the agency receiving all requests) would become the bottleneck.</li>
+</ol>
+<p>We would instead use a new scheme in our project. This scheme only involves replicas themselves and it is easy to implement.</p>
+<h3 id="Polite-Client-Assumption"><a href="#Polite-Client-Assumption" class="headerlink" title="Polite Client Assumption"></a>Polite Client Assumption</h3><p>First, we have the following assumptions:</p>
+<ul>
+<li>The RM first notifies all clients of the new replication configuration, then notifies all replicas of the new config.</li>
+<li>Whenever the client knows there is a replica whose state is NEW (which means the synchronization for this NEW replica is undergoing and have not finished), it stops sending requests until all replicas are READY. <strong><em>You will later see that this assumption is strong and it greatly simplifies the implementation of total ordering.</em></strong></li>
+</ul>
+<h3 id="Handling-Client-Requests"><a href="#Handling-Client-Requests" class="headerlink" title="Handling Client Requests"></a>Handling Client Requests</h3><p>Let’s first talk about how a replica handles a client request.</p>
+<p>By <em>Polite Client Assumption</em>, we know that a new replica never receives client requests. A replica only receives requests when it is in READY state.</p>
+<p>The procedure is:</p>
+<ol>
+<li>Put the client request in the <strong><em>RequestPool</em></strong> and waits for it to complete. When this thread is waiting, other threads do consensus and request processing work. When everything is done, this thread is woken up with the result.</li>
+<li>Return the result to the client.</li>
+</ol>
+<p>The RequestPool is a bridge between the client side and the consensus side. The client side doesn’t care how the consensus is done, and the consensus side doesn’t care where the request comes from and where it goes to.</p>
+<p>So now we have a <strong>clear separation</strong> between client request handling and consensus protocol.</p>
+<h3 id="Executor-Thread"><a href="#Executor-Thread" class="headerlink" title="Executor Thread"></a>Executor Thread</h3><p>Before talking about consensus protocol, let’s first assume that we already have a total order by running consensus. Now how do we actually process those requests?</p>
+<p>The truth is that <strong>the replica has a long-running Executor thread. The thread runs a while(true) loop that checks if it has any work to do repeatedly</strong>.</p>
+<p>It has an internal counter <code>nextProcLid</code> that is the next log ID to process. We use log ID (or Lid) to refer to the <em>index of a message in the total order</em>.</p>
+<p>It also needs to read a global variable <code>lastCommitLid</code> that is the last committed log ID (which means you can process all the logs up to this lid, but not those after this lid). For now, we can assume that <code>lastCommitLid</code> is always the ID of the last log entry in its log. Later, we’ll talk about why it is not.</p>
+<p>The thread work as follows:</p>
+<ol>
+<li>Check if <code>nextProcLid &lt;= lastCommitLid</code> and there is a request in the RequestPool with the log ID equal to <code>nextProcLid</code>. If false, then we have processed all committed requests, so we have nothing to do.</li>
+<li>If false, we sleep 100 ms and go to step 1. If true, we process that request, hand over the response to the RequestPool and increment <code>nextProcLid</code>. By giving the response to the RequestPool, the Executor thread wakes up the client request thread that is waiting for it.</li>
+<li>Go to step 1. We want to process as many as possible.</li>
+</ol>
+<p><img src="executor_thread.svg" alt="executor-flow"></p>
+<p>The RequestPool has an API that allows us to find a request by the log ID. The log ID is not assigned by the client request thread. It is set by the consensus protocol.</p>
+<p>We have already talked about how to handle client requests and how to process a request. All the “request-related” things have been discussed. The only thing left is how to achieve consensus on the order of requests.</p>
+<p>In the rest of the section, we will focus our eyes only on the request ID (which is generated uniquely by the client) and the log ID. We will ignore the content of the requests.</p>
+<h3 id="Prosper-and-Acceptor"><a href="#Prosper-and-Acceptor" class="headerlink" title="Prosper and Acceptor"></a>Prosper and Acceptor</h3><p>A replica can be either a <strong><em>proposer</em></strong> or an <strong><em>acceptor</em></strong>, but not both.</p>
+<ul>
+<li>A proposer dictates the order of messages.</li>
+<li>An acceptor accepts whatever the proposer says.</li>
+</ul>
+<p>The proposer has a Proposer thread running in the background.</p>
+<p>The Proposer thread has an internal counter <code>nextProposeLid</code> that is the next log id to propose.</p>
+<p>The Proposer thread also has an internal hash map <code>lastLidMap</code> whose key is a replicaId, and whose value is the lastLid of that replica (the ID of the last log that replica has).</p>
+<p>The proposer periodically executes this:</p>
+<ol>
+<li>Get all unassigned requests from the RequestPool. An unassigned request has no lid. After it is proposed, it is assigned a lid. So we ensure that a request can be proposed only once.</li>
+<li>Assign <code>nextProposeLid</code> to an unassigned request and then increment <code>nextProposeLid</code>, repeat for all unassigned requests. This is how the requests in the RequestPool are assigned.</li>
+<li>Append these <code>requestId</code> to the local log that it has. <code>requestId</code> is the unique identifier generated by the client in the request. The index of the requestId in the log is its lid.</li>
+<li>Send <code>appendLog(lastCommitId, logs)</code> to all ready acceptors; logs start from <code>lastLidMap[replicaId]+1</code> for each replica. After doing <code>appendLog</code>, all ready replicas are informed of the assignments. But these new logs are not committed yet.</li>
+<li>Set <code>lastCommitId</code> to the last lid in its log. After informing all replicas, we can commit these logs. This value will be updated to all replicas in the next round.</li>
+</ol>
+<p>Periodically, even if there is no unassigned request, the proposer will still send an <code>appendLog(lastCommitId, [])</code> to all replicas (to inform them of the new commit ID, for example).</p>
+<p><img src="proposer_thread.svg" alt="proposer_workflow"></p>
+<p>The acceptor reacts to appendLog request from the proposer by doing the following things:</p>
+<ul>
+<li>Assign <code>lastCommitId</code> to the value in <code>appendLog</code>.</li>
+<li>If the RequestPool has the requests, assign the lids to the requests.</li>
+<li>If not, tell the RequestPool to save the pair <code>(lid, requestId)</code> somewhere and assign the lids to those requests when it sees the requests later.</li>
+</ul>
+<p>By doing so, the Executor thread in the acceptor will eventually process the request.</p>
+<h3 id="New-Proposer-Confirmation"><a href="#New-Proposer-Confirmation" class="headerlink" title="New Proposer Confirmation"></a>New Proposer Confirmation</h3><p><strong>When a new replica joins the cluster, the RM assigns a <code>replicaRank</code> to the replica.</strong> The replicaRank is an integer increasing from 0. It marks when a replica joins the cluster. New replicas have greater ranks.</p>
+<p>Whenever a replica receives a <code>updateReplicationConfig</code> request from the RM, <strong><em>it recognizes the replica with the smallest rank as the proposer</em></strong>.</p>
+<p>Since a new proposer will appear only AFTER the old proposer crashes, there will never be two proposers at the same time. There will be times when there is no proposer at all, but it’s okay. Eventually, there will be a proposer.</p>
+<p>We also know that the transition is one-directional: an acceptor can become a proposer, but a proposer can never become an acceptor (it’s a dictator for life).</p>
+<p>Whenever there is a proposer change, the new proposers and the acceptors will perform a proposer confirmation process.</p>
+<ol>
+<li>The proposer sends <code>confirm(lastLid)</code> to all ready acceptors (a) to tell all replicas the last log ID that the proposer has and (b) to ask them to tell the proposer the last log ID that they have. The new proposer might not be the one who has the longest log.</li>
+<li>Each acceptor responds with the latest log ID it has to the proposer; if an acceptor has longer logs, it also put these additional logs in the response.</li>
+<li>Upon receiving all responses, for all acceptors’ responses,<ul>
+<li>If an acceptor has a longer log, the proposer will append the missing part to its log. Now the proposer has the longest log.</li>
+<li>Set lastLidMap[replicaId] to the lid in the response. Next time the proposer will send logs to this replica from this position.</li>
+</ul>
+</li>
+<li>If the RequestPool has no unassigned requests for now, put a <strong><em>NoOp(do-nothing)</em></strong> request in the pool. The proposer might have some assigned but uncommitted requests. If we don’t commit them, the clients might be blocked. However, the way we commit them is not to modify the <code>lastCommitLid</code> directly, but to propose a NoOp request, which in turn triggers the <code>appendLog</code> procedure, committing the NoOp request and all the uncommitted requests ahead of it.</li>
+</ol>
+<p>After the new proposer finishes the confirmation, it will start the Proposer thread. There might be some unassigned requests left when it was an acceptor, the new proposer will propose these requests eventually. No requests will be lost.</p>
+<p><img src="new_proposer.svg" alt="new_proposer"></p>
+<p>Up to now, you might be confused with the description above. Let’s address some questions again.</p>
+<blockquote>
+<p><strong>Q: Why do we need a <code>lastCommitLid</code>?</strong></p>
+</blockquote>
+<p>There are <strong>three parts</strong> in the log:</p>
+<ul>
+<li>the first part is what is committed and processed;</li>
+<li>the second part is what is committed but unprocessed (the executor hasn’t processed them though it can do so);</li>
+<li>the third part is what is uncommitted (the executor is not allowed to process them).</li>
+</ul>
+<p>Why can’t we assume all logs are committed?</p>
+<p>Think of this scenario of three replicas: the proposer appended the log X to acceptor A, but before appending to acceptor B, crashed. Acceptor A crashed simultaneously (a.k.a. two simultaneous faults). Acceptor B becomes the new proposer.</p>
+<p>Do you see the problem?</p>
+<p>Acceptor B has no possibility of knowing that X is in the log. It may propose something different, for example, an unassigned request Y, before re-proposing X. But since acceptor A knows X, it might already have returned the response to the client.</p>
+<p>Now we have an <strong>inconsistency</strong>: the client thought X happened before Y, but in the new “world”, the new proposer said Y happened before X!</p>
+<p>The way to avoid this from happening is to commit (allowing processing a request) <strong><em>only after all replicas know the log</em></strong>, which is a typical consensus behavior (you may compare it with 2-phase commit or PAXOS). That’s why we need a <code>lastCommitLid</code>.</p>
+<p>In other words, uncommitted logs are changeable during proposer changes.</p>
+<blockquote>
+<p> <strong>Q: Why do we need a NoOp request?</strong></p>
+</blockquote>
+<p>This issue raises from committing.</p>
+<p>Let’s look at a new proposer. It has some assigned but uncommitted requests. These uncommitted requests block the clients who are waiting for responses. And in turn, since the clients are blocked, they can’t send new requests.</p>
+<p>And now comes the problem: the proposer can commit only when receiving new requests! It’s a deadlock.</p>
+<p>To avoid it from happening, if the proposer has no unassigned requests, it proposes a NoOp request that does nothing. By the time the NoOp request is committed, all the requests before the NoOp are committed as well! Remember lastCommitLid means that <strong>ALL</strong> the requests before and equal to that lid are committed.</p>
+<h3 id="New-Replica"><a href="#New-Replica" class="headerlink" title="New Replica"></a>New Replica</h3><p>Let’s first recap the <strong><em>Polite Client Assumption</em></strong>. No client interactions during new replica synchronization.</p>
+<p>Upon receiving updateReplicationConfig, the proposer checks if there is a NEW replica that it sees for the first time. If so, it starts the following synchronization step.</p>
+<ol>
+<li>The proposer first asks if the NEW replica is still in the NEW state. The latency of information propagation can cheat. That’s why we need to confirm the state of the new replica.</li>
+<li>If the replica says READY, the proposer internally marks it as READY and finish. If the replica says NEW, do the following. By internally marking as READY, the proposer will ignore any state of that replica in later updateReplicationConfig. There might be some delay for it to become ready.</li>
+<li><strong>The proposer waits until all the requests are processed</strong>. This is to ensure that its state is the newest state. If it has some requests left undone, its state is earlier than the latest.</li>
+<li>The proposer checkpoints the state. It contains the balance of all accounts and the last processed log ID and the last committed log ID.</li>
+<li>The proposer sends the checkpoint to the new replica.</li>
+<li>The new replica accepts and recovers the state from the checkpoint. <strong>Now the new replica is in the same state as the proposer.</strong></li>
+<li>The new replica switches to READY state. If the old proposer crashes, the new proposer will ask if the new replica is still new first (this is a corner case that we might ignore).</li>
+<li>The proposer internally marks the replica as READY and will never perform the synchronization on that replica again, even if later <code>updateReplicationConfig</code> says it is still NEW (due to the latency of fault detectors).</li>
+</ol>
+<p><img src="new_replica.svg" alt="new_replica"></p>
+<p>Up to now, you may have a more comprehensive understanding of how requests are handled and what would happen if some faults come to appear (e.g., the proposer fails, a replica joins). A very important note is that: <strong>all contents discussed up to now are only for active replication.</strong> We have emphasized it many times in order to avoid confusion. What would be different in passive replication? We will talk about it now.</p>
+<h2 id="Passive-Replication-Highlights"><a href="#Passive-Replication-Highlights" class="headerlink" title="Passive Replication Highlights"></a>Passive Replication Highlights</h2><p>We will only highlight the differences between these two replication schemes.</p>
+<p>Let’s first recall the definition of passive replication: only one replica (<strong>primary replica</strong>) will in fact execute the requests and all other replicas (<strong>secondary replicas</strong>) will periodically get checkpointing from the primary one.</p>
+<p>Under active replication style, the RM will send full membership info (i.e., information of all existing replicas) to all replicas and clients (we probably did not note this previously, but it is not late to say it now! ). However, in passive replication, <strong>the RM should send clients only the information of primary replica, while still send full membership information to all replicas</strong>. With this trick, our client will not (and should not) be aware of the current replication method: all it has to do is to just send requests to replicas that are included in the config info.</p>
+<p>Wait, how can we determine who is the primary replica? It is similar to the proposer-acceptor pattern in active style: <strong>among all alive replicas, the one with the lowest rank number is always the primary replica.</strong></p>
+<p>Now only the primary replica would be able to receive requests from clients. The process to handle a request from a client would also be simpler compared with the active replication method. When the request pool is not empty, the primary replica would also do the following:</p>
+<ol>
+<li>Get a request from request pool (in the order of time), assign a lid for this request and increment <code>nextProposeLid</code>;</li>
+<li>Append these requestIds to the local log that it has;</li>
+<li>Send <code>(lid, request)</code> to all secondary replicas. The primary replica would try to process this request only after receiving ACKs from all secondary replicas. Note that, for secondary replicas, instead of immediately processing requests from the primary replica, they will only store requests and states remain unchanged until checkpointing is conducted in the future;</li>
+<li>Primary replica returns results to clients and proceeds to the next request.</li>
+</ol>
+<h2 id="Checkpointing"><a href="#Checkpointing" class="headerlink" title="Checkpointing"></a>Checkpointing</h2><p>We keep a really simple application in the system: each back system is in fact a list of accounts, and each account contains user id and balance. Making a checkpoint is in fact dumping a data structure into JSON data while parsing checkpoint reading JSON data.</p>
+<h1 id="Web-UI"><a href="#Web-UI" class="headerlink" title="Web UI"></a>Web UI</h1><p>To monitor our system in a better way, we implement web UI for each component in our system. They might be naive and simple, but highly helpful.</p>
+<p>To present the demo of the web UIs, we initialized a small system here which includes:</p>
+<ol>
+<li>One replication manager;</li>
+<li>One global fault detector;</li>
+<li>One local fault detector and two replicas under it;</li>
+<li>Two independent clients.</li>
+</ol>
+<p>The web UIs would be able to provide some useful information of the system and you may as well perform some simple operations.</p>
+<h2 id="GFD"><a href="#GFD" class="headerlink" title="GFD"></a>GFD</h2><p>As mentioned before, GFD will directly communicate with all local fault detectors (though we only have one in this case) and it also has the complete membership information (i.e., replicas in the system), and you are able to see all of these on the UI.</p>
+<p>In addition, “Activity Log” will show the important events that GFD experienced. You can also set the fault detection interval, which can impact the recovery time if faults happens (but we will not discuss it here).</p>
+<p><img src="gfd_ui.png" alt="gfd-ui"></p>
+<h2 id="LFD"><a href="#LFD" class="headerlink" title="LFD"></a>LFD</h2><p>While the whole system is running, an LFD will keep monitoring the status of all replicas under its supervision. In our demo, there is one LFD which has two replicas. The web UI will show the last fault detection time (real-time) and IP address of all monitoring replicas.</p>
+<p><img src="lfd_ui.png" alt="lfd-ui"></p>
+<h2 id="RM"><a href="#RM" class="headerlink" title="RM"></a>RM</h2><p>The web UI of the replication manager would show information including current replication style (active or passive), information of all replicas, and IP address of all clients.</p>
+<p>In “All Replicas” table, you will get each replica’s “Replica ID” and “Replica Rank”. Please note that the “Replica Rank” is the <code>replicaRank</code> we previously discussed, which will be used to determine which is the proposer (in active style) or primary replica (in passive style).</p>
+<p>You can also set the checkpointing interval via the UI.</p>
+<p><img src="rm_ui.png" alt="rm-ui"></p>
+<h2 id="Replica-1"><a href="#Replica-1" class="headerlink" title="Replica"></a>Replica</h2><p>The web UI will show some information of one replica, including ID, IP address, replication style, status (NEW or READY), and a simple bank “database” (accounts and their balance). Checkpoint messages and total ordering messages are also showed.</p>
+<p>If a replica is a proposer or primary replica, you are supposed to see “(Primary Replica)” in red color under “Replica ID”. Otherwise, it will show as “(Acceptor)” in black. The naming might be confusing and we apologize for it.</p>
+<p>If the replica state is “NEW”, it means that the replica is still under synchronization. According to the “polite client assumption”, clients will not send any requests if any replica is under “NEW” state.</p>
+<p>There are two kinds of checkpoint messages: “get” and “set”. “get” simply means the replica records its database into a checkpoint (JSON data) and store it locally; while “set” simply means one replica acquires checkpoint data from another replica and restores data from it.</p>
+<p>An interesting part is “Total Order Messages”. All logs showed here have the following format:</p>
+<pre><code>[message_order]:Transaction ([client_ID], [request_ID])</code></pre><p><code>message_order</code> is the order of the message decided by the proposer. The tuple <code>([client_ID], [request_ID])</code> is generated by the replica which sends this message; in other words, it acts as a unique ID of the request across the whole system.</p>
+<p>The picture above shows the web UI of the proposer replica under active replication. Once the replica is started, it will first try to set a checkpoint from someone else (but it will not take any effects as it is the first one to start in the system). When another replica starts, it will ask the proposer for a checkpoint, so the proposer will “get” one and send it to the secondary replica. This is why you can see one “set” and one “get” in the proposer’s UI.</p>
+<p><img src="r_active_1.png" alt="replica-active-primary"></p>
+<p>Accordingly, you will only see one “set” on the second (acceptor) replica’s UI (see below). <strong>Please remember: in active replica, getting and setting checkpoints will only happen when a new replica appears.</strong></p>
+<p><img src="r_active_2.png" alt="replica-active-second"></p>
+<p>However, if we switch the replication style from active to passive, things would be different: primary replica will periodically get checkpoints and sent them to all other replicas, so primary replica will have a list of “get” checkpoint messages and other replicas will have a list of “set”; lists will keep growing as long as the system is still running. See the pictures below for a demo.</p>
+<p><img src="r_passive_1.png" alt="replica-passive-primary"></p>
+<p><img src="r_passive_2.png" alt="replica-passive-second"></p>
+<h2 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h2><p>For the web UI of clients, we used some elements from Bootstrap. The picture below is the main interface of this UI.</p>
+<p><img src="client_main_ui.png" alt="client-main"></p>
+<p>On the main interface you will see the system status: either <strong>“Ready for Request”</strong> or <strong>Service Not Available</strong>. Note that the status will be “Ready for Request” only when all replicas are under “READY” states.</p>
+<p>You may also see a list of replicas. Please note that, under active style, all replicas will be listed here; while there will be only one replica (the primary one) under passive style. Thus, you might not know the current replication style just via this interface. In fact, this is what we want: the client should never care about the replica style. If we switch the replication style to passive (but still run 2 replicas), the client UI will be different:</p>
+<p><img src="client_main_ui_passive.png" alt="client-main-passive"></p>
+<p>We also show the most 20 logs on the UI. It shows all messages sent from this client and the response from corresponding replicas. Remember clients will always send a request to all replicas it knows (but, once again, it will only know the presence of primary replica under passive style).</p>
+<p>You may also execute some basic operations on the bank account. Once you submit the operation, you will be directed to the main interface and the result (success or failure) of this operation will pop up here.</p>
+<p>UI for “deposit”:<br><img src="client_deposit.png" alt="client_deposit"></p>
+<p>Results of “deposit”:<br><img src="client_success.png" alt="client_return"></p>
+<p>We also implemented a button “Start Testing” on the main UI, so a client can continuously send requests to replicas without manually clicking buttons. This feature is mainly used for testing.</p>
+</span> -->
         </article>
     
     
 
 </div>
+
 
         </div>
         <footer id="footer" class="footer">

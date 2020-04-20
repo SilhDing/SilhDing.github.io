@@ -131,6 +131,66 @@
         <article class="archive-item">
             <a class="archive-item-link" href="/2019/02/01/rpc/">Project: A Distributed System with Multiple RPCs and File Fetching Cache</a>
             <span class="archive-item-date">Feb 1, 2019</span>
+            <!-- <span style=> <img src="rpc.png" alt="drawing" width="500"/>
+
+<p>You may have seen many awesome and outstanding distributed systems which work for some real-life applications. Today, we will go all to the way to the system level and see how distributed computing could be implemented here.</p>
+<p>This project consists of two tasks:</p>
+<ol>
+<li>build an RPC system to allow remote file operations (<code>open</code>, <code>read</code>, <code>write</code>, …); these RPC stubs will be interposed in place of the C library functions that handle file operation. For example, if you execute <code>cat foo</code> command on the local machine, instead of opening and printing the contents of a local file, it will access the contents of file <code>foo</code> on the remote server machine.</li>
+<li>based on the task 1, a proxy containing a cache should be implemented and placed between the clients and the server. Multi-clients and multi-proxy will be supported. You should also exploit some cache policies and strategies to guarantee consistency.</li>
+</ol>
+<p>This project comes from the CMU course 15-440/640: Distributed System. <font color="#F13E3E">Due to the CMU academic integrity policy, the code will not be publicized and some contents in this post will also be disabled as there are directly related to the design of my solution. </font></p>
+<h1 id="RPC"><a href="#RPC" class="headerlink" title="RPC"></a>RPC</h1><p>It is very common for us to access resources located on remote machines. We may easily write some applications to use the network to communicate between different components running on different machines, which, however, is tedious and inelegant to insert ad-hoc networking code every place our software needs to access remote resources.</p>
+<p>Instead, we could implement remote procedure calls to hide the network complexities and to access the remote resources in a clean abstraction. Users of these RPCs will not need to care anything on networking, and they could also develop more applications on the top of them.</p>
+<h2 id="Requirements"><a href="#Requirements" class="headerlink" title="Requirements"></a>Requirements</h2><p>The purpose of this task is to enable clients to use some commands (such as <code>cat</code>, <code>ls</code>) to access files on remote machine. In order to do this, we need to rewrite the standard C library calls and replace the original ones:</p>
+<pre><code>open, close, read, write, lseek, stat, unlink, getdirentries</code></pre><p>We will also implement the non-standard calls <code>getdirtree</code> and <code>freedirtree</code>. The course will provide us a library containing these two functions.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">struct dirtreenode* <span class="title">getdirtree</span><span class="params">( <span class="keyword">const</span> <span class="keyword">char</span> *path )</span></span>;</span><br></pre></td></tr></table></figure>
+<p>Function <code>getdirtree</code> recusively descend through directory hierarchy starting at directory indicated by path string. Allocates and constructs directory tree data structure representing all of the directories in the hierarchy.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">freedirtree</span><span class="params">( struct dirtreenode* dt )</span></span>;</span><br></pre></td></tr></table></figure>
+<p>Function <code>freedirtree</code> recursively frees the memory used to hold the directory tree structures, including the name strings, pointer arrays, and <code>dirtreenode</code> structures.</p>
+<p>These two function enables you to use <code>tree</code> on the terminal which will print out the file tree structure on the terminal. The library only makes sure you can execute the command locally, and we need to implement a RPC for it.</p>
+<h2 id="Design"><a href="#Design" class="headerlink" title="Design"></a>Design</h2><p>This task will be completed in C, so it may involve some basic practice on memory management, networking programming (we use TCP here) and some file operations. In addition, we also need to design some protocols.</p>
+<h3 id="Serialization-and-Deserialization"><a href="#Serialization-and-Deserialization" class="headerlink" title="Serialization and Deserialization"></a>Serialization and Deserialization</h3><img src="serial.png" alt="drawing" width="600"/>
+
+<p>The picture below shows what will happen once a RPC is called. We need to design how should we:</p>
+<ol>
+<li>pack RPC name and corresponding parameters into a string (serialization on client side) and send it to server;</li>
+<li>unpack RPC name and parameters, call corresponding local function, get results, pack results into a string and send back to client (deserialization and serialization on server side);</li>
+<li>unpack results from server and show locally.</li>
+</ol>
+<p>Due to CMU academic policy, we will not discuss any detail on these protocols. Please note that you may need some a little bit more complicated algorithm when dealing with <code>getdirtree</code>, as we have to serialize a tree structure into a string and deserialize from a string.</p>
+<h3 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h3><p>We must handle the situation where multiple clients are accessing to a single remote machine. A simple solution is using the multi-process mode. Each client will be handled in a specific child process, which has its own file descriptor table and will not conflict with other clients’ FD tables.</p>
+<h3 id="Local-and-Remote-File-Descriptor"><a href="#Local-and-Remote-File-Descriptor" class="headerlink" title="Local and Remote File Descriptor"></a>Local and Remote File Descriptor</h3><p>a very subtle but important problem is, for client, how can we distinguish between the local and remote file descriptor.</p>
+<p>You may ask, why we have to do this? <strong><em>This is because some programs on the client still needs to access local resources.</em></strong> For example, a client opens a remote file and the FD is <code>3</code> (this is created by the remote machine) and a local file, which returns a FD <code>3</code> as well. In this case, if we continue some file operations such as <code>read</code>, we don’t know which file we exactly need to read. Thus, there must be a mechanism to tell the origin of the FD (i.e., it is from local or remote).</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h1 id="File-Cache"><a href="#File-Cache" class="headerlink" title="File Cache"></a>File Cache</h1><p>In the previous task, we already have a simply distributed system, where clients and servers could communicate via RPCs. Now, we will design and implement a cache in Java between these two components.</p>
+<p>Caching is a great technique for improving the performance of a distributed system. It can help reduce data transfers, and improve the latency of operations. This task will continue to use existing binary tools in task 1 and interpose on their C library calls. Instead of directly connecting the server, clients now will only access the proxy (which contains a cache) to execute some operations:</p>
+<img src="cache.jpg" alt="drawing" width="500"/>
+
+<br>
+
+<p>Seems easy, right? Well, let’s talk about some details on requirements.</p>
+<h2 id="Requirements-1"><a href="#Requirements-1" class="headerlink" title="Requirements"></a>Requirements</h2><p>Here are something we need to consider through this task.</p>
+<ol>
+<li><strong><em>Cache policy</em></strong>. Remember that a cache always have limited space, so we need to evict some cache entries under a policy we design;</li>
+<li><strong><em>Concurrency</em></strong>. The system must support multiple proxies and clients running simultaneously (especially when there are many writers);</li>
+<li><strong><em>Consistency</em></strong>. We have to make sure clients will not get stale contents;</li>
+<li><strong><em>Atomicity</em></strong>. If one client opens a client, it should be interrupted by other clients accessing the same file. In other words, clients will have a fixed view during the open-close session.</li>
+</ol>
+<h2 id="Design-1"><a href="#Design-1" class="headerlink" title="Design"></a>Design</h2><h3 id="LRU-policy"><a href="#LRU-policy" class="headerlink" title="LRU policy"></a>LRU policy</h3><p>We will use a “Least Recently Used” policy to decide which cache entries should be evicted when the cache is full.</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h3 id="Concurrency-1"><a href="#Concurrency-1" class="headerlink" title="Concurrency"></a>Concurrency</h3><p>Some Java built-in libraries could be exploited to make data safe in concurrent condition. In addition, we always ensure there is only reader instance and multiple writer instances: multiple readers can read a single reader instance but each writer needs an exclusive writer instance. How can we achieve that?</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h3 id="Consistency"><a href="#Consistency" class="headerlink" title="Consistency"></a>Consistency</h3><p>We will exploit an idea called “check on use” to make sure that the clients will not get stale contents. Specifically speaking, every time a client wants to read some contents from the proxy (cache), the proxy needs to connect the server and verify if the contents are most recent. In addition, if a client writes something new to a file (on proxy), the proxy should also make the changes on server side as well.</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+
+<h3 id="Open-close-Semantics"><a href="#Open-close-Semantics" class="headerlink" title="Open-close Semantics"></a>Open-close Semantics</h3><p>Once a client opens a file, the client should have a fixed view of the file before “close”, though some other clients are reading or writing this file at the same time. How can we achieve that?</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+</span> -->
         </article>
     
     

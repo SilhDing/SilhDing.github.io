@@ -113,6 +113,11 @@
 
         <div class="main">
             <div class="post-wrap archive">
+	<br>
+	<h1> ✏ | Posts </h1>
+	<br>
+</div>
+<div class="post-wrap archive">
     
     
         
@@ -124,6 +129,90 @@
         <article class="archive-item">
             <a class="archive-item-link" href="/2019/02/26/spark/">Project: Apache Spark - Process Large Web Crawl Data and Train ML Model</a>
             <span class="archive-item-date">Feb 26, 2019</span>
+            <!-- <span style=> <img src="spark.png" alt="drawing" width="500"/>
+
+<br>
+
+<p>Apache Spark is an open source, distributed parallel computing framework, which is very powerful in processing and analyzing a large amount of data. It also has some additional advantages over MapReduce.</p>
+<p>In this project, I will use Apache Spark to finish two tasks:</p>
+<ol>
+<li>Use Spark to preprocess an existing corpus crawled from the Internet to generate output in a specific format: extract, load, and transform (ELT).</li>
+<li>Write a scalable distributed iterative ML program using Apache Spark.</li>
+</ol>
+<p>The two tasks listed above, in fact, seem not challenging at the first glance. Yes, you are right. By briefly studying the official documents and some example programs, you can finish the job easily. <strong>However, please consider some special requirements or scenarios before drawing any conclusions</strong>:</p>
+<ul>
+<li>There is an upper limit for the running time of the program. In other words, your program should preform efficiently in terms of time.</li>
+<li>We have limited computing resources, i.e., memory, CPU cores, etc.</li>
+<li>Program should be reliable and tolerant for failures (though Spark has some built-in mechanisms for fault-tolerance).</li>
+</ul>
+<p>You will gradually see that programming with Spark is never easy, especially when you wish your program has high performance.</p>
+<p>Please note that, in this project, I also used HDFS and Amazon EC2 to manage our machines and distribute data/files, which, however, is not our focus, so I just exploited some existing framework/scripts for this part.</p>
+<p style="color:#F13E3E"><b>Note</b>: due to the CMU academic integrity policy, some contents in this post are disabled as they are directly related to my codes or design. Please contact me or leave comments if you want to learn more about this project and <u><b>AND</b></u> will not take this course in the future!</p>
+
+<h1 id="Preprocessing-with-Spark"><a href="#Preprocessing-with-Spark" class="headerlink" title="Preprocessing with Spark"></a>Preprocessing with Spark</h1><p>In this task, I was given an open repository of web crawled data (we only choose WET format file). These data should be processed following the steps below:</p>
+<ol>
+<li>Retrieve all documents (payloads) from some WET files with some third-party Python APIs; a WET file could be large and have many documents;</li>
+<li>Discard all tokens that are not valid (e.g., invalid words contain characters rather than English letters and some simple characters);</li>
+<li>Standardize all valid tokens from step 2 (including stripping away some invalid leading or tailing characters, convert all characters to lower-case, etc.);</li>
+<li>Discard some documents whose length is lower than a limit;</li>
+<li>Remove “stop” words (stop words refer to common words in English, e.g., “a”, “the” and domain-specific common words, which appear in more than 90% of all documents);</li>
+<li>Remove typo words. Typo words can be identified by checking the number of documents that the word appears in. If the number is below a limit, we may treat this word as a typo.</li>
+<li>sort all words by their lexicographical order and give them index number starting from 0.</li>
+<li>Generate “word:count” pair for all words and computer statistic data of processed corpus.</li>
+</ol>
+<p>All steps listed above, in fact, do not require complex algorithms. You may find that we could parallelize some operations, e.g., discard invalid tokens, as each machine can independently finish this job. Some other operations may need <code>Reduce</code> operation, e.g., removing typo, as we have to know the document frequency of this word across the entire corpus.</p>
+<p>But, what makes the program so slow?</p>
+<h2 id="Performance-Analysis"><a href="#Performance-Analysis" class="headerlink" title="Performance Analysis"></a>Performance Analysis</h2><h3 id="Shuffle"><a href="#Shuffle" class="headerlink" title="Shuffle"></a>Shuffle</h3><p>Shuffle mechanism is used to redistribute the partitioned RDDs to satisfy certain conditions. For example, in order to detect domain-specific “stop” words, we need to count the document frequency of each word, which may require <code>reduceByKey</code> operations. <strong>Shuffle is an expensive operation.</strong> It normally requires a lot of disk IO and network IO costs. Also, each node (worker) will not be independent anymore, so one slow work can make the whole process slow.</p>
+<h3 id="Transformations-and-Actions"><a href="#Transformations-and-Actions" class="headerlink" title="Transformations and Actions"></a>Transformations and Actions</h3><p><a href="https://spark.apache.org/docs/latest/rdd-programming-guide.html#transformations" target="_blank" rel="noopener">Transformations</a> and <a href="https://spark.apache.org/docs/latest/rdd-programming-guide.html#actions" target="_blank" rel="noopener">actions</a> are different, and you should be aware of how they behave differently.</p>
+<p>Note that, if there is no actions, Spark could records the dependency information between RDDs without evaluating them, which is called “lazy evaluation”. Thus, several distinct steps could be merged and be executed seamlessly. This is very helpful in boosting computing performance. Thus, do not invoke actions unless required.</p>
+<h2 id="Ideas"><a href="#Ideas" class="headerlink" title="Ideas"></a>Ideas</h2><p>Here are some ideas I used for this task. They show great improvement in the performance.</p>
+<h3 id="Reorder-the-Workflow"><a href="#Reorder-the-Workflow" class="headerlink" title="Reorder the Workflow"></a>Reorder the Workflow</h3><p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h3 id="Consider-Intermediate-Results"><a href="#Consider-Intermediate-Results" class="headerlink" title="Consider Intermediate Results"></a>Consider Intermediate Results</h3><p>This trick is super helpful and effective.</p>
+<p>At first, let’s talk about a sorting algorithm. We all know “merge sort” algorithm, which divides the array into many smaller subarrays, sorts these subarrays then merges. It shows a principle called “divide and conquer”. <strong>This principle will give us some ideas in designing the program</strong>.</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h3 id="Distribute-Workload-Evenly"><a href="#Distribute-Workload-Evenly" class="headerlink" title="Distribute Workload Evenly"></a>Distribute Workload Evenly</h3><p>If there is an action which needs <code>Reduce</code> and shuffle, the reducer needs to wait all mappers to finish their work before the reducer could start its job.</p>
+<p>Is it possible that there is a mapper takes much longer to finish its job, which slow down the whole pipeline? In this case, some mappers might be idle and reducer cannot start its job either.</p>
+<p>The answer is yes, and it is even highly possible. Suppose when we have 4 workers and 5 WET files. The first step is to initialize 5 RDDs (corresponding to 5 WET files) and distribute them to 4 workers. However, even under the best allocation strategy, there is always one worker who has 2 WET files to process. As we mentioned earlier, it may take a long time to process just a single WET file. Thus, we will expect a period of time when three workers are idle and one working (which is called “straggler”).</p>
+<p>This poor strategy is highly possible to lead to waste of resources. Normally, if the size of RDD is smaller (and number of RDD increases), we are less likely to see a worker become the “straggler”. For example, we could make each document as a RDD partition. However, it also leads to more overhead which consumes storage and computing resources as well.</p>
+<h2 id="Benchmark"><a href="#Benchmark" class="headerlink" title="Benchmark"></a>Benchmark</h2><p>To process 400 WET files (~200 GB) with 16 AWS <code>m4.xlarge</code> slaves instance, the original and naive program needs to take <strong>more than 3 hours</strong>, while the improved program (which used the tricks above) only takes <strong>within 35 minutes</strong>.</p>
+<p>Though these tricks seem very intuitive and easy to implement, they might not come to your mind when you write Spark programs the first time. Spark in fact provides us with interactive and informative UIs, showing the real-time workflow and metrics of each worker. <strong>It is an important source for you to spot the bottleneck of your program and figure out a solution.</strong> We will talk about it at the end of this post.</p>
+<h1 id="Iterative-ML-Model-Training"><a href="#Iterative-ML-Model-Training" class="headerlink" title="Iterative ML Model Training"></a>Iterative ML Model Training</h1><p>Remember what I said at the beginning of this post: Spark has some additional advantages over MapReduce. The most important features that Spark brings to us is <strong>in-memory processing</strong>.</p>
+<p>This feature will be more prominent when the task is iterative: we may need to access or process the same data multiple times. Resilient Distributed Datasets (RDDs) enable multiple map operations in memory, while Hadoop MapReduce has to write interim results to a disk, which may involve some additional IO cost.</p>
+<p>Thus, here comes the second task: given a lot of training data and multiple nodes (instances), how can we efficiently train our machine learning model in parallel. The ML model itself may has a large amount of features.</p>
+<p>The ML model here is a simple logistic regression, and we are going to use gradient descent to update our model. This model starts with a random guess of the model feature weights and refines them over many iterations. In a single iteration, each data sample in the training set is processed to generate an incremental update to the model features. The model features updates are accumulated and not applied until the end of an iteration. <strong>This algorithm enables us to implement a training workflow which involves many nodes:</strong></p>
+<ul>
+<li>In an iteration, each node can compute and accumulate gradient independently;</li>
+<li>The reducer can then accumulate updates from all mappers, get the final updates in the current iteration, update the feature weights, and broadcast new feature weights to all mappers;</li>
+<li>Mappers start a new iteration.</li>
+</ul>
+<p>This workflow is really suitable for Spark: in each iteration, the nodes need to access the same training data and compute the gradient, as Spark can keep data in memory, nodes do not have to load data from disk through IO (this is what MapReduce does). The whole process would be much faster and more efficient.</p>
+<p>However, some problem will appear when you are writing you program: sometimes your program will encounter out-of-memory issue and then crashes, or it has to take a long time to finish its job.</p>
+<p>Compared with the first task, this task also forces you to figure out how you should manage the computing resources appropriately. Apparently, out-of-memory issue happens due to the exhaustion of memory. Is this because the memory stores too much data? Another question is, are there any other ways to make my program faster (in addition to the tips mentioned in the first task)?</p>
+<p>No worry. I will summarize some useful tricks.</p>
+<h2 id="Join-based-Parameters-Communication"><a href="#Join-based-Parameters-Communication" class="headerlink" title="Join-based Parameters Communication"></a>Join-based Parameters Communication</h2><p>As we mentioned earlier, the number of ML features may be huge (millions in this task). However, each data sample may not have so many nonzero values (probably only have tens of nonzero values). Also, processing each data sample only requires reading the weight values for its nonzero features and generating updates for its non-zero feature. Thus, <strong>a node does not need to get all feature weights from the ML model.</strong> This practice is critical in this project. In fact, trying to store a full copy of the weights or all updates on any of the machines will case failure: remember, memory is expensive and limited.</p>
+<p>In order to take advantage of this feature, we might exploit some methods, such as inverted indices (which is popular in many area such as search engine) to design a better workflow.</p>
+<h2 id="Ideas-1"><a href="#Ideas-1" class="headerlink" title="Ideas"></a>Ideas</h2><h3 id="A-Better-Workflow"><a href="#A-Better-Workflow" class="headerlink" title="A Better Workflow"></a>A Better Workflow</h3><p>We have mentioned that workflow is very important in implementing a Spark program. But, in the previous example, we just reordered some tasks to reduce the work load. For a different task, the workflow might be much harder to design or improve.</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h3 id="Optimization-on-join"><a href="#Optimization-on-join" class="headerlink" title="Optimization on join"></a>Optimization on <code>join</code></h3><h4 id="Partition"><a href="#Partition" class="headerlink" title="Partition"></a>Partition</h4><p>When using <code>join</code> in your code, remember:</p>
+<p><strong><em>When joining an RDD of N partitions with an RDD of M partitions, the resulting RDD may contain N*M partitions. You may want to explicitly control the number of partitions for the resulting RDD.</em></strong></p>
+<p>So, if possible, remember to use some built-in APIs (e.g., <code>partitionBy</code>) to partition your RDDs again.</p>
+<h4 id="Shuffle-1"><a href="#Shuffle-1" class="headerlink" title="Shuffle"></a>Shuffle</h4><p>Shuffle in always expensive and “join” operation may also involve shuffle. However, <strong><em>When two RDDs are already partitioned by the same function, joining them does not require a shuﬄe</em></strong>.</p>
+<p>Why? And what does this indicate?</p>
+<p>In fact, every time we create RDDs, we need to use some partitioner function to partition data and distribute data on all nodes. If two RDDs have the same partitioner functions, it indicate that data entries with same key will also reside on the same node; nodes then does not need to communicate with nodes to do “join”, which leads to shuffle.</p>
+<p>The default partitioner function is hash function. But how can you make sure two RDDs have the same partitioner function?</p>
+<p>There are many possible cases where partitioner functions are changed. But the most important one is: <strong><em>if you applied any custom partitioning to your RDD (e.g. using <code>partitionBy</code>), using <code>map</code> or <code>flatMap</code> would “forget” that partitioner function.</em></strong> This is because Spark cannot know if the key is changed after <code>map</code>. Instead, <code>mapValues</code> is better as you could only change the value with this function.</p>
+<p><strong>A caveat</strong>: always choose <code>mapValues</code> or <code>flatMapValues</code> if you don’t intend to change the key.</p>
+<h3 id="Manage-Your-Resources"><a href="#Manage-Your-Resources" class="headerlink" title="Manage Your Resources"></a>Manage Your Resources</h3><p>You may see some out-of-memory (OOM) issue when running your spark program. This is because Spark by default will keep RDD in memory, when we need to create another RDD (by some action), they will also be placed in memory. E.g., in this task, we need to maintain a training data RDD while generating the updates RDD. What if the memory is limited?</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h3 id="Find-the-Bottleneck"><a href="#Find-the-Bottleneck" class="headerlink" title="Find the Bottleneck"></a>Find the Bottleneck</h3><p>Spark gives you the live monitoring web UI to help you track the task and find the bottleneck.</p>
+<p>Normally, the first thing to check is <strong>job</strong>. Clicking a job shows the details of this job, including its event timeline and a DAG visualization. You can easily figure out which operations belong to which stage and the locations where shuffle occurs.</p>
+<p>The web UI also shows statistics/metrics for tasks. You may also access status of each machine and check if any nodes are dead already. You can also detect any stragglers by checking the task numbers of each machine from the web UI.</p>
+<h2 id="Benchmark-1"><a href="#Benchmark-1" class="headerlink" title="Benchmark"></a>Benchmark</h2><p>The improved program could finish 2 iterations within 30 mins with 40GB Criteo dataset as training data (ML model with 88M features) on AWS 16 <code>c4.xlarge</code> instances; or 4 iterations within 40 mins with 10 GB KDD2012 dataset (ML model with 54M features) on 16 <code>c4.xlarge</code> instances.</p>
+</span> -->
         </article>
     
         
@@ -133,11 +222,72 @@
         <article class="archive-item">
             <a class="archive-item-link" href="/2019/02/01/rpc/">Project: A Distributed System with Multiple RPCs and File Fetching Cache</a>
             <span class="archive-item-date">Feb 1, 2019</span>
+            <!-- <span style=> <img src="rpc.png" alt="drawing" width="500"/>
+
+<p>You may have seen many awesome and outstanding distributed systems which work for some real-life applications. Today, we will go all to the way to the system level and see how distributed computing could be implemented here.</p>
+<p>This project consists of two tasks:</p>
+<ol>
+<li>build an RPC system to allow remote file operations (<code>open</code>, <code>read</code>, <code>write</code>, …); these RPC stubs will be interposed in place of the C library functions that handle file operation. For example, if you execute <code>cat foo</code> command on the local machine, instead of opening and printing the contents of a local file, it will access the contents of file <code>foo</code> on the remote server machine.</li>
+<li>based on the task 1, a proxy containing a cache should be implemented and placed between the clients and the server. Multi-clients and multi-proxy will be supported. You should also exploit some cache policies and strategies to guarantee consistency.</li>
+</ol>
+<p>This project comes from the CMU course 15-440/640: Distributed System. <font color="#F13E3E">Due to the CMU academic integrity policy, the code will not be publicized and some contents in this post will also be disabled as there are directly related to the design of my solution. </font></p>
+<h1 id="RPC"><a href="#RPC" class="headerlink" title="RPC"></a>RPC</h1><p>It is very common for us to access resources located on remote machines. We may easily write some applications to use the network to communicate between different components running on different machines, which, however, is tedious and inelegant to insert ad-hoc networking code every place our software needs to access remote resources.</p>
+<p>Instead, we could implement remote procedure calls to hide the network complexities and to access the remote resources in a clean abstraction. Users of these RPCs will not need to care anything on networking, and they could also develop more applications on the top of them.</p>
+<h2 id="Requirements"><a href="#Requirements" class="headerlink" title="Requirements"></a>Requirements</h2><p>The purpose of this task is to enable clients to use some commands (such as <code>cat</code>, <code>ls</code>) to access files on remote machine. In order to do this, we need to rewrite the standard C library calls and replace the original ones:</p>
+<pre><code>open, close, read, write, lseek, stat, unlink, getdirentries</code></pre><p>We will also implement the non-standard calls <code>getdirtree</code> and <code>freedirtree</code>. The course will provide us a library containing these two functions.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">struct dirtreenode* <span class="title">getdirtree</span><span class="params">( <span class="keyword">const</span> <span class="keyword">char</span> *path )</span></span>;</span><br></pre></td></tr></table></figure>
+<p>Function <code>getdirtree</code> recusively descend through directory hierarchy starting at directory indicated by path string. Allocates and constructs directory tree data structure representing all of the directories in the hierarchy.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">freedirtree</span><span class="params">( struct dirtreenode* dt )</span></span>;</span><br></pre></td></tr></table></figure>
+<p>Function <code>freedirtree</code> recursively frees the memory used to hold the directory tree structures, including the name strings, pointer arrays, and <code>dirtreenode</code> structures.</p>
+<p>These two function enables you to use <code>tree</code> on the terminal which will print out the file tree structure on the terminal. The library only makes sure you can execute the command locally, and we need to implement a RPC for it.</p>
+<h2 id="Design"><a href="#Design" class="headerlink" title="Design"></a>Design</h2><p>This task will be completed in C, so it may involve some basic practice on memory management, networking programming (we use TCP here) and some file operations. In addition, we also need to design some protocols.</p>
+<h3 id="Serialization-and-Deserialization"><a href="#Serialization-and-Deserialization" class="headerlink" title="Serialization and Deserialization"></a>Serialization and Deserialization</h3><img src="serial.png" alt="drawing" width="600"/>
+
+<p>The picture below shows what will happen once a RPC is called. We need to design how should we:</p>
+<ol>
+<li>pack RPC name and corresponding parameters into a string (serialization on client side) and send it to server;</li>
+<li>unpack RPC name and parameters, call corresponding local function, get results, pack results into a string and send back to client (deserialization and serialization on server side);</li>
+<li>unpack results from server and show locally.</li>
+</ol>
+<p>Due to CMU academic policy, we will not discuss any detail on these protocols. Please note that you may need some a little bit more complicated algorithm when dealing with <code>getdirtree</code>, as we have to serialize a tree structure into a string and deserialize from a string.</p>
+<h3 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h3><p>We must handle the situation where multiple clients are accessing to a single remote machine. A simple solution is using the multi-process mode. Each client will be handled in a specific child process, which has its own file descriptor table and will not conflict with other clients’ FD tables.</p>
+<h3 id="Local-and-Remote-File-Descriptor"><a href="#Local-and-Remote-File-Descriptor" class="headerlink" title="Local and Remote File Descriptor"></a>Local and Remote File Descriptor</h3><p>a very subtle but important problem is, for client, how can we distinguish between the local and remote file descriptor.</p>
+<p>You may ask, why we have to do this? <strong><em>This is because some programs on the client still needs to access local resources.</em></strong> For example, a client opens a remote file and the FD is <code>3</code> (this is created by the remote machine) and a local file, which returns a FD <code>3</code> as well. In this case, if we continue some file operations such as <code>read</code>, we don’t know which file we exactly need to read. Thus, there must be a mechanism to tell the origin of the FD (i.e., it is from local or remote).</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h1 id="File-Cache"><a href="#File-Cache" class="headerlink" title="File Cache"></a>File Cache</h1><p>In the previous task, we already have a simply distributed system, where clients and servers could communicate via RPCs. Now, we will design and implement a cache in Java between these two components.</p>
+<p>Caching is a great technique for improving the performance of a distributed system. It can help reduce data transfers, and improve the latency of operations. This task will continue to use existing binary tools in task 1 and interpose on their C library calls. Instead of directly connecting the server, clients now will only access the proxy (which contains a cache) to execute some operations:</p>
+<img src="cache.jpg" alt="drawing" width="500"/>
+
+<br>
+
+<p>Seems easy, right? Well, let’s talk about some details on requirements.</p>
+<h2 id="Requirements-1"><a href="#Requirements-1" class="headerlink" title="Requirements"></a>Requirements</h2><p>Here are something we need to consider through this task.</p>
+<ol>
+<li><strong><em>Cache policy</em></strong>. Remember that a cache always have limited space, so we need to evict some cache entries under a policy we design;</li>
+<li><strong><em>Concurrency</em></strong>. The system must support multiple proxies and clients running simultaneously (especially when there are many writers);</li>
+<li><strong><em>Consistency</em></strong>. We have to make sure clients will not get stale contents;</li>
+<li><strong><em>Atomicity</em></strong>. If one client opens a client, it should be interrupted by other clients accessing the same file. In other words, clients will have a fixed view during the open-close session.</li>
+</ol>
+<h2 id="Design-1"><a href="#Design-1" class="headerlink" title="Design"></a>Design</h2><h3 id="LRU-policy"><a href="#LRU-policy" class="headerlink" title="LRU policy"></a>LRU policy</h3><p>We will use a “Least Recently Used” policy to decide which cache entries should be evicted when the cache is full.</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h3 id="Concurrency-1"><a href="#Concurrency-1" class="headerlink" title="Concurrency"></a>Concurrency</h3><p>Some Java built-in libraries could be exploited to make data safe in concurrent condition. In addition, we always ensure there is only reader instance and multiple writer instances: multiple readers can read a single reader instance but each writer needs an exclusive writer instance. How can we achieve that?</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h3 id="Consistency"><a href="#Consistency" class="headerlink" title="Consistency"></a>Consistency</h3><p>We will exploit an idea called “check on use” to make sure that the clients will not get stale contents. Specifically speaking, every time a client wants to read some contents from the proxy (cache), the proxy needs to connect the server and verify if the contents are most recent. In addition, if a client writes something new to a file (on proxy), the proxy should also make the changes on server side as well.</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+
+<h3 id="Open-close-Semantics"><a href="#Open-close-Semantics" class="headerlink" title="Open-close Semantics"></a>Open-close Semantics</h3><p>Once a client opens a file, the client should have a fixed view of the file before “close”, though some other clients are reading or writing this file at the same time. How can we achieve that?</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+</span> -->
         </article>
     
     
 
 </div>
+
 
         </div>
         <footer id="footer" class="footer">

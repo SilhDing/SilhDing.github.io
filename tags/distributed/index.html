@@ -131,6 +131,293 @@
         <article class="archive-item">
             <a class="archive-item-link" href="/2019/12/01/distributedsystem/">Project: A Distributed, Reliable and Fault-tolerant Banking System</a>
             <span class="archive-item-date">Dec 1, 2019</span>
+            <!-- <span style=> <p><img src="bank.png" alt="bank"></p>
+<p>In <a href="/2019/04/21/shoppingweb/">a previous post</a>, we have introduced a distributed system where:</p>
+<ul>
+<li>Load balancing (scalability) is implemented;</li>
+<li>Multi-tier hierarchy is exploited.</li>
+</ul>
+<p>However, this small project is far from enough: we still have a lot to learn in designing and implementing a more comprehensive distributed system. Now, we will do something more <strong>interesting</strong> and <strong>challenging</strong>.</p>
+<p>In this team project, we designed and implemented a comprehensive distributed banking system. However, the application part is simple in our project as we want to mainly focus on the design and implementation of the distributed system and principles of strong consistency. Below are some highlights or features of our system:</p>
+<ul>
+<li>Industrial standard architecture (but simplified) of distributed system;</li>
+<li>Support <strong>active replication</strong> and <strong>passive replications</strong> schemes;</li>
+<li>Implement total ordering to ensure strong consistency;</li>
+<li>Tolerant to changes of membership (i.e., able to handle the cases where new replicas join or existing replicas fail);</li>
+<li>Implement web UI for each component;</li>
+<li>Support some basic banking operations, e.g., create an account, deposit, withdraw, etc.</li>
+<li>…</li>
+</ul>
+<p>This project is the course project of CMU 18749 (Building Reliable Distributed Systems) which spanned the whole semester. Due to the CMU AIV policy, we will not release the codes of the project. If you have any question, please contact me or leave comments at the bottom of this page.</p>
+<h1 id="Design-Overview"><a href="#Design-Overview" class="headerlink" title="Design Overview"></a>Design Overview</h1><p>In this section, we are going to give a brief introduction to our system.</p>
+<h2 id="Terminology"><a href="#Terminology" class="headerlink" title="Terminology"></a>Terminology</h2><table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Note</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RM</td>
+<td>replication manager</td>
+</tr>
+<tr>
+<td>GFD</td>
+<td>global fault detector</td>
+</tr>
+<tr>
+<td>LFD</td>
+<td>local fault detector</td>
+</tr>
+<tr>
+<td>Address</td>
+<td>the IP and port number of a service (e.g. the RM, GFD, LFD or a replica)</td>
+</tr>
+<tr>
+<td>Replica status</td>
+<td>whether the replica is <strong>NEW</strong> (a new replica that is syncing up) or <strong>READY</strong> (the replica is up and running).</td>
+</tr>
+<tr>
+<td>Local replica status</td>
+<td>the replica status of all the replicas that are managed by an LFD.</td>
+</tr>
+<tr>
+<td>Global replica status</td>
+<td>the replica status of all the replicas that are managed by a GFD.</td>
+</tr>
+<tr>
+<td>Replication configuration</td>
+<td>the addresses of reachable replicas, the replication style, the primary replica if passive, etc.</td>
+</tr>
+<tr>
+<td>Reachable replica</td>
+<td>in the distributed system settings, it is hard to say if a replica is “running” or not, since it can happen that a replica is still running but can’t be reached by an LFD or GFD. To avoid such ambiguity, we would say that a replica is “unreachable”.</td>
+</tr>
+<tr>
+<td>Service info</td>
+<td>the replication configuration in the client’s point of view, including the addresses of replicas that the client needs to reach. In passive replication, a client only needs to reach the primary replica but in active replication, it needs to reach all active replicas.</td>
+</tr>
+</tbody></table>
+<h2 id="Hierarchy-and-Components"><a href="#Hierarchy-and-Components" class="headerlink" title="Hierarchy and Components"></a>Hierarchy and Components</h2><p>We used a simplified version of an industry-standard architecture. The picture below shows a brief structure of the system.</p>
+<p><img src="system.svg" alt="system"></p>
+<p>Please note that each element in the picture (e.g., RM, GFD) would be a physical machine or a virtual machine or even a process. To simplify the system, we make RM and GFD on one physical machine. An LFD and several replicas would be included in a cluster, which, in our case, is a physical machine.</p>
+<p>We will give a detailed description of each component in the picture above.</p>
+<h3 id="Replication-Manager"><a href="#Replication-Manager" class="headerlink" title="Replication Manager"></a>Replication Manager</h3><p>The replication manager maintains a table of all replicas and their addresses (called replica status table), and also the replication style (either passive or active) and which is the primary replica in passive replication.</p>
+<p>The replication manager also maintains a sequence number counter that monotonically increases.</p>
+<p>The global fault detector periodically polls the status of all replicas and reports changes to the replication manager. The changes can be addition or removal of replicas. The replication manager is responsible for reacting appropriately to the changes. For example, in passive replication, if the primary replica is removed from the membership, the replication manager is responsible for choosing a new primary replica.</p>
+<p>The replication manager assumes that the global fault detector never crashes.</p>
+<h3 id="Global-Fault-Detector"><a href="#Global-Fault-Detector" class="headerlink" title="Global Fault Detector"></a>Global Fault Detector</h3><p>The global fault detector maintains a list of addresses of local fault detectors and the status of all replicas at the last check. <strong>It will never directly contact any replicas</strong>.</p>
+<p>The global fault detector periodically asks all local fault detectors for replica status. The interval (a.k.a. the fault detection interval) is configured via a configuration file or command-line argument. If there are any changes between the new status and the previous one, it reports these changes to the replication manager.</p>
+<p>That a replica becomes unreachable and that a local fault detector becomes unreachable both mean related replicas are removed from the membership. The GFD doesn’t distinguish between these two cases.</p>
+<p>If a local fault detector is unreachable for one time, it is immediately removed from the list and all associated replicas under that local fault detector are considered as leaving the cluster. This is to avoid a local fault detector from fluctuating between reachable and unreachable due to temporary network malfunctioning.</p>
+<h3 id="Local-Fault-Detector"><a href="#Local-Fault-Detector" class="headerlink" title="Local Fault Detector"></a>Local Fault Detector</h3><p>The local fault detector maintains a list of addresses of replicas that it monitors (which can be only one).</p>
+<p>Each time the global fault detector queries replica status, it asks all the replicas on its list for their status and returns the result to the global fault detector.</p>
+<p>If a replica is unreachable for one time, it is immediately removed from the list.</p>
+<p>Please note that we used a 2-tier mechanism for failure detection (LFD and GFD), which could be efficient when there are many replicas across the whole system. A single fault detector, which manages all replicas, would show poor scalability.</p>
+<h3 id="Replica"><a href="#Replica" class="headerlink" title="Replica"></a>Replica</h3><p>Replicas maintain the state of the application and respond to queries of the local fault detector.</p>
+<p>When a new replica is added to the cluster, the replica will notify its LFD, and LFD will later notify GFD about this update. When the replication manager detects the addition of this replica via the report of the GFD, it sends a <code>updateReplicationConfig</code> to the new replica as well as all other replicas to trigger synchronization (the new replica can download checkpoints and logs from any other replicas).</p>
+<h1 id="Interaction"><a href="#Interaction" class="headerlink" title="Interaction"></a>Interaction</h1><p>In this project, we use <strong>HTTP-based</strong> messages for communication between different components. That is to say, each component may act as an HTTP server, an HTTP client, or both. A clear and rigid workflow is also critical to make sure the system behaves as we expect. We will cover some cases that you might be interested in and explain the mechanism/workflow behind them.</p>
+<h2 id="Startup"><a href="#Startup" class="headerlink" title="Startup"></a>Startup</h2><p>To simplify our implementation, all components in our system will be started manually. GFD and RM will be first started. GFD is configured with the address of the RM and its monitoring list is initially empty.</p>
+<p>When a LFD starts, the LFD calls /addLocalFaultDetector of the GFD to add itself to the monitoring list of the GFD.</p>
+<p>When a replica starts, the replica calls /addReplica of the LFD to add itself to the monitoring list of the LFD.</p>
+<p>Next time that GFD polls replica status, it will detect the presence of the new replicas or absence of old replicas and report this change to the RM.</p>
+<h2 id="Replica-Status-Polling"><a href="#Replica-Status-Polling" class="headerlink" title="Replica Status Polling"></a>Replica Status Polling</h2><p>The GFD performs replica status polling to know the liveness of all replicas and reports any changes since the last check to the replication manager.</p>
+<p>The frequency of the GFD performing this polling is determined by the fault detection interval, which is part of the configuration file of GFD and can be modified by the RM.</p>
+<h3 id="Detect-a-Failed-Replica"><a href="#Detect-a-Failed-Replica" class="headerlink" title="Detect a Failed Replica"></a>Detect a Failed Replica</h3><p>When a replica fails or becomes unreachable, LFD will first be aware of the issue and notify the GFD about this update. The GFD would notify the RM and RM would later send the new replication configuration that has removed the failed replica to all reachable replicas.</p>
+<p>You may refer to the UML sequence diagram for a more accurate description.</p>
+<p><img src="polling_1.svg" alt="polling_1"></p>
+<h3 id="Detect-a-New-Replica"><a href="#Detect-a-New-Replica" class="headerlink" title="Detect a New Replica"></a>Detect a New Replica</h3><p>When a replica is started (note it could be a previously failed replica and now it recovers), it will first report to its LFD (a new replica will always be configured with the address of its LFD). LFD will deliver this message to GFD, who will also notify RM if there are changes in the replica configuration.</p>
+<p>On the RM’s side, when a new replica is detected, the RM broadcasts the replication configuration containing the new replica to all reachable replicas. After knowing other replicas, the new replica can download checkpoints and logs from any up and running replica.</p>
+<p>When the primary replica is unreachable in passive replication, the RM chooses a new primary and broadcasts the new configuration to all reachable replicas. (We will give more information for this part later)</p>
+<p>The sequence interaction diagram shows how the GFD conducts replica status polling and what would happen if a new replica is detected.</p>
+<p><img src="polling_2.svg" alt="polling_2"></p>
+<h2 id="Client-Operation"><a href="#Client-Operation" class="headerlink" title="Client Operation"></a>Client Operation</h2><p>When a client initializes a request, the request will go through many components and trigger various behaviors, which could be <strong>highly complicated and interactive</strong>. Our goal in processing clients’ requests is to guarantee strong consistency across all replicas by implementing <strong>total ordering</strong>. In addition, we are also supposed to design and implement different workflows under different replication style/schemes (active or passive). We will skip this section and give more explanation when we talk about replication styles later.</p>
+<h1 id="Request-Handling"><a href="#Request-Handling" class="headerlink" title="Request Handling"></a>Request Handling</h1><p>Up to now we already know how the system keeps detecting new or failed replicas. However, you may still have questions:</p>
+<ol>
+<li>How do you handle a request while ensuring strong consistency?</li>
+<li>Consider a case where multiple clients may send requests simultaneously. How do you implement total ordering to guarantee consistency?</li>
+<li>Consider a case where the whole system has been running for a while and have handled some request. Now a new replica joins. How does it synchronize to the most recent state? In other words, how do you implement logging and checkpointing?</li>
+</ol>
+<p>No worry. Before we start, let’s dive deep into the replication style.</p>
+<h2 id="Replication-Style"><a href="#Replication-Style" class="headerlink" title="Replication Style"></a>Replication Style</h2><p>In this project, we support two different replication styles.</p>
+<h3 id="Active-Style"><a href="#Active-Style" class="headerlink" title="Active Style"></a>Active Style</h3><p>In active replication style, once a client sends a request, <strong>ALL</strong> replicas will have to execute the request and, if necessary, make state changes. Active replication style promises faster recovery from faults but it normally requires more memory and processing costs.</p>
+<p>If many clients send requests simultaneously, it is highly possible that different replicas will receive different orders of requests. In this case, strong consistency might be compromised, and we need <strong>total ordering</strong> to address this concern. We will talk about it later.</p>
+<h3 id="Passive-Style"><a href="#Passive-Style" class="headerlink" title="Passive Style"></a>Passive Style</h3><p>In passive replication style, only the <strong>primary replica</strong> will receive and handle this request. For other replicas (a.k.a <strong>secondary replicas</strong>), they will only get checkpoints from primary replica periodically (the frequency is determined by a parameter called <em>checkpointing interval</em> which can be modified while the system is running). Passive replication style requires less memory and processing costs but may take longer to recover from faults/failures.</p>
+<p>Total ordering will be trivial here as there is only one replica that executes requests. However, it may complicate other parts. For example, if the primary replica fails, how can we determine a new replica as the primary replica? Some consensus protocols might be helpful (e.g., PAXOS), but remember: <em>implementing a consensus protocol would be highly complicated and painful.</em></p>
+<p>No worry. We will introduce our solution later.</p>
+<h2 id="Total-Ordering"><a href="#Total-Ordering" class="headerlink" title="Total Ordering"></a>Total Ordering</h2><p>Here are many ways to implement total ordering in active replication style. Let’s list some:</p>
+<ol>
+<li>Ask every client to grab a <strong><em>sequence number</em></strong> from RM or another agency every time it wants to send a request. The request and its assigned sequence number will then be delivered to all replicas, and replicas will handle requests in the order of request’s sequence number (like what we do in TCP protocol).</li>
+<li>Ask all clients to send requests to RM (or another agency) and let the RM decide the order of requests to process. Replicas will get requests from RM.</li>
+</ol>
+<p>However, these schemes might be fragile if we consider some extreme cases:</p>
+<ol>
+<li>In the first scheme, what if a client grabs a sequence number and holds it for a long time before sending a request? What may happen is that replicas will block in order to wait for that request’s arrival.</li>
+<li>In the second scheme, what if we have many replicas sending requests? Scalability would be an issue and the RM (or the agency receiving all requests) would become the bottleneck.</li>
+</ol>
+<p>We would instead use a new scheme in our project. This scheme only involves replicas themselves and it is easy to implement.</p>
+<h3 id="Polite-Client-Assumption"><a href="#Polite-Client-Assumption" class="headerlink" title="Polite Client Assumption"></a>Polite Client Assumption</h3><p>First, we have the following assumptions:</p>
+<ul>
+<li>The RM first notifies all clients of the new replication configuration, then notifies all replicas of the new config.</li>
+<li>Whenever the client knows there is a replica whose state is NEW (which means the synchronization for this NEW replica is undergoing and have not finished), it stops sending requests until all replicas are READY. <strong><em>You will later see that this assumption is strong and it greatly simplifies the implementation of total ordering.</em></strong></li>
+</ul>
+<h3 id="Handling-Client-Requests"><a href="#Handling-Client-Requests" class="headerlink" title="Handling Client Requests"></a>Handling Client Requests</h3><p>Let’s first talk about how a replica handles a client request.</p>
+<p>By <em>Polite Client Assumption</em>, we know that a new replica never receives client requests. A replica only receives requests when it is in READY state.</p>
+<p>The procedure is:</p>
+<ol>
+<li>Put the client request in the <strong><em>RequestPool</em></strong> and waits for it to complete. When this thread is waiting, other threads do consensus and request processing work. When everything is done, this thread is woken up with the result.</li>
+<li>Return the result to the client.</li>
+</ol>
+<p>The RequestPool is a bridge between the client side and the consensus side. The client side doesn’t care how the consensus is done, and the consensus side doesn’t care where the request comes from and where it goes to.</p>
+<p>So now we have a <strong>clear separation</strong> between client request handling and consensus protocol.</p>
+<h3 id="Executor-Thread"><a href="#Executor-Thread" class="headerlink" title="Executor Thread"></a>Executor Thread</h3><p>Before talking about consensus protocol, let’s first assume that we already have a total order by running consensus. Now how do we actually process those requests?</p>
+<p>The truth is that <strong>the replica has a long-running Executor thread. The thread runs a while(true) loop that checks if it has any work to do repeatedly</strong>.</p>
+<p>It has an internal counter <code>nextProcLid</code> that is the next log ID to process. We use log ID (or Lid) to refer to the <em>index of a message in the total order</em>.</p>
+<p>It also needs to read a global variable <code>lastCommitLid</code> that is the last committed log ID (which means you can process all the logs up to this lid, but not those after this lid). For now, we can assume that <code>lastCommitLid</code> is always the ID of the last log entry in its log. Later, we’ll talk about why it is not.</p>
+<p>The thread work as follows:</p>
+<ol>
+<li>Check if <code>nextProcLid &lt;= lastCommitLid</code> and there is a request in the RequestPool with the log ID equal to <code>nextProcLid</code>. If false, then we have processed all committed requests, so we have nothing to do.</li>
+<li>If false, we sleep 100 ms and go to step 1. If true, we process that request, hand over the response to the RequestPool and increment <code>nextProcLid</code>. By giving the response to the RequestPool, the Executor thread wakes up the client request thread that is waiting for it.</li>
+<li>Go to step 1. We want to process as many as possible.</li>
+</ol>
+<p><img src="executor_thread.svg" alt="executor-flow"></p>
+<p>The RequestPool has an API that allows us to find a request by the log ID. The log ID is not assigned by the client request thread. It is set by the consensus protocol.</p>
+<p>We have already talked about how to handle client requests and how to process a request. All the “request-related” things have been discussed. The only thing left is how to achieve consensus on the order of requests.</p>
+<p>In the rest of the section, we will focus our eyes only on the request ID (which is generated uniquely by the client) and the log ID. We will ignore the content of the requests.</p>
+<h3 id="Prosper-and-Acceptor"><a href="#Prosper-and-Acceptor" class="headerlink" title="Prosper and Acceptor"></a>Prosper and Acceptor</h3><p>A replica can be either a <strong><em>proposer</em></strong> or an <strong><em>acceptor</em></strong>, but not both.</p>
+<ul>
+<li>A proposer dictates the order of messages.</li>
+<li>An acceptor accepts whatever the proposer says.</li>
+</ul>
+<p>The proposer has a Proposer thread running in the background.</p>
+<p>The Proposer thread has an internal counter <code>nextProposeLid</code> that is the next log id to propose.</p>
+<p>The Proposer thread also has an internal hash map <code>lastLidMap</code> whose key is a replicaId, and whose value is the lastLid of that replica (the ID of the last log that replica has).</p>
+<p>The proposer periodically executes this:</p>
+<ol>
+<li>Get all unassigned requests from the RequestPool. An unassigned request has no lid. After it is proposed, it is assigned a lid. So we ensure that a request can be proposed only once.</li>
+<li>Assign <code>nextProposeLid</code> to an unassigned request and then increment <code>nextProposeLid</code>, repeat for all unassigned requests. This is how the requests in the RequestPool are assigned.</li>
+<li>Append these <code>requestId</code> to the local log that it has. <code>requestId</code> is the unique identifier generated by the client in the request. The index of the requestId in the log is its lid.</li>
+<li>Send <code>appendLog(lastCommitId, logs)</code> to all ready acceptors; logs start from <code>lastLidMap[replicaId]+1</code> for each replica. After doing <code>appendLog</code>, all ready replicas are informed of the assignments. But these new logs are not committed yet.</li>
+<li>Set <code>lastCommitId</code> to the last lid in its log. After informing all replicas, we can commit these logs. This value will be updated to all replicas in the next round.</li>
+</ol>
+<p>Periodically, even if there is no unassigned request, the proposer will still send an <code>appendLog(lastCommitId, [])</code> to all replicas (to inform them of the new commit ID, for example).</p>
+<p><img src="proposer_thread.svg" alt="proposer_workflow"></p>
+<p>The acceptor reacts to appendLog request from the proposer by doing the following things:</p>
+<ul>
+<li>Assign <code>lastCommitId</code> to the value in <code>appendLog</code>.</li>
+<li>If the RequestPool has the requests, assign the lids to the requests.</li>
+<li>If not, tell the RequestPool to save the pair <code>(lid, requestId)</code> somewhere and assign the lids to those requests when it sees the requests later.</li>
+</ul>
+<p>By doing so, the Executor thread in the acceptor will eventually process the request.</p>
+<h3 id="New-Proposer-Confirmation"><a href="#New-Proposer-Confirmation" class="headerlink" title="New Proposer Confirmation"></a>New Proposer Confirmation</h3><p><strong>When a new replica joins the cluster, the RM assigns a <code>replicaRank</code> to the replica.</strong> The replicaRank is an integer increasing from 0. It marks when a replica joins the cluster. New replicas have greater ranks.</p>
+<p>Whenever a replica receives a <code>updateReplicationConfig</code> request from the RM, <strong><em>it recognizes the replica with the smallest rank as the proposer</em></strong>.</p>
+<p>Since a new proposer will appear only AFTER the old proposer crashes, there will never be two proposers at the same time. There will be times when there is no proposer at all, but it’s okay. Eventually, there will be a proposer.</p>
+<p>We also know that the transition is one-directional: an acceptor can become a proposer, but a proposer can never become an acceptor (it’s a dictator for life).</p>
+<p>Whenever there is a proposer change, the new proposers and the acceptors will perform a proposer confirmation process.</p>
+<ol>
+<li>The proposer sends <code>confirm(lastLid)</code> to all ready acceptors (a) to tell all replicas the last log ID that the proposer has and (b) to ask them to tell the proposer the last log ID that they have. The new proposer might not be the one who has the longest log.</li>
+<li>Each acceptor responds with the latest log ID it has to the proposer; if an acceptor has longer logs, it also put these additional logs in the response.</li>
+<li>Upon receiving all responses, for all acceptors’ responses,<ul>
+<li>If an acceptor has a longer log, the proposer will append the missing part to its log. Now the proposer has the longest log.</li>
+<li>Set lastLidMap[replicaId] to the lid in the response. Next time the proposer will send logs to this replica from this position.</li>
+</ul>
+</li>
+<li>If the RequestPool has no unassigned requests for now, put a <strong><em>NoOp(do-nothing)</em></strong> request in the pool. The proposer might have some assigned but uncommitted requests. If we don’t commit them, the clients might be blocked. However, the way we commit them is not to modify the <code>lastCommitLid</code> directly, but to propose a NoOp request, which in turn triggers the <code>appendLog</code> procedure, committing the NoOp request and all the uncommitted requests ahead of it.</li>
+</ol>
+<p>After the new proposer finishes the confirmation, it will start the Proposer thread. There might be some unassigned requests left when it was an acceptor, the new proposer will propose these requests eventually. No requests will be lost.</p>
+<p><img src="new_proposer.svg" alt="new_proposer"></p>
+<p>Up to now, you might be confused with the description above. Let’s address some questions again.</p>
+<blockquote>
+<p><strong>Q: Why do we need a <code>lastCommitLid</code>?</strong></p>
+</blockquote>
+<p>There are <strong>three parts</strong> in the log:</p>
+<ul>
+<li>the first part is what is committed and processed;</li>
+<li>the second part is what is committed but unprocessed (the executor hasn’t processed them though it can do so);</li>
+<li>the third part is what is uncommitted (the executor is not allowed to process them).</li>
+</ul>
+<p>Why can’t we assume all logs are committed?</p>
+<p>Think of this scenario of three replicas: the proposer appended the log X to acceptor A, but before appending to acceptor B, crashed. Acceptor A crashed simultaneously (a.k.a. two simultaneous faults). Acceptor B becomes the new proposer.</p>
+<p>Do you see the problem?</p>
+<p>Acceptor B has no possibility of knowing that X is in the log. It may propose something different, for example, an unassigned request Y, before re-proposing X. But since acceptor A knows X, it might already have returned the response to the client.</p>
+<p>Now we have an <strong>inconsistency</strong>: the client thought X happened before Y, but in the new “world”, the new proposer said Y happened before X!</p>
+<p>The way to avoid this from happening is to commit (allowing processing a request) <strong><em>only after all replicas know the log</em></strong>, which is a typical consensus behavior (you may compare it with 2-phase commit or PAXOS). That’s why we need a <code>lastCommitLid</code>.</p>
+<p>In other words, uncommitted logs are changeable during proposer changes.</p>
+<blockquote>
+<p> <strong>Q: Why do we need a NoOp request?</strong></p>
+</blockquote>
+<p>This issue raises from committing.</p>
+<p>Let’s look at a new proposer. It has some assigned but uncommitted requests. These uncommitted requests block the clients who are waiting for responses. And in turn, since the clients are blocked, they can’t send new requests.</p>
+<p>And now comes the problem: the proposer can commit only when receiving new requests! It’s a deadlock.</p>
+<p>To avoid it from happening, if the proposer has no unassigned requests, it proposes a NoOp request that does nothing. By the time the NoOp request is committed, all the requests before the NoOp are committed as well! Remember lastCommitLid means that <strong>ALL</strong> the requests before and equal to that lid are committed.</p>
+<h3 id="New-Replica"><a href="#New-Replica" class="headerlink" title="New Replica"></a>New Replica</h3><p>Let’s first recap the <strong><em>Polite Client Assumption</em></strong>. No client interactions during new replica synchronization.</p>
+<p>Upon receiving updateReplicationConfig, the proposer checks if there is a NEW replica that it sees for the first time. If so, it starts the following synchronization step.</p>
+<ol>
+<li>The proposer first asks if the NEW replica is still in the NEW state. The latency of information propagation can cheat. That’s why we need to confirm the state of the new replica.</li>
+<li>If the replica says READY, the proposer internally marks it as READY and finish. If the replica says NEW, do the following. By internally marking as READY, the proposer will ignore any state of that replica in later updateReplicationConfig. There might be some delay for it to become ready.</li>
+<li><strong>The proposer waits until all the requests are processed</strong>. This is to ensure that its state is the newest state. If it has some requests left undone, its state is earlier than the latest.</li>
+<li>The proposer checkpoints the state. It contains the balance of all accounts and the last processed log ID and the last committed log ID.</li>
+<li>The proposer sends the checkpoint to the new replica.</li>
+<li>The new replica accepts and recovers the state from the checkpoint. <strong>Now the new replica is in the same state as the proposer.</strong></li>
+<li>The new replica switches to READY state. If the old proposer crashes, the new proposer will ask if the new replica is still new first (this is a corner case that we might ignore).</li>
+<li>The proposer internally marks the replica as READY and will never perform the synchronization on that replica again, even if later <code>updateReplicationConfig</code> says it is still NEW (due to the latency of fault detectors).</li>
+</ol>
+<p><img src="new_replica.svg" alt="new_replica"></p>
+<p>Up to now, you may have a more comprehensive understanding of how requests are handled and what would happen if some faults come to appear (e.g., the proposer fails, a replica joins). A very important note is that: <strong>all contents discussed up to now are only for active replication.</strong> We have emphasized it many times in order to avoid confusion. What would be different in passive replication? We will talk about it now.</p>
+<h2 id="Passive-Replication-Highlights"><a href="#Passive-Replication-Highlights" class="headerlink" title="Passive Replication Highlights"></a>Passive Replication Highlights</h2><p>We will only highlight the differences between these two replication schemes.</p>
+<p>Let’s first recall the definition of passive replication: only one replica (<strong>primary replica</strong>) will in fact execute the requests and all other replicas (<strong>secondary replicas</strong>) will periodically get checkpointing from the primary one.</p>
+<p>Under active replication style, the RM will send full membership info (i.e., information of all existing replicas) to all replicas and clients (we probably did not note this previously, but it is not late to say it now! ). However, in passive replication, <strong>the RM should send clients only the information of primary replica, while still send full membership information to all replicas</strong>. With this trick, our client will not (and should not) be aware of the current replication method: all it has to do is to just send requests to replicas that are included in the config info.</p>
+<p>Wait, how can we determine who is the primary replica? It is similar to the proposer-acceptor pattern in active style: <strong>among all alive replicas, the one with the lowest rank number is always the primary replica.</strong></p>
+<p>Now only the primary replica would be able to receive requests from clients. The process to handle a request from a client would also be simpler compared with the active replication method. When the request pool is not empty, the primary replica would also do the following:</p>
+<ol>
+<li>Get a request from request pool (in the order of time), assign a lid for this request and increment <code>nextProposeLid</code>;</li>
+<li>Append these requestIds to the local log that it has;</li>
+<li>Send <code>(lid, request)</code> to all secondary replicas. The primary replica would try to process this request only after receiving ACKs from all secondary replicas. Note that, for secondary replicas, instead of immediately processing requests from the primary replica, they will only store requests and states remain unchanged until checkpointing is conducted in the future;</li>
+<li>Primary replica returns results to clients and proceeds to the next request.</li>
+</ol>
+<h2 id="Checkpointing"><a href="#Checkpointing" class="headerlink" title="Checkpointing"></a>Checkpointing</h2><p>We keep a really simple application in the system: each back system is in fact a list of accounts, and each account contains user id and balance. Making a checkpoint is in fact dumping a data structure into JSON data while parsing checkpoint reading JSON data.</p>
+<h1 id="Web-UI"><a href="#Web-UI" class="headerlink" title="Web UI"></a>Web UI</h1><p>To monitor our system in a better way, we implement web UI for each component in our system. They might be naive and simple, but highly helpful.</p>
+<p>To present the demo of the web UIs, we initialized a small system here which includes:</p>
+<ol>
+<li>One replication manager;</li>
+<li>One global fault detector;</li>
+<li>One local fault detector and two replicas under it;</li>
+<li>Two independent clients.</li>
+</ol>
+<p>The web UIs would be able to provide some useful information of the system and you may as well perform some simple operations.</p>
+<h2 id="GFD"><a href="#GFD" class="headerlink" title="GFD"></a>GFD</h2><p>As mentioned before, GFD will directly communicate with all local fault detectors (though we only have one in this case) and it also has the complete membership information (i.e., replicas in the system), and you are able to see all of these on the UI.</p>
+<p>In addition, “Activity Log” will show the important events that GFD experienced. You can also set the fault detection interval, which can impact the recovery time if faults happens (but we will not discuss it here).</p>
+<p><img src="gfd_ui.png" alt="gfd-ui"></p>
+<h2 id="LFD"><a href="#LFD" class="headerlink" title="LFD"></a>LFD</h2><p>While the whole system is running, an LFD will keep monitoring the status of all replicas under its supervision. In our demo, there is one LFD which has two replicas. The web UI will show the last fault detection time (real-time) and IP address of all monitoring replicas.</p>
+<p><img src="lfd_ui.png" alt="lfd-ui"></p>
+<h2 id="RM"><a href="#RM" class="headerlink" title="RM"></a>RM</h2><p>The web UI of the replication manager would show information including current replication style (active or passive), information of all replicas, and IP address of all clients.</p>
+<p>In “All Replicas” table, you will get each replica’s “Replica ID” and “Replica Rank”. Please note that the “Replica Rank” is the <code>replicaRank</code> we previously discussed, which will be used to determine which is the proposer (in active style) or primary replica (in passive style).</p>
+<p>You can also set the checkpointing interval via the UI.</p>
+<p><img src="rm_ui.png" alt="rm-ui"></p>
+<h2 id="Replica-1"><a href="#Replica-1" class="headerlink" title="Replica"></a>Replica</h2><p>The web UI will show some information of one replica, including ID, IP address, replication style, status (NEW or READY), and a simple bank “database” (accounts and their balance). Checkpoint messages and total ordering messages are also showed.</p>
+<p>If a replica is a proposer or primary replica, you are supposed to see “(Primary Replica)” in red color under “Replica ID”. Otherwise, it will show as “(Acceptor)” in black. The naming might be confusing and we apologize for it.</p>
+<p>If the replica state is “NEW”, it means that the replica is still under synchronization. According to the “polite client assumption”, clients will not send any requests if any replica is under “NEW” state.</p>
+<p>There are two kinds of checkpoint messages: “get” and “set”. “get” simply means the replica records its database into a checkpoint (JSON data) and store it locally; while “set” simply means one replica acquires checkpoint data from another replica and restores data from it.</p>
+<p>An interesting part is “Total Order Messages”. All logs showed here have the following format:</p>
+<pre><code>[message_order]:Transaction ([client_ID], [request_ID])</code></pre><p><code>message_order</code> is the order of the message decided by the proposer. The tuple <code>([client_ID], [request_ID])</code> is generated by the replica which sends this message; in other words, it acts as a unique ID of the request across the whole system.</p>
+<p>The picture above shows the web UI of the proposer replica under active replication. Once the replica is started, it will first try to set a checkpoint from someone else (but it will not take any effects as it is the first one to start in the system). When another replica starts, it will ask the proposer for a checkpoint, so the proposer will “get” one and send it to the secondary replica. This is why you can see one “set” and one “get” in the proposer’s UI.</p>
+<p><img src="r_active_1.png" alt="replica-active-primary"></p>
+<p>Accordingly, you will only see one “set” on the second (acceptor) replica’s UI (see below). <strong>Please remember: in active replica, getting and setting checkpoints will only happen when a new replica appears.</strong></p>
+<p><img src="r_active_2.png" alt="replica-active-second"></p>
+<p>However, if we switch the replication style from active to passive, things would be different: primary replica will periodically get checkpoints and sent them to all other replicas, so primary replica will have a list of “get” checkpoint messages and other replicas will have a list of “set”; lists will keep growing as long as the system is still running. See the pictures below for a demo.</p>
+<p><img src="r_passive_1.png" alt="replica-passive-primary"></p>
+<p><img src="r_passive_2.png" alt="replica-passive-second"></p>
+<h2 id="Client"><a href="#Client" class="headerlink" title="Client"></a>Client</h2><p>For the web UI of clients, we used some elements from Bootstrap. The picture below is the main interface of this UI.</p>
+<p><img src="client_main_ui.png" alt="client-main"></p>
+<p>On the main interface you will see the system status: either <strong>“Ready for Request”</strong> or <strong>Service Not Available</strong>. Note that the status will be “Ready for Request” only when all replicas are under “READY” states.</p>
+<p>You may also see a list of replicas. Please note that, under active style, all replicas will be listed here; while there will be only one replica (the primary one) under passive style. Thus, you might not know the current replication style just via this interface. In fact, this is what we want: the client should never care about the replica style. If we switch the replication style to passive (but still run 2 replicas), the client UI will be different:</p>
+<p><img src="client_main_ui_passive.png" alt="client-main-passive"></p>
+<p>We also show the most 20 logs on the UI. It shows all messages sent from this client and the response from corresponding replicas. Remember clients will always send a request to all replicas it knows (but, once again, it will only know the presence of primary replica under passive style).</p>
+<p>You may also execute some basic operations on the bank account. Once you submit the operation, you will be directed to the main interface and the result (success or failure) of this operation will pop up here.</p>
+<p>UI for “deposit”:<br><img src="client_deposit.png" alt="client_deposit"></p>
+<p>Results of “deposit”:<br><img src="client_success.png" alt="client_return"></p>
+<p>We also implemented a button “Start Testing” on the main UI, so a client can continuously send requests to replicas without manually clicking buttons. This feature is mainly used for testing.</p>
+</span> -->
         </article>
     
         
@@ -140,6 +427,36 @@
         <article class="archive-item">
             <a class="archive-item-link" href="/2019/04/21/shoppingweb/">Project: A Distributed and Auto-Scalable Online Shop Web Server</a>
             <span class="archive-item-date">Apr 21, 2019</span>
+            <!-- <span style=> <img src="head.jpeg" alt="drawing" width="500"/>
+
+<p>If you have ever get along with AWS EC2, you must know that the most critical feature it provides is load balancing, which is capable of automatically killing or launching machines (or VMs) according to the real-time metrics (e.g., CPU utilization). In this project, we also wanted to do something similar.</p>
+<p>We implemented a distributed web server which can emulated online shopping (browse buy). The system consists of multiple tiers, and is able to scale in or out accordingly, depending on the current QPS.</p>
+<p>Please note that it is a small project, and there is, in fact, no any real shopping applications, we as want to mainly pay attention to design and implementation of scalability and system hierarchy.</p>
+<p>We also want you to keep in mind that:</p>
+<ul>
+<li>Though we talks about “servers” here, each server in fact is a process, which act as a VM and can easily be killed or launched.</li>
+<li>You cannot by anything though our web :)</li>
+</ul>
+<h1 id="System-Hierarchy"><a href="#System-Hierarchy" class="headerlink" title="System Hierarchy"></a>System Hierarchy</h1><p>Refer to the picture below for the system, hierarchy:</p>
+<p><img src="structure.svg" alt="hierarchy"></p>
+<h2 id="Front-end-Server"><a href="#Front-end-Server" class="headerlink" title="Front-end Server"></a>Front-end Server</h2><p>The responsibility of front-end servers is to receive requests (but not process them). Thus, there should be something like “request pool” to store all requests. Who should be responsible for maintaining this “pool”? In order to do that, we also divided all front-end servers into 2 categories:</p>
+<h3 id="Master"><a href="#Master" class="headerlink" title="Master"></a>Master</h3><p>The master front-end server is supposed to maintain a <strong><em>central queue</em></strong> which has all requests received by front-end servers. Please note, the master server itself will also receive requests, just like slave servers (explain below). There is only and at least one master in our system. Another critical feature for master server is that it also takes charges of scaling in/out, according to the length of central queue.</p>
+<h3 id="Slave"><a href="#Slave" class="headerlink" title="Slave"></a>Slave</h3><p>Slave front-end servers have less workload compared to the master. It will only receive requests and push them into the central queue on master front-end servers. There might be multiple slave masters.</p>
+<h2 id="Middle-end-Server"><a href="#Middle-end-Server" class="headerlink" title="Middle-end Server"></a>Middle-end Server</h2><p>Each middle-end server would continuously get a request from the master front-end server and process it with the cache. In addition, it will also detect whether scale-in or scale-out for middle-tier is necessary. If so, it would notify the master server to kill or launch middle-end servers accordingly.</p>
+<h2 id="Cache-and-Database"><a href="#Cache-and-Database" class="headerlink" title="Cache and Database"></a>Cache and Database</h2><p>When it comes to database and cache, consistency appears to the top priority. While read-only operations might be executed on cache directly, write operations might cause more trouble as we have to go all the way to the database, and might have to invalidate some cache entries as well. It would become more complex and troublesome if there are multiple clients or caches in the system.</p>
+<p>In this project, we will not do anything about database and cache, not to mention any consistency models. We only wrote a very simple interface to execute some operations on a cache. If you want to learn more about cache-related technologies, you may refer to my another post on distributed system and file caching. (If you do not see such a post, probably I am still working on it)</p>
+<h1 id="Scalability"><a href="#Scalability" class="headerlink" title="Scalability"></a>Scalability</h1><h2 id="Middle-Tier"><a href="#Middle-Tier" class="headerlink" title="Middle Tier"></a>Middle Tier</h2><p>Scaling on middle tier is <strong>determined</strong> by middle-end servers and <strong>done</strong> by master front-end server.</p>
+<h3 id="Scaling-Out"><a href="#Scaling-Out" class="headerlink" title="Scaling Out"></a>Scaling Out</h3><p>As we mentioned earlier, middle-end servers will continuously poll requests from master server. In fact, when it tries to get a request, it will also check the length of the central queue. If it detects a “too long” queue <strong>for consecutive two times</strong>, we will launch two more servers.</p>
+<h3 id="Scaling-In"><a href="#Scaling-In" class="headerlink" title="Scaling In"></a>Scaling In</h3><p>Consider the case where this is no pending requests in the central queue. Now, a middle-end server cannot get a request, and it will wait until timeout. If there are three consecutive timeouts, master server will be notified to scale in by killing some servers.</p>
+<h2 id="Front-Tier"><a href="#Front-Tier" class="headerlink" title="Front Tier"></a>Front Tier</h2><p>The number of front-end servers is dynamically adjusted by number of the middle-end servers. The master front-end server will check it when the number of middle-end servers change. By doing so, we can always keep an optimal ratio of front-end and middle-end servers, which is helpful in avoiding waste of resource.</p>
+<h2 id="Benchmarking"><a href="#Benchmarking" class="headerlink" title="Benchmarking"></a>Benchmarking</h2><p>You may now be aware that we have many parameters in out system, and probably we need to conduct some experiments to determine the optimal values. That’s right. We need benchmarking and experiments to answer the following questions:</p>
+<ol>
+<li>What is the initial number for front-end server and middle-end server (based on the QPS)?</li>
+<li>What is value of timeout when a middle-end server tries to get a request from the master?</li>
+<li>What is the optimal ratio of front-end and middle-end servers? The optimal value might different under different load pattern.</li>
+</ol>
+<p>Designing an auto-scalable system is not only about algorithms and strategies. We also need to carefully study the load pattern and conduct some experiments to determine how we should tweak our system.</p>
+</span> -->
         </article>
     
         
@@ -149,6 +466,90 @@
         <article class="archive-item">
             <a class="archive-item-link" href="/2019/02/26/spark/">Project: Apache Spark - Process Large Web Crawl Data and Train ML Model</a>
             <span class="archive-item-date">Feb 26, 2019</span>
+            <!-- <span style=> <img src="spark.png" alt="drawing" width="500"/>
+
+<br>
+
+<p>Apache Spark is an open source, distributed parallel computing framework, which is very powerful in processing and analyzing a large amount of data. It also has some additional advantages over MapReduce.</p>
+<p>In this project, I will use Apache Spark to finish two tasks:</p>
+<ol>
+<li>Use Spark to preprocess an existing corpus crawled from the Internet to generate output in a specific format: extract, load, and transform (ELT).</li>
+<li>Write a scalable distributed iterative ML program using Apache Spark.</li>
+</ol>
+<p>The two tasks listed above, in fact, seem not challenging at the first glance. Yes, you are right. By briefly studying the official documents and some example programs, you can finish the job easily. <strong>However, please consider some special requirements or scenarios before drawing any conclusions</strong>:</p>
+<ul>
+<li>There is an upper limit for the running time of the program. In other words, your program should preform efficiently in terms of time.</li>
+<li>We have limited computing resources, i.e., memory, CPU cores, etc.</li>
+<li>Program should be reliable and tolerant for failures (though Spark has some built-in mechanisms for fault-tolerance).</li>
+</ul>
+<p>You will gradually see that programming with Spark is never easy, especially when you wish your program has high performance.</p>
+<p>Please note that, in this project, I also used HDFS and Amazon EC2 to manage our machines and distribute data/files, which, however, is not our focus, so I just exploited some existing framework/scripts for this part.</p>
+<p style="color:#F13E3E"><b>Note</b>: due to the CMU academic integrity policy, some contents in this post are disabled as they are directly related to my codes or design. Please contact me or leave comments if you want to learn more about this project and <u><b>AND</b></u> will not take this course in the future!</p>
+
+<h1 id="Preprocessing-with-Spark"><a href="#Preprocessing-with-Spark" class="headerlink" title="Preprocessing with Spark"></a>Preprocessing with Spark</h1><p>In this task, I was given an open repository of web crawled data (we only choose WET format file). These data should be processed following the steps below:</p>
+<ol>
+<li>Retrieve all documents (payloads) from some WET files with some third-party Python APIs; a WET file could be large and have many documents;</li>
+<li>Discard all tokens that are not valid (e.g., invalid words contain characters rather than English letters and some simple characters);</li>
+<li>Standardize all valid tokens from step 2 (including stripping away some invalid leading or tailing characters, convert all characters to lower-case, etc.);</li>
+<li>Discard some documents whose length is lower than a limit;</li>
+<li>Remove “stop” words (stop words refer to common words in English, e.g., “a”, “the” and domain-specific common words, which appear in more than 90% of all documents);</li>
+<li>Remove typo words. Typo words can be identified by checking the number of documents that the word appears in. If the number is below a limit, we may treat this word as a typo.</li>
+<li>sort all words by their lexicographical order and give them index number starting from 0.</li>
+<li>Generate “word:count” pair for all words and computer statistic data of processed corpus.</li>
+</ol>
+<p>All steps listed above, in fact, do not require complex algorithms. You may find that we could parallelize some operations, e.g., discard invalid tokens, as each machine can independently finish this job. Some other operations may need <code>Reduce</code> operation, e.g., removing typo, as we have to know the document frequency of this word across the entire corpus.</p>
+<p>But, what makes the program so slow?</p>
+<h2 id="Performance-Analysis"><a href="#Performance-Analysis" class="headerlink" title="Performance Analysis"></a>Performance Analysis</h2><h3 id="Shuffle"><a href="#Shuffle" class="headerlink" title="Shuffle"></a>Shuffle</h3><p>Shuffle mechanism is used to redistribute the partitioned RDDs to satisfy certain conditions. For example, in order to detect domain-specific “stop” words, we need to count the document frequency of each word, which may require <code>reduceByKey</code> operations. <strong>Shuffle is an expensive operation.</strong> It normally requires a lot of disk IO and network IO costs. Also, each node (worker) will not be independent anymore, so one slow work can make the whole process slow.</p>
+<h3 id="Transformations-and-Actions"><a href="#Transformations-and-Actions" class="headerlink" title="Transformations and Actions"></a>Transformations and Actions</h3><p><a href="https://spark.apache.org/docs/latest/rdd-programming-guide.html#transformations" target="_blank" rel="noopener">Transformations</a> and <a href="https://spark.apache.org/docs/latest/rdd-programming-guide.html#actions" target="_blank" rel="noopener">actions</a> are different, and you should be aware of how they behave differently.</p>
+<p>Note that, if there is no actions, Spark could records the dependency information between RDDs without evaluating them, which is called “lazy evaluation”. Thus, several distinct steps could be merged and be executed seamlessly. This is very helpful in boosting computing performance. Thus, do not invoke actions unless required.</p>
+<h2 id="Ideas"><a href="#Ideas" class="headerlink" title="Ideas"></a>Ideas</h2><p>Here are some ideas I used for this task. They show great improvement in the performance.</p>
+<h3 id="Reorder-the-Workflow"><a href="#Reorder-the-Workflow" class="headerlink" title="Reorder the Workflow"></a>Reorder the Workflow</h3><p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h3 id="Consider-Intermediate-Results"><a href="#Consider-Intermediate-Results" class="headerlink" title="Consider Intermediate Results"></a>Consider Intermediate Results</h3><p>This trick is super helpful and effective.</p>
+<p>At first, let’s talk about a sorting algorithm. We all know “merge sort” algorithm, which divides the array into many smaller subarrays, sorts these subarrays then merges. It shows a principle called “divide and conquer”. <strong>This principle will give us some ideas in designing the program</strong>.</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h3 id="Distribute-Workload-Evenly"><a href="#Distribute-Workload-Evenly" class="headerlink" title="Distribute Workload Evenly"></a>Distribute Workload Evenly</h3><p>If there is an action which needs <code>Reduce</code> and shuffle, the reducer needs to wait all mappers to finish their work before the reducer could start its job.</p>
+<p>Is it possible that there is a mapper takes much longer to finish its job, which slow down the whole pipeline? In this case, some mappers might be idle and reducer cannot start its job either.</p>
+<p>The answer is yes, and it is even highly possible. Suppose when we have 4 workers and 5 WET files. The first step is to initialize 5 RDDs (corresponding to 5 WET files) and distribute them to 4 workers. However, even under the best allocation strategy, there is always one worker who has 2 WET files to process. As we mentioned earlier, it may take a long time to process just a single WET file. Thus, we will expect a period of time when three workers are idle and one working (which is called “straggler”).</p>
+<p>This poor strategy is highly possible to lead to waste of resources. Normally, if the size of RDD is smaller (and number of RDD increases), we are less likely to see a worker become the “straggler”. For example, we could make each document as a RDD partition. However, it also leads to more overhead which consumes storage and computing resources as well.</p>
+<h2 id="Benchmark"><a href="#Benchmark" class="headerlink" title="Benchmark"></a>Benchmark</h2><p>To process 400 WET files (~200 GB) with 16 AWS <code>m4.xlarge</code> slaves instance, the original and naive program needs to take <strong>more than 3 hours</strong>, while the improved program (which used the tricks above) only takes <strong>within 35 minutes</strong>.</p>
+<p>Though these tricks seem very intuitive and easy to implement, they might not come to your mind when you write Spark programs the first time. Spark in fact provides us with interactive and informative UIs, showing the real-time workflow and metrics of each worker. <strong>It is an important source for you to spot the bottleneck of your program and figure out a solution.</strong> We will talk about it at the end of this post.</p>
+<h1 id="Iterative-ML-Model-Training"><a href="#Iterative-ML-Model-Training" class="headerlink" title="Iterative ML Model Training"></a>Iterative ML Model Training</h1><p>Remember what I said at the beginning of this post: Spark has some additional advantages over MapReduce. The most important features that Spark brings to us is <strong>in-memory processing</strong>.</p>
+<p>This feature will be more prominent when the task is iterative: we may need to access or process the same data multiple times. Resilient Distributed Datasets (RDDs) enable multiple map operations in memory, while Hadoop MapReduce has to write interim results to a disk, which may involve some additional IO cost.</p>
+<p>Thus, here comes the second task: given a lot of training data and multiple nodes (instances), how can we efficiently train our machine learning model in parallel. The ML model itself may has a large amount of features.</p>
+<p>The ML model here is a simple logistic regression, and we are going to use gradient descent to update our model. This model starts with a random guess of the model feature weights and refines them over many iterations. In a single iteration, each data sample in the training set is processed to generate an incremental update to the model features. The model features updates are accumulated and not applied until the end of an iteration. <strong>This algorithm enables us to implement a training workflow which involves many nodes:</strong></p>
+<ul>
+<li>In an iteration, each node can compute and accumulate gradient independently;</li>
+<li>The reducer can then accumulate updates from all mappers, get the final updates in the current iteration, update the feature weights, and broadcast new feature weights to all mappers;</li>
+<li>Mappers start a new iteration.</li>
+</ul>
+<p>This workflow is really suitable for Spark: in each iteration, the nodes need to access the same training data and compute the gradient, as Spark can keep data in memory, nodes do not have to load data from disk through IO (this is what MapReduce does). The whole process would be much faster and more efficient.</p>
+<p>However, some problem will appear when you are writing you program: sometimes your program will encounter out-of-memory issue and then crashes, or it has to take a long time to finish its job.</p>
+<p>Compared with the first task, this task also forces you to figure out how you should manage the computing resources appropriately. Apparently, out-of-memory issue happens due to the exhaustion of memory. Is this because the memory stores too much data? Another question is, are there any other ways to make my program faster (in addition to the tips mentioned in the first task)?</p>
+<p>No worry. I will summarize some useful tricks.</p>
+<h2 id="Join-based-Parameters-Communication"><a href="#Join-based-Parameters-Communication" class="headerlink" title="Join-based Parameters Communication"></a>Join-based Parameters Communication</h2><p>As we mentioned earlier, the number of ML features may be huge (millions in this task). However, each data sample may not have so many nonzero values (probably only have tens of nonzero values). Also, processing each data sample only requires reading the weight values for its nonzero features and generating updates for its non-zero feature. Thus, <strong>a node does not need to get all feature weights from the ML model.</strong> This practice is critical in this project. In fact, trying to store a full copy of the weights or all updates on any of the machines will case failure: remember, memory is expensive and limited.</p>
+<p>In order to take advantage of this feature, we might exploit some methods, such as inverted indices (which is popular in many area such as search engine) to design a better workflow.</p>
+<h2 id="Ideas-1"><a href="#Ideas-1" class="headerlink" title="Ideas"></a>Ideas</h2><h3 id="A-Better-Workflow"><a href="#A-Better-Workflow" class="headerlink" title="A Better Workflow"></a>A Better Workflow</h3><p>We have mentioned that workflow is very important in implementing a Spark program. But, in the previous example, we just reordered some tasks to reduce the work load. For a different task, the workflow might be much harder to design or improve.</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h3 id="Optimization-on-join"><a href="#Optimization-on-join" class="headerlink" title="Optimization on join"></a>Optimization on <code>join</code></h3><h4 id="Partition"><a href="#Partition" class="headerlink" title="Partition"></a>Partition</h4><p>When using <code>join</code> in your code, remember:</p>
+<p><strong><em>When joining an RDD of N partitions with an RDD of M partitions, the resulting RDD may contain N*M partitions. You may want to explicitly control the number of partitions for the resulting RDD.</em></strong></p>
+<p>So, if possible, remember to use some built-in APIs (e.g., <code>partitionBy</code>) to partition your RDDs again.</p>
+<h4 id="Shuffle-1"><a href="#Shuffle-1" class="headerlink" title="Shuffle"></a>Shuffle</h4><p>Shuffle in always expensive and “join” operation may also involve shuffle. However, <strong><em>When two RDDs are already partitioned by the same function, joining them does not require a shuﬄe</em></strong>.</p>
+<p>Why? And what does this indicate?</p>
+<p>In fact, every time we create RDDs, we need to use some partitioner function to partition data and distribute data on all nodes. If two RDDs have the same partitioner functions, it indicate that data entries with same key will also reside on the same node; nodes then does not need to communicate with nodes to do “join”, which leads to shuffle.</p>
+<p>The default partitioner function is hash function. But how can you make sure two RDDs have the same partitioner function?</p>
+<p>There are many possible cases where partitioner functions are changed. But the most important one is: <strong><em>if you applied any custom partitioning to your RDD (e.g. using <code>partitionBy</code>), using <code>map</code> or <code>flatMap</code> would “forget” that partitioner function.</em></strong> This is because Spark cannot know if the key is changed after <code>map</code>. Instead, <code>mapValues</code> is better as you could only change the value with this function.</p>
+<p><strong>A caveat</strong>: always choose <code>mapValues</code> or <code>flatMapValues</code> if you don’t intend to change the key.</p>
+<h3 id="Manage-Your-Resources"><a href="#Manage-Your-Resources" class="headerlink" title="Manage Your Resources"></a>Manage Your Resources</h3><p>You may see some out-of-memory (OOM) issue when running your spark program. This is because Spark by default will keep RDD in memory, when we need to create another RDD (by some action), they will also be placed in memory. E.g., in this task, we need to maintain a training data RDD while generating the updates RDD. What if the memory is limited?</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h3 id="Find-the-Bottleneck"><a href="#Find-the-Bottleneck" class="headerlink" title="Find the Bottleneck"></a>Find the Bottleneck</h3><p>Spark gives you the live monitoring web UI to help you track the task and find the bottleneck.</p>
+<p>Normally, the first thing to check is <strong>job</strong>. Clicking a job shows the details of this job, including its event timeline and a DAG visualization. You can easily figure out which operations belong to which stage and the locations where shuffle occurs.</p>
+<p>The web UI also shows statistics/metrics for tasks. You may also access status of each machine and check if any nodes are dead already. You can also detect any stragglers by checking the task numbers of each machine from the web UI.</p>
+<h2 id="Benchmark-1"><a href="#Benchmark-1" class="headerlink" title="Benchmark"></a>Benchmark</h2><p>The improved program could finish 2 iterations within 30 mins with 40GB Criteo dataset as training data (ML model with 88M features) on AWS 16 <code>c4.xlarge</code> instances; or 4 iterations within 40 mins with 10 GB KDD2012 dataset (ML model with 54M features) on 16 <code>c4.xlarge</code> instances.</p>
+</span> -->
         </article>
     
         
@@ -158,6 +559,66 @@
         <article class="archive-item">
             <a class="archive-item-link" href="/2019/02/01/rpc/">Project: A Distributed System with Multiple RPCs and File Fetching Cache</a>
             <span class="archive-item-date">Feb 1, 2019</span>
+            <!-- <span style=> <img src="rpc.png" alt="drawing" width="500"/>
+
+<p>You may have seen many awesome and outstanding distributed systems which work for some real-life applications. Today, we will go all to the way to the system level and see how distributed computing could be implemented here.</p>
+<p>This project consists of two tasks:</p>
+<ol>
+<li>build an RPC system to allow remote file operations (<code>open</code>, <code>read</code>, <code>write</code>, …); these RPC stubs will be interposed in place of the C library functions that handle file operation. For example, if you execute <code>cat foo</code> command on the local machine, instead of opening and printing the contents of a local file, it will access the contents of file <code>foo</code> on the remote server machine.</li>
+<li>based on the task 1, a proxy containing a cache should be implemented and placed between the clients and the server. Multi-clients and multi-proxy will be supported. You should also exploit some cache policies and strategies to guarantee consistency.</li>
+</ol>
+<p>This project comes from the CMU course 15-440/640: Distributed System. <font color="#F13E3E">Due to the CMU academic integrity policy, the code will not be publicized and some contents in this post will also be disabled as there are directly related to the design of my solution. </font></p>
+<h1 id="RPC"><a href="#RPC" class="headerlink" title="RPC"></a>RPC</h1><p>It is very common for us to access resources located on remote machines. We may easily write some applications to use the network to communicate between different components running on different machines, which, however, is tedious and inelegant to insert ad-hoc networking code every place our software needs to access remote resources.</p>
+<p>Instead, we could implement remote procedure calls to hide the network complexities and to access the remote resources in a clean abstraction. Users of these RPCs will not need to care anything on networking, and they could also develop more applications on the top of them.</p>
+<h2 id="Requirements"><a href="#Requirements" class="headerlink" title="Requirements"></a>Requirements</h2><p>The purpose of this task is to enable clients to use some commands (such as <code>cat</code>, <code>ls</code>) to access files on remote machine. In order to do this, we need to rewrite the standard C library calls and replace the original ones:</p>
+<pre><code>open, close, read, write, lseek, stat, unlink, getdirentries</code></pre><p>We will also implement the non-standard calls <code>getdirtree</code> and <code>freedirtree</code>. The course will provide us a library containing these two functions.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">struct dirtreenode* <span class="title">getdirtree</span><span class="params">( <span class="keyword">const</span> <span class="keyword">char</span> *path )</span></span>;</span><br></pre></td></tr></table></figure>
+<p>Function <code>getdirtree</code> recusively descend through directory hierarchy starting at directory indicated by path string. Allocates and constructs directory tree data structure representing all of the directories in the hierarchy.</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">freedirtree</span><span class="params">( struct dirtreenode* dt )</span></span>;</span><br></pre></td></tr></table></figure>
+<p>Function <code>freedirtree</code> recursively frees the memory used to hold the directory tree structures, including the name strings, pointer arrays, and <code>dirtreenode</code> structures.</p>
+<p>These two function enables you to use <code>tree</code> on the terminal which will print out the file tree structure on the terminal. The library only makes sure you can execute the command locally, and we need to implement a RPC for it.</p>
+<h2 id="Design"><a href="#Design" class="headerlink" title="Design"></a>Design</h2><p>This task will be completed in C, so it may involve some basic practice on memory management, networking programming (we use TCP here) and some file operations. In addition, we also need to design some protocols.</p>
+<h3 id="Serialization-and-Deserialization"><a href="#Serialization-and-Deserialization" class="headerlink" title="Serialization and Deserialization"></a>Serialization and Deserialization</h3><img src="serial.png" alt="drawing" width="600"/>
+
+<p>The picture below shows what will happen once a RPC is called. We need to design how should we:</p>
+<ol>
+<li>pack RPC name and corresponding parameters into a string (serialization on client side) and send it to server;</li>
+<li>unpack RPC name and parameters, call corresponding local function, get results, pack results into a string and send back to client (deserialization and serialization on server side);</li>
+<li>unpack results from server and show locally.</li>
+</ol>
+<p>Due to CMU academic policy, we will not discuss any detail on these protocols. Please note that you may need some a little bit more complicated algorithm when dealing with <code>getdirtree</code>, as we have to serialize a tree structure into a string and deserialize from a string.</p>
+<h3 id="Concurrency"><a href="#Concurrency" class="headerlink" title="Concurrency"></a>Concurrency</h3><p>We must handle the situation where multiple clients are accessing to a single remote machine. A simple solution is using the multi-process mode. Each client will be handled in a specific child process, which has its own file descriptor table and will not conflict with other clients’ FD tables.</p>
+<h3 id="Local-and-Remote-File-Descriptor"><a href="#Local-and-Remote-File-Descriptor" class="headerlink" title="Local and Remote File Descriptor"></a>Local and Remote File Descriptor</h3><p>a very subtle but important problem is, for client, how can we distinguish between the local and remote file descriptor.</p>
+<p>You may ask, why we have to do this? <strong><em>This is because some programs on the client still needs to access local resources.</em></strong> For example, a client opens a remote file and the FD is <code>3</code> (this is created by the remote machine) and a local file, which returns a FD <code>3</code> as well. In this case, if we continue some file operations such as <code>read</code>, we don’t know which file we exactly need to read. Thus, there must be a mechanism to tell the origin of the FD (i.e., it is from local or remote).</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h1 id="File-Cache"><a href="#File-Cache" class="headerlink" title="File Cache"></a>File Cache</h1><p>In the previous task, we already have a simply distributed system, where clients and servers could communicate via RPCs. Now, we will design and implement a cache in Java between these two components.</p>
+<p>Caching is a great technique for improving the performance of a distributed system. It can help reduce data transfers, and improve the latency of operations. This task will continue to use existing binary tools in task 1 and interpose on their C library calls. Instead of directly connecting the server, clients now will only access the proxy (which contains a cache) to execute some operations:</p>
+<img src="cache.jpg" alt="drawing" width="500"/>
+
+<br>
+
+<p>Seems easy, right? Well, let’s talk about some details on requirements.</p>
+<h2 id="Requirements-1"><a href="#Requirements-1" class="headerlink" title="Requirements"></a>Requirements</h2><p>Here are something we need to consider through this task.</p>
+<ol>
+<li><strong><em>Cache policy</em></strong>. Remember that a cache always have limited space, so we need to evict some cache entries under a policy we design;</li>
+<li><strong><em>Concurrency</em></strong>. The system must support multiple proxies and clients running simultaneously (especially when there are many writers);</li>
+<li><strong><em>Consistency</em></strong>. We have to make sure clients will not get stale contents;</li>
+<li><strong><em>Atomicity</em></strong>. If one client opens a client, it should be interrupted by other clients accessing the same file. In other words, clients will have a fixed view during the open-close session.</li>
+</ol>
+<h2 id="Design-1"><a href="#Design-1" class="headerlink" title="Design"></a>Design</h2><h3 id="LRU-policy"><a href="#LRU-policy" class="headerlink" title="LRU policy"></a>LRU policy</h3><p>We will use a “Least Recently Used” policy to decide which cache entries should be evicted when the cache is full.</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h3 id="Concurrency-1"><a href="#Concurrency-1" class="headerlink" title="Concurrency"></a>Concurrency</h3><p>Some Java built-in libraries could be exploited to make data safe in concurrent condition. In addition, we always ensure there is only reader instance and multiple writer instances: multiple readers can read a single reader instance but each writer needs an exclusive writer instance. How can we achieve that?</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+<h3 id="Consistency"><a href="#Consistency" class="headerlink" title="Consistency"></a>Consistency</h3><p>We will exploit an idea called “check on use” to make sure that the clients will not get stale contents. Specifically speaking, every time a client wants to read some contents from the proxy (cache), the proxy needs to connect the server and verify if the contents are most recent. In addition, if a client writes something new to a file (on proxy), the proxy should also make the changes on server side as well.</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+
+
+<h3 id="Open-close-Semantics"><a href="#Open-close-Semantics" class="headerlink" title="Open-close Semantics"></a>Open-close Semantics</h3><p>Once a client opens a file, the client should have a fixed view of the file before “close”, though some other clients are reading or writing this file at the same time. How can we achieve that?</p>
+<p style="color:#F13E3E">[Contents are disabled]</p>
+</span> -->
         </article>
     
     

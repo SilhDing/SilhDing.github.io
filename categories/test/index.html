@@ -132,6 +132,189 @@
         <article class="archive-item">
             <a class="archive-item-link" href="/2020/01/10/markdown/">Markdown Display Test</a>
             <span class="archive-item-date">Jan 10, 2020</span>
+            <!-- <span style=> <h1 id="Markdown-Syntax"><a href="#Markdown-Syntax" class="headerlink" title="Markdown: Syntax"></a>Markdown: Syntax</h1><p>I want to test <code>size</code> should be okay!</p>
+<pre><code>and the code block
+should be okay as well!</code></pre><h1 id="This-is-code"><a href="#This-is-code" class="headerlink" title="This is code"></a>This is <code>code</code></h1><h2 id="This-is-code-1"><a href="#This-is-code-1" class="headerlink" title="This is code"></a>This is <code>code</code></h2><h3 id="This-is-code-2"><a href="#This-is-code-2" class="headerlink" title="This is code"></a>This is <code>code</code></h3><h4 id="This-is-code-3"><a href="#This-is-code-3" class="headerlink" title="This is code"></a>This is <code>code</code></h4><h5 id="This-is-code-4"><a href="#This-is-code-4" class="headerlink" title="This is code"></a>This is <code>code</code></h5><ul>
+<li>this is <code>code</code></li>
+</ul>
+<p>Test mathjax:</p>
+<p>$$f(x) = a_1x^n + a_2x^{n-1} + a_3x^{n-2}$$</p>
+<p>$$\left \lbrace \sum_{i=0}^n i^3 = \frac{(n^2+n)(n+6)}{9} \right \rbrace$$</p>
+<p>$$\left[<br>\begin{matrix}<br>V_A \\<br>V_B \\<br>V_C \\<br>\end{matrix}<br>\right] =<br>\left[<br>\begin{matrix}<br>1 &amp; 0 &amp; L \\<br>-cosψ &amp; sinψ &amp; L \\<br>-cosψ &amp; -sinψ &amp; L<br>\end{matrix}<br>\right]<br>\left[<br>\begin{matrix}<br>V_x \\<br>V_y \\<br>W \\<br>\end{matrix}<br>\right] $$</p>
+<h1 id="中文标题"><a href="#中文标题" class="headerlink" title="中文标题"></a>中文标题</h1><p>Can you test ‘??’ and “??”.</p>
+<p><em>你好</em><br><em>hello</em><br><strong>hello</strong><br><strong>你好</strong><br><strong>这句话应该被加粗。</strong><br>他姐说，“你这样有意思吗”？我濡染布置但怎！么办……好被。<br>“How can you do this?”</p>
+<p><strong><em>OK, I’m okay!</em></strong><br><strong><em>我一点都不好！</em></strong></p>
+<ul>
+<li><a href="#overview">Overview</a><ul>
+<li><a href="#philosophy">Philosophy</a></li>
+<li><a href="#html">Inline HTML</a></li>
+<li><a href="#autoescape">Automatic Escaping for Special Characters</a></li>
+</ul>
+</li>
+<li><a href="#block">Block Elements</a><ul>
+<li><a href="#p">Paragraphs and Line Breaks</a></li>
+<li><a href="#header">Headers</a></li>
+<li><a href="#blockquote">Blockquotes</a></li>
+<li><a href="#list">Lists</a></li>
+<li><a href="#precode">Code Blocks</a></li>
+<li><a href="#hr">Horizontal Rules</a></li>
+</ul>
+</li>
+<li><a href="#span">Span Elements</a><ul>
+<li><a href="#link">Links</a></li>
+<li><a href="#em">Emphasis</a></li>
+<li><a href="#code">Code</a></li>
+<li><a href="#img">Images</a></li>
+</ul>
+</li>
+<li><a href="#misc">Miscellaneous</a><ul>
+<li><a href="#backslash">Backslash Escapes</a></li>
+<li><a href="#autolink">Automatic Links</a></li>
+</ul>
+</li>
+</ul>
+<p><strong>Note:</strong> This document is itself written using Markdown; you<br>can <a href="/projects/markdown/syntax.text">see the source for it by adding ‘.text’ to the URL</a>.</p>
+<hr>
+<h2 id="Overview"><a href="#Overview" class="headerlink" title="Overview"></a>Overview</h2><h3 id="Philosophy"><a href="#Philosophy" class="headerlink" title="Philosophy"></a>Philosophy</h3><p>Markdown is intended to be as easy-to-read and easy-to-write as is feasible.</p>
+<p>Readability, however, is emphasized above all else. A Markdown-formatted document should be publishable as-is, as plain text, without looking<br>like it’s been marked up with tags or formatting instructions. While<br>Markdown’s syntax has been influenced by several existing text-to-HTML<br>filters – including <a href="http://docutils.sourceforge.net/mirror/setext.html" target="_blank" rel="noopener">Setext</a>, <a href="http://www.aaronsw.com/2002/atx/" target="_blank" rel="noopener">atx</a>, <a href="http://textism.com/tools/textile/" target="_blank" rel="noopener">Textile</a>, <a href="http://docutils.sourceforge.net/rst.html" target="_blank" rel="noopener">reStructuredText</a>,<br><a href="http://www.triptico.com/software/grutatxt.html" target="_blank" rel="noopener">Grutatext</a>, and <a href="http://ettext.taint.org/doc/" target="_blank" rel="noopener">EtText</a> – the single biggest source of<br>inspiration for Markdown’s syntax is the format of plain text email.</p>
+<h2 id="Block-Elements"><a href="#Block-Elements" class="headerlink" title="Block Elements"></a>Block Elements</h2><h3 id="Paragraphs-and-Line-Breaks"><a href="#Paragraphs-and-Line-Breaks" class="headerlink" title="Paragraphs and Line Breaks"></a>Paragraphs and Line Breaks</h3><p>A paragraph is simply one or more consecutive lines of text, separated<br>by one or more blank lines. (A blank line is any line that looks like a<br>blank line – a line containing nothing but spaces or tabs is considered<br>blank.) Normal paragraphs should not be indented with spaces or tabs.</p>
+<p>The implication of the “one or more consecutive lines of text” rule is<br>that Markdown supports “hard-wrapped” text paragraphs. This differs<br>significantly from most other text-to-HTML formatters (including Movable<br>Type’s “Convert Line Breaks” option) which translate every line break<br>character in a paragraph into a <code>&lt;br /&gt;</code> tag.</p>
+<p>When you <em>do</em> want to insert a <code>&lt;br /&gt;</code> break tag using Markdown, you<br>end a line with two or more spaces, then type return.</p>
+<h3 id="Headers"><a href="#Headers" class="headerlink" title="Headers"></a>Headers</h3><p>Markdown supports two styles of headers, [Setext] [1] and [atx] [2].</p>
+<p>Optionally, you may “close” atx-style headers. This is purely<br>cosmetic – you can use this if you think it looks better. The<br>closing hashes don’t even need to match the number of hashes<br>used to open the header. (The number of opening hashes<br>determines the header level.)</p>
+<h3 id="Blockquotes"><a href="#Blockquotes" class="headerlink" title="Blockquotes"></a>Blockquotes</h3><p>Markdown uses email-style <code>&gt;</code> characters for blockquoting. If you’re<br>familiar with quoting passages of text in an email message, then you<br>know how to create a blockquote in Markdown. It looks best if you hard<br>wrap the text and put a <code>&gt;</code> before every line:</p>
+<blockquote>
+<p>This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,<br>consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.<br>Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.</p>
+<p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse<br>id sem consectetuer libero luctus adipiscing.</p>
+</blockquote>
+<p>Markdown allows you to be lazy and only put the <code>&gt;</code> before the first<br>line of a hard-wrapped paragraph:</p>
+<blockquote>
+<p>This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet,<br>consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.<br>Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.</p>
+</blockquote>
+<blockquote>
+<p>Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse<br>id sem consectetuer libero luctus adipiscing.</p>
+</blockquote>
+<p>Blockquotes can be nested (i.e. a blockquote-in-a-blockquote) by<br>adding additional levels of <code>&gt;</code>:</p>
+<blockquote>
+<p>This is the first level of quoting.</p>
+<blockquote>
+<p>This is nested blockquote.</p>
+</blockquote>
+<p>Back to the first level.</p>
+</blockquote>
+<p>Blockquotes can contain other Markdown elements, including headers, lists,<br>and code blocks:</p>
+<blockquote>
+<h2 id="This-is-a-header"><a href="#This-is-a-header" class="headerlink" title="This is a header."></a>This is a header.</h2><ol>
+<li>This is the first list item.</li>
+<li>This is the second list item.</li>
+</ol>
+<p>Here’s some example code:</p>
+<pre><code>return shell_exec(&quot;echo $input | $markdown_script&quot;);</code></pre></blockquote>
+<p>Any decent text editor should make email-style quoting easy. For<br>example, with BBEdit, you can make a selection and choose Increase<br>Quote Level from the Text menu.</p>
+<h3 id="Lists"><a href="#Lists" class="headerlink" title="Lists"></a>Lists</h3><p>Markdown supports ordered (numbered) and unordered (bulleted) lists.</p>
+<p>Unordered lists use asterisks, pluses, and hyphens – interchangably<br>– as list markers:</p>
+<ul>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ul>
+<p>is equivalent to:</p>
+<ul>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ul>
+<p>and:</p>
+<ul>
+<li>Red</li>
+<li>Green</li>
+<li>Blue</li>
+</ul>
+<p>Ordered lists use numbers followed by periods:</p>
+<ol>
+<li>Bird</li>
+<li>McHale</li>
+<li>Parish</li>
+</ol>
+<p>It’s important to note that the actual numbers you use to mark the<br>list have no effect on the HTML output Markdown produces. The HTML<br>Markdown produces from the above list is:</p>
+<p>If you instead wrote the list in Markdown like this:</p>
+<ol>
+<li>Bird</li>
+<li>McHale</li>
+<li>Parish</li>
+</ol>
+<p>or even:</p>
+<ol start="3">
+<li>Bird</li>
+<li>McHale</li>
+<li>Parish</li>
+</ol>
+<p>you’d get the exact same HTML output. The point is, if you want to,<br>you can use ordinal numbers in your ordered Markdown lists, so that<br>the numbers in your source match the numbers in your published HTML.<br>But if you want to be lazy, you don’t have to.</p>
+<p>To make lists look nice, you can wrap items with hanging indents:</p>
+<ul>
+<li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.<br>Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,<br>viverra nec, fringilla in, laoreet vitae, risus.</li>
+<li>Donec sit amet nisl. Aliquam semper ipsum sit amet velit.<br>Suspendisse id sem consectetuer libero luctus adipiscing.</li>
+</ul>
+<p>But if you want to be lazy, you don’t have to:</p>
+<ul>
+<li>Lorem ipsum dolor sit amet, consectetuer adipiscing elit.<br>Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi,<br>viverra nec, fringilla in, laoreet vitae, risus.</li>
+<li>Donec sit amet nisl. Aliquam semper ipsum sit amet velit.<br>Suspendisse id sem consectetuer libero luctus adipiscing.</li>
+</ul>
+<p>List items may consist of multiple paragraphs. Each subsequent<br>paragraph in a list item must be indented by either 4 spaces<br>or one tab:</p>
+<ol>
+<li><p>This is a list item with two paragraphs. Lorem ipsum dolor<br>sit amet, consectetuer adipiscing elit. Aliquam hendrerit<br>mi posuere lectus.</p>
+<p>Vestibulum enim wisi, viverra nec, fringilla in, laoreet<br>vitae, risus. Donec sit amet nisl. Aliquam semper ipsum<br>sit amet velit.</p>
+</li>
+<li><p>Suspendisse id sem consectetuer libero luctus adipiscing.</p>
+</li>
+</ol>
+<p>It looks nice if you indent every line of the subsequent<br>paragraphs, but here again, Markdown will allow you to be<br>lazy:</p>
+<ul>
+<li><p>This is a list item with two paragraphs.</p>
+<p>This is the second paragraph in the list item. You’re<br>only required to indent the first line. Lorem ipsum dolor<br>sit amet, consectetuer adipiscing elit.</p>
+</li>
+<li><p>Another item in the same list.</p>
+</li>
+</ul>
+<p>To put a blockquote within a list item, the blockquote’s <code>&gt;</code><br>delimiters need to be indented:</p>
+<ul>
+<li><p>A list item with a blockquote:</p>
+<blockquote>
+<p>This is a blockquote<br>inside a list item.</p>
+</blockquote>
+</li>
+</ul>
+<p>To put a code block within a list item, the code block needs<br>to be indented <em>twice</em> – 8 spaces or two tabs:</p>
+<ul>
+<li><p>A list item with a code block:</p>
+<pre><code>&lt;code goes here&gt;</code></pre></li>
+</ul>
+<h3 id="Code-Blocks"><a href="#Code-Blocks" class="headerlink" title="Code Blocks"></a>Code Blocks</h3><p>Pre-formatted code blocks are used for writing about programming or<br>markup source code. Rather than forming normal paragraphs, the lines<br>of a code block are interpreted literally. Markdown wraps a code block<br>in both <code>&lt;pre&gt;</code> and <code>&lt;code&gt;</code> tags.</p>
+<p>To produce a code block in Markdown, simply indent every line of the<br>block by at least 4 spaces or 1 tab.</p>
+<p>This is a normal paragraph:</p>
+<pre><code>This is a code block.</code></pre><p>Here is an example of AppleScript:</p>
+<pre><code>tell application &quot;Foo&quot;
+    beep
+end tell</code></pre><p>A code block continues until it reaches a line that is not indented<br>(or the end of the article).</p>
+<p>Within a code block, ampersands (<code>&amp;</code>) and angle brackets (<code>&lt;</code> and <code>&gt;</code>)<br>are automatically converted into HTML entities. This makes it very<br>easy to include example HTML source code using Markdown – just paste<br>it and indent it, and Markdown will handle the hassle of encoding the<br>ampersands and angle brackets. For example, this:</p>
+<pre><code>&lt;div class=&quot;footer&quot;&gt;
+    &amp;copy; 2004 Foo Corporation
+&lt;/div&gt;</code></pre><p>Regular Markdown syntax is not processed within code blocks. E.g.,<br>asterisks are just literal asterisks within a code block. This means<br>it’s also easy to use Markdown to write about Markdown’s own syntax.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tell application &quot;Foo&quot;</span><br><span class="line">    beep</span><br><span class="line">end tell</span><br></pre></td></tr></table></figure>
+
+<h2 id="Span-Elements"><a href="#Span-Elements" class="headerlink" title="Span Elements"></a>Span Elements</h2><h3 id="Links"><a href="#Links" class="headerlink" title="Links"></a>Links</h3><p>Markdown supports two style of links: <em>inline</em> and <em>reference</em>.</p>
+<p>In both styles, the link text is delimited by [square brackets].</p>
+<p>To create an inline link, use a set of regular parentheses immediately<br>after the link text’s closing square bracket. Inside the parentheses,<br>put the URL where you want the link to point, along with an <em>optional</em><br>title for the link, surrounded in quotes. For example:</p>
+<p>This is <a href="http://example.com/" target="_blank" rel="noopener">an example</a> inline link.</p>
+<p><a href="http://example.net/" target="_blank" rel="noopener">This link</a> has no title attribute.</p>
+<h3 id="Emphasis"><a href="#Emphasis" class="headerlink" title="Emphasis"></a>Emphasis</h3><p>Markdown treats asterisks (<code>*</code>) and underscores (<code>_</code>) as indicators of<br>emphasis. Text wrapped with one <code>*</code> or <code>_</code> will be wrapped with an<br>HTML <code>&lt;em&gt;</code> tag; double <code>*</code>‘s or <code>_</code>‘s will be wrapped with an HTML<br><code>&lt;strong&gt;</code> tag. E.g., this input:</p>
+<p><em>single asterisks</em></p>
+<p><em>single underscores</em></p>
+<p><strong>double asterisks</strong></p>
+<p><strong>double underscores</strong></p>
+<h3 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h3><p>To indicate a span of code, wrap it with backtick quotes (<code>`</code>).<br>Unlike a pre-formatted code block, a code span indicates code within a<br>normal paragraph. For example:</p>
+<p>Use the <code>printf()</code> function.</p>
+</span> -->
         </article>
     
         
@@ -143,6 +326,24 @@
         <article class="archive-item">
             <a class="archive-item-link" href="/2019/10/01/asianlang/">Asian Language Display Test</a>
             <span class="archive-item-date">Oct 1, 2019</span>
+            <!-- <span style=> <h1 id="简体中文"><a href="#简体中文" class="headerlink" title="简体中文"></a>简体中文</h1><p>“滚滚长江东逝水，浪花淘尽英雄。是非成败转头空，青山依旧在，几度夕阳红。白发渔樵江渚上，惯看秋月春风。一壶浊酒喜相逢，古今多少事，都付笑谈中。<br>是非成败转头空，青山依旧在，惯看秋月春风。一壶浊酒喜相逢，古今多少事，滚滚长江东逝水，浪花淘尽英雄。 几度夕阳红。白发渔樵江渚上，都付笑谈中…….”</p>
+<h2 id="重点"><a href="#重点" class="headerlink" title="重点"></a>重点</h2><p><strong>天地玄黄 宇宙洪荒 日月盈昃 辰宿列张 寒来暑往 秋收冬藏</strong></p>
+<p>闰馀成岁 律吕调阳 云腾致雨 露结为霜 金生丽水 玉出昆冈</p>
+<p><em>剑号巨阙 珠称夜光 果珍李柰 菜重芥姜 海咸河淡 鳞潜羽翔</em></p>
+<p>龙师火帝 鸟官人皇 始制文字 <strong><em>乃服衣裳</em></strong> 推位让国 有虞陶唐</p>
+<h1 id="繁體中文"><a href="#繁體中文" class="headerlink" title="繁體中文"></a>繁體中文</h1><p>過事會原港出式灣量燈也特度我大人，信家著的的訴。更點角的名紅一此人聯，多時行民消去屋學望安，教得天，精是壓考，著經詩了重工從化物。車那超望理禮多還電到拉看依朋史地要盡國任；沒已廣，畫著者決車……了說了，精樹中手是包名樣而政致為組為來先國然日。完性麼才分會，子中一西，了自親、環羅中子！學人有算：感受洋，多全見紀兩專絕人果，色聞員重。關人經物動業戰者洲？必簡包的務想必現兒的青和備的。</p>
+<p><strong>動因非象得來，消是資，林自在會？</strong></p>
+<blockquote>
+<p>對是生輕紙轉他牛心來存便直會義型們……性裡前出氣香隨發會，來變果內在了排品現之的為人團位位。之學散公。</p>
+</blockquote>
+<h1 id="日本語"><a href="#日本語" class="headerlink" title="日本語"></a>日本語</h1><p>載やり戦本新歩フリだ倍詳シル治都テラセエ特長イ知朝カラ子光ヘケニ南始ヨ直除こねろを朝人ッけ算念ーすが暮購ホヲノア実広カフチ右48奥連者ーごにそ。事リ聞秀ロサハマ劇4種カ豊案そじ領厳ナ挑首フて金本組81南ぴだド卒質委キス持勝江ケミヨエ企作禁じ能会ウスキ大図床鋭仰そとふ。</p>
+<p><strong>動ンフえゅ探団1関ち下下ラ底24与店</strong>建8価かぱぞ更適かみ告方カケリヌ戒碁ヨアオ経職フサネウ政人ヲユ示逮ろぎ聞松ユネノカ創資ム意直しさわぎ革謙は細功タア縄冬ホ念偽刀穂駒リくどぎ。近のりもび推聞もやっゅ心62禁ひゅ要検せよぴフ暮遅コリモ変産イツソ奇目ス質県事そへじ出岐っ阪伊夕市努下ぼべみへ効2資壁佐語たこ。</p>
+<p>舞爆ノモウヒ期演雪シ月咳ごぱレわ集躍稿ヱ段味ムタカア採9心ヤア喜13身ま開属ヘ補改ハムネ員更そ届賛登ろすを会性しだずす銀藤ごほさ念画リニ央憂昌詩とあき。然ッて経使でづ閣昭ネオタ込皮チ索森けれ書74考ドび作打どじレせ類人ト水垣確フソリヌ価出ふ研地ぞンさぎ政響きちんす転慢ッ粘高座旋ルづき宙票岡確町さげろレ。</p>
+<p>拓分ヲ松済ソウヤ暮長タチ図奈3台きとぽゆ契王てせはっ総浦ノテリス省月21旧よち媛雪ゅス医掃邸釈を。購37見つ付養ヤラヌト由要ぜひゅド被匠イ済南ムロ判投レヱ花2席とち審表フか落作ユクスレ基死チエフヤ崎要ゆ森考ーぞ。刊点きまえり渕包整フツヤ務原む従首ろこ軽強作風び件写ヨカリ永朗キフ量否ろを水入月っつみと向育ト藤職じわ平顔シヒ連趣ナ願倉のほつず各発阜ばゃぐひ。</p>
+<h1 id="한국어"><a href="#한국어" class="headerlink" title="한국어"></a>한국어</h1><p>두기 굳세게 무한한 사랑의 것이다. 이것은 것은 뜨고, 노래하며 무엇이 철환하였는가 일월과 위하여서, 행복스럽고 보는 고행을 갑 청춘의 위하여서. 눈이 아름다우냐? 있는 싶이 없으면 든 있으랴? 눈에 청춘의 용기가 것은 영락과 기쁘며. 무한한 과실이 이상은 듣기만 든 것이다, 보이는 풀밭에 무엇을 인생을 동산에는 것이다. 얼음과 장식하는 아니한 있다.</p>
+<p><strong>눈에 주며, 반짝이는 찬미를 능히 이상 뼈 생생하며. 같으며. 동산에는 가치를 불러 그리하였는가?</strong>남는 보배를 현저하게 청춘 얼마나 사막이다. 이상 많이 인간의 얼마나 용감하고 피고 힘있다, 귀는 노래하며 못할 속에서 사막이다, 가치를 있다, 살았으며.</p>
+<p><em>날카로우나 살았으며, 곳으로 인간은 그들은 있으랴? 얼음이 천하를 같이 오직 새가 것은 칼이다</em>. 봄날의 위하여 기관과 주며. 남는 풀이 고동을 생명을 청춘이 산야에 내는 피다. 실로 천하를 무엇이 열매를 청춘을 사막이다. 가지에 힘있다. 생명을 수 풀이 것은 그들의 피는 봄날의 따뜻한 피다, 두손을 예수는 쓸쓸한 할지니.</p>
+</span> -->
         </article>
     
     

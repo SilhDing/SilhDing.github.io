@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="author" content="Yihang (Ian) Ding">
+
+
+    <meta name="subtitle" content="Glad you reach here.">
+
+
+
+
+<title>Algorithms of String | Yihang&#39;s Blog</title>
+
+
+
+    <link rel="icon" href="/favicon.png">
+
+
+<link href="https://fonts.googleapis.com/css?family=Noto+Serif+SC:300,700|Noto+Serif+KR:300,700|Source+Code+Pro:400,400i,700,700i&display=swap" rel="stylesheet">
+
+
+
+    <!-- stylesheets list from _config.yml -->
+    
+    <link rel="stylesheet" href="/css/style.css">
+    
+
+
+
+    <!-- scripts list from _config.yml -->
+    
+    <script src="/js/script.js"></script>
+    
+    <script src="/js/tocbot.min.js"></script>
+    
+
+
+
+    
+    
+        
+    
+
+
+<meta name="generator" content="Hexo 4.2.0"></head>
+<body>
+    <div class="wrapper">
+        <header>
+    <nav class="navbar">
+        <div class="container">
+            <div class="navbar-header header-logo">
+            <a href="/">楽しんでね。| Yihang&#39;s Nest</a>
+            </div>
+
+            <div class="menu navbar-right">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">Résumé</a>
+                
+                <input id="switch_default" type="checkbox" class="switch_default">
+                <label for="switch_default" class="toggleBtn"></label>
+            </div>
+        </div>
+    </nav>
+
+    
+    <nav class="navbar-mobile" id="nav-mobile">
+        <div class="container">
+            <div class="navbar-header">
+                <div>
+                    <a href="/">楽しんでね。| Yihang&#39;s Nest</a><a id="mobile-toggle-theme">·&nbsp;Light</a>
+                </div>
+                <div class="menu-toggle" onclick="mobileBtn()">&#9776; Menu</div>
+            </div>
+            <div class="menu" id="mobile-menu">
+                
+                    <a class="menu-item" href="/archives">Posts</a>
+                
+                    <a class="menu-item" href="/category">Categories</a>
+                
+                    <a class="menu-item" href="/tag">Tags</a>
+                
+                    <a class="menu-item" href="/about">Résumé</a>
+                
+            </div>
+        </div>
+    </nav>
+
+</header>
+<script>
+    var mobileBtn = function f() {
+        var toggleMenu = document.getElementsByClassName("menu-toggle")[0];
+        var mobileMenu = document.getElementById("mobile-menu");
+        if(toggleMenu.classList.contains("active")){
+           toggleMenu.classList.remove("active")
+            mobileMenu.classList.remove("active")
+        }else{
+            toggleMenu.classList.add("active")
+            mobileMenu.classList.add("active")
+        }
+    }
+</script>
+
+        <div class="main">
+            <div class="container">
+    
+    
+        <div class="post-toc">
+    <div class="tocbot-list">
+    </div>
+    <div class="tocbot-list-menu">
+        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
+        <a onclick="go_top()">Back to top</a>
+        <a onclick="go_bottom()">Go to bottom</a>
+    </div>
+</div>
+
+<script>
+    document.ready(
+        function () {
+            tocbot.init({
+                tocSelector: '.tocbot-list',
+                contentSelector: '.post-content',
+                headingSelector: 'h1, h2, h3, h4, h5',
+                collapseDepth: 1,
+                orderedList: false,
+                scrollSmooth: true,
+            })
+        }
+    )
+
+    function expand_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 6,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "collapse_toc()");
+        b.innerHTML = "Collapse all"
+    }
+
+    function collapse_toc() {
+        var b = document.querySelector(".tocbot-toc-expand");
+        tocbot.init({
+            tocSelector: '.tocbot-list',
+            contentSelector: '.post-content',
+            headingSelector: 'h1, h2, h3, h4, h5',
+            collapseDepth: 1,
+            orderedList: false,
+            scrollSmooth: true,
+        });
+        b.setAttribute("onclick", "expand_toc()");
+        b.innerHTML = "Expand all"
+    }
+
+    function go_top() {
+        window.scrollTo(0, 0);
+    }
+
+    function go_bottom() {
+        window.scrollTo(0, document.body.scrollHeight);
+    }
+
+</script>
+    
+    <br>
+    
+    <article class="post-wrap">
+        <header class="post-header">
+            <h1 class="post-title">Algorithms of String</h1>
+            <br>
+            
+                <div class="post-meta">
+
+                    
+                        <span class="post-time">
+                        <i>Apr 18, 2020&nbsp;&nbsp;9:15 PM, by Yihang (Ian) Ding</i><br>
+                        </span>
+                    
+                    
+
+                    
+                        <span class="post-category">
+                    <b>Categories:
+                            
+                                <<a href="/categories/technique/">technique</a>>
+                            </b>
+                        </span>
+                    <br>
+                    
+
+                    
+                        <span class="post-tag">
+                        <b>Tags:
+                            
+                                #<a href="/tags/algorithm/">algorithm</a>
+                            
+                        </b>
+                        </span>
+                    <br>
+                    
+
+                    
+                    
+                    <br>
+                </div>
+            
+        </header>
+
+
+        <div class="post-content">
+            <p>In this post, we want to study and summarize some well-known algorithms for Strings.</p>
+<h2 id="String-Sorts"><a href="#String-Sorts" class="headerlink" title="String Sorts"></a>String Sorts</h2><h3 id="LSD"><a href="#LSD" class="headerlink" title="LSD"></a>LSD</h3><p>If we want to sort some items and each item is associated with a key (or ID). We could use <em>key-indexed</em> counting to sort, which is very efficient. This method also indicates that we could follow the same idea to sort <strong>fixed-length</strong> strings, which is called <strong><em>least-significant-digit first (LSD)</em></strong> sort.</p>
+<p>The basic idea is to conduct key-indexed counting for w times, where w is the length of each string.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">LSD</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(String[] a, <span class="keyword">int</span> W)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// W is the length of each string in a</span></span><br><span class="line">        <span class="keyword">int</span> N = a.length;</span><br><span class="line">        <span class="keyword">int</span> R = <span class="number">256</span>;</span><br><span class="line">        String[] aux = <span class="keyword">new</span> String[N];</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> d = W - <span class="number">1</span>; d &gt;= <span class="number">0</span>; d--) &#123;</span><br><span class="line">            <span class="comment">// Sort by key-indexed counting on dth char.</span></span><br><span class="line"></span><br><span class="line">            <span class="keyword">int</span>[] count = <span class="keyword">new</span> <span class="keyword">int</span>[R+<span class="number">1</span>];</span><br><span class="line">            <span class="comment">// Computer frequency counts.</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; i++) &#123;</span><br><span class="line">                count[a[i].charAt(d) + <span class="number">1</span>] ++;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Transform counts to indices.</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> r = <span class="number">0</span>; r &lt; R; r++) &#123;</span><br><span class="line">                count[r+<span class="number">1</span>] += count[r];</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Distribute.</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; i++) &#123;</span><br><span class="line">                aux[count[a[i].charAt(d)]++] = a[i];</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="comment">// Copy back.</span></span><br><span class="line">            <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; N; i++) &#123;</span><br><span class="line">                a[i] = aux[i];</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String[] a  = &#123;<span class="string">"43FRFN"</span>, <span class="string">"423FFE"</span>, <span class="string">"D439JN"</span>, <span class="string">"10NE2E"</span>,</span><br><span class="line">                        <span class="string">"DDERFR"</span>, <span class="string">"340FEW"</span>, <span class="string">"104FDS"</span>, <span class="string">"R4053N"</span>&#125;;</span><br><span class="line">        LSD.sort(a, <span class="number">6</span>);</span><br><span class="line">        System.out.println(Arrays.toString(a));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Time complexity: <code>O(W(N + R))</code>, where <code>N</code> is the number of all string to be sorted, <code>R</code> is the radix (number of characters in alphabet) and <code>W</code> is the width of each string.</p>
+<p>Space complexity: <code>O(N + R)</code>, as we use two additional arrays.</p>
+<p>Remember that there are some requirements when applying this method:</p>
+<ol>
+<li>Each string has the same length (certainly we can modify this method to accommodate this case, but we have other algorithms that work well for this scenario);</li>
+<li>We know the radix of the alphabet of these strings (in this case, 256).</li>
+</ol>
+<h3 id="MSD"><a href="#MSD" class="headerlink" title="MSD"></a>MSD</h3><p>LSD algorithm listed above only works for fix-length strings. Here we want to implement an algorithm that works for a general purpose: <em>most-significant-digit-first (MSD)</em>.</p>
+<p>We still follow the basic idea of key-indexed counting to complete this algorithm. Now, as the algorithm’s name indicates, we will start sorting based on the most significant digits. So, if we have sorted them based on the first digit, what should we do next? <strong>We can group (or split) these strings and sort in each group based on other digits,</strong> which requires a recursive algorithm.</p>
+<p>Remember, this algorithm does not require all strings with same length. What should we do if, in a group, there are string which are shorter than others and we have reached the end of these short strings during key-indexed counting? Okay, we know that shorter strings here should be sorted first, so here is the solution:</p>
+<p>Implement a new <code>toChar()</code> method that can convert from an indexed string character to an array index that returns -1 if the specified character position is pass the end of the string. Then, we just add 1 to each returned value, so get a nonnegative <code>int</code> that we can use to index <code>count[]</code>. It means we have <code>R+1</code> possible character values at each string position:</p>
+<ul>
+<li><code>0</code> to signify the end of the string;</li>
+<li><code>1</code> for the first alphabet character;</li>
+<li><code>2</code> for the second alphabet character;</li>
+</ul>
+<p>With all these practices above, now it is easy to write down the real code.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MSD</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> R = <span class="number">256</span>;  <span class="comment">// radix</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> M = <span class="number">0</span>;  <span class="comment">// cutoff for small subarrays</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> String[] aux; <span class="comment">// auxiliary array for distribution</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(String[] a)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> N = a.length;</span><br><span class="line">        aux = <span class="keyword">new</span> String[N];</span><br><span class="line">        sort(a, <span class="number">0</span>, N-<span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(String[] a, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi, <span class="keyword">int</span> d)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Cut-off if the number of string is too small</span></span><br><span class="line">        <span class="keyword">if</span> (lo + M &gt;= hi) &#123;</span><br><span class="line">            Insertion.sort(a, lo, hi, d);</span><br><span class="line">            <span class="keyword">return</span> ;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span>[] count = <span class="keyword">new</span> <span class="keyword">int</span>[R+<span class="number">2</span>];</span><br><span class="line">        <span class="comment">// Compute frequency counts.</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = lo; i &lt;= hi; i++) &#123;</span><br><span class="line">            count[charAt(a[i], d) + <span class="number">2</span>] ++;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Transform counts to indices.</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; R +<span class="number">1</span>; i++) &#123;</span><br><span class="line">            count[i+<span class="number">1</span>] += count[i];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Distribute.</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = lo; i &lt;= hi; i++) &#123;</span><br><span class="line">            aux[count[charAt(a[i], d) + <span class="number">1</span>]++] = a[i];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Copy back.</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = lo; i &lt;= hi; i++) &#123;</span><br><span class="line">            <span class="comment">// Consider why i - lo here: because we only sort hi- lo + 1 strings, starting with index 0 in aux</span></span><br><span class="line">            a[i] = aux[i - lo];</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Recursive call: process to the next d for each split</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> r = <span class="number">0</span>; r &lt; R; r++) &#123;</span><br><span class="line">            sort(a, lo + count[r], lo + count[r+<span class="number">1</span>] - <span class="number">1</span>, d + <span class="number">1</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">charAt</span><span class="params">(String s, <span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (index &lt; s.length())</span><br><span class="line">            <span class="keyword">return</span> s.charAt(index);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String[] a = &#123;<span class="string">"she"</span>, <span class="string">"sells"</span>, <span class="string">"seashells"</span>, <span class="string">"by"</span>, <span class="string">"the"</span>, <span class="string">"sea"</span>,</span><br><span class="line">                        <span class="string">"shore"</span>, <span class="string">"the"</span>, <span class="string">"shells"</span>, <span class="string">"she"</span>, <span class="string">"sells"</span>, <span class="string">"are"</span>, <span class="string">"surely"</span>, <span class="string">"seashells"</span>&#125;;</span><br><span class="line">        sort(a);</span><br><span class="line">        System.out.println(Arrays.toString(a));</span><br><span class="line">        String[] b = &#123;<span class="string">"aaaaaa"</span>,<span class="string">"aaaaaa"</span>,<span class="string">"aaaaaa"</span>,<span class="string">"aaaaaa"</span>,<span class="string">"aaaaaa"</span>,<span class="string">"aaaaaa"</span>,<span class="string">"aaaaaa"</span>,<span class="string">"aaaaaa"</span>&#125;;</span><br><span class="line">        sort(b);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Note that we add a “cutoff-for-small-subarrays” before the sort really begins. why do we need this?</p>
+<p>As we can see, the method quickly divides the array to be sorted into small subarrays. But this is also a double-edged sword: we are certain to have to handle huge numbers of tiny subarrays, so we had better be sure that we handle them efficiently. Each sort involves initializing the 258 (if <code>R = 256</code>) entries of the <code>count[]</code> array to <code>0</code> and transforming them all to indices. Accordingly, the switch to insertion sort for small subarrays is a must for MSD string sort (in the code I simply use a <code>Insertion.sort()</code> for this part).</p>
+<p>Please also note another pitfall of MSD sort algorithm: it can be relatively slow for subarrays containing large numbers of equal keys. <strong><em>The worst case for MSD string sorting is when all key are equal</em></strong>: the algorithm cannot make smaller subarrays after each iteration (d). In this case, out program will have to examine every character in all input strings, and the running time is linear in the number of characters in the data (like LSD string sort).</p>
+<p>In many cases, we should treat the input strings are randomly generated. In this case, MSD string sort examines just enough characters to distinguish among the keys, and the running time is sub-linear in the number of characters in the data.</p>
+<h3 id="Three-way-string-quicksort"><a href="#Three-way-string-quicksort" class="headerlink" title="Three-way string quicksort"></a>Three-way string quicksort</h3><p>This algorithm borrows the idea from quick sort.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Quick3string</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(String[] a)</span> </span>&#123;</span><br><span class="line">        sort(a, <span class="number">0</span>, a.length - <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">sort</span><span class="params">(String[] a, <span class="keyword">int</span> lo, <span class="keyword">int</span> hi, <span class="keyword">int</span> d)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (lo &gt;= hi) <span class="keyword">return</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">int</span> lt = lo, gt = hi;</span><br><span class="line">        <span class="keyword">int</span> i = lo + <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">int</span> v = charAt(a[lo], d);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> (i &lt;= gt) &#123;</span><br><span class="line">            <span class="keyword">int</span> t = charAt(a[i], d);</span><br><span class="line"></span><br><span class="line">            <span class="keyword">if</span> (t &lt; v) exch(a, lt++, i++);</span><br><span class="line">            <span class="keyword">else</span> <span class="keyword">if</span> (t &gt; v) exch(a, i, gt--);</span><br><span class="line">            <span class="keyword">else</span> i ++;</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        sort(a, lo, lt - <span class="number">1</span>, d);</span><br><span class="line">        <span class="keyword">if</span> (v &gt;= <span class="number">0</span>) sort(a, lt, gt, d + <span class="number">1</span>);</span><br><span class="line">        sort(a, gt + <span class="number">1</span>, hi, d);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> <span class="title">charAt</span><span class="params">(String s, <span class="keyword">int</span> index)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (index &lt; s.length())</span><br><span class="line">            <span class="keyword">return</span> s.charAt(index);</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> -<span class="number">1</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">exch</span><span class="params">(String[] a, <span class="keyword">int</span> i, <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">        String tmp = a[i];</span><br><span class="line">        a[i] = a[j];</span><br><span class="line">        a[j] = tmp;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        String[] a = &#123;<span class="string">"she"</span>, <span class="string">"sells"</span>, <span class="string">"seashells"</span>, <span class="string">"by"</span>, <span class="string">"the"</span>, <span class="string">"sea"</span>,</span><br><span class="line">                <span class="string">"shore"</span>, <span class="string">"the"</span>, <span class="string">"shells"</span>, <span class="string">"she"</span>, <span class="string">"sells"</span>, <span class="string">"are"</span>, <span class="string">"surely"</span>, <span class="string">"seashells"</span>&#125;;</span><br><span class="line">        sort(a);</span><br><span class="line">        System.out.println(Arrays.toString(a));</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>This algorithm will always partition the array into three subarrays, which is different from MSD as MSD might generate many subarrays and many of them might be small or even empty subarrays. It can adapt well to handling equal keys, keys with long common prefixes. <strong>It will not use extra space, just like quick sort</strong>.</p>
+<p>An interesting fact will be found when you try to compare this algorithm with standard quicksort. Indeed, one way to think 2-way string quick sort is <strong><em>as a way for standard quicksort to keep track of leading characters that are known to be equal</em></strong>. Note: no algorithm can beat 3-way string quicksort by more than a constant factor.</p>
+<h2 id="Tries"><a href="#Tries" class="headerlink" title="Tries"></a>Tries</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TrieSTNew</span>&lt;<span class="title">Value</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">int</span> R = <span class="number">256</span>;</span><br><span class="line">    <span class="keyword">private</span> Node root;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="class"><span class="keyword">class</span> <span class="title">Node</span> </span>&#123;</span><br><span class="line">        <span class="keyword">private</span> Object val;</span><br><span class="line">        <span class="keyword">private</span> Node[] next = <span class="keyword">new</span> Node[R];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// When finding the node, we use recursion rather than iteration.</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Value <span class="title">get</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">        Node node = get(root, key, <span class="number">0</span>);</span><br><span class="line">        <span class="keyword">if</span> (node == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        <span class="keyword">return</span> (Value) node.val;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> Node <span class="title">get</span><span class="params">(Node x, String key, <span class="keyword">int</span> d)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// Return value associated with key in the subtrie rooted at x.</span></span><br><span class="line">        <span class="keyword">if</span> (x == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">        <span class="comment">// Remember, right now we are at the node corresponding to char at index d-1</span></span><br><span class="line">        <span class="keyword">if</span> (d == key.length()) <span class="keyword">return</span> x;</span><br><span class="line">        <span class="keyword">char</span> c = key.charAt(d);</span><br><span class="line">        <span class="keyword">return</span> get(x.next[c], key, d + <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">put</span><span class="params">(String key, Value value)</span> </span>&#123;</span><br><span class="line">        root = put(root, key, value, <span class="number">0</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> Node <span class="title">put</span><span class="params">(Node x, String key, Value value, <span class="keyword">int</span> d)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">if</span> (x == <span class="keyword">null</span>) x = <span class="keyword">new</span> Node();</span><br><span class="line">        <span class="comment">// Remember, right now we are at the node corresponding to char at index d-1</span></span><br><span class="line">        <span class="keyword">if</span> (d == key.length()) &#123;</span><br><span class="line">            x.val = value;</span><br><span class="line">            <span class="keyword">return</span> x;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">char</span> c = key.charAt(d);</span><br><span class="line">        x.next[c] = put(x.next[c], key, value, d + <span class="number">1</span>);</span><br><span class="line">        <span class="keyword">return</span> x;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">		TrieSTNew&lt;Integer&gt; trie = <span class="keyword">new</span> TrieSTNew&lt;&gt;();</span><br><span class="line">		trie.put(<span class="string">"dede"</span>, <span class="number">0</span>);</span><br><span class="line">		trie.put(<span class="string">"de"</span>, <span class="number">0</span>);</span><br><span class="line">		trie.put(<span class="string">"deeffe"</span>, <span class="number">0</span>);</span><br><span class="line"></span><br><span class="line">		<span class="keyword">for</span> (String str: trie.keys()) &#123;</span><br><span class="line">			System.out.print( str+<span class="string">" "</span>);</span><br><span class="line">		&#125;</span><br><span class="line">		System.out.println();</span><br><span class="line">		System.out.println(trie.root);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Collecting-keys"><a href="#Collecting-keys" class="headerlink" title="Collecting keys"></a>Collecting keys</h3><p>Now, we are going to implement some methods for collecting keys. The above code contains some basic operations including <code>get</code> and <code>put</code>. Now we will continue to implement some method.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Iterable&lt;String&gt; <span class="title">keys</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> keysWithPrefix(<span class="string">""</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> Iterable&lt;String&gt; <span class="title">keysWithPrefix</span><span class="params">(String pre)</span> </span>&#123;</span><br><span class="line">    Queue&lt;String&gt; queue = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">    collect(<span class="keyword">this</span>.get(root, pre, <span class="number">0</span>), pre, queue);</span><br><span class="line">    <span class="keyword">return</span> queue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">collect</span><span class="params">(Node x, String pre, Queue&lt;String&gt; q)</span> </span>&#123;</span><br><span class="line">    <span class="comment">// Starting with Node x, find all keys</span></span><br><span class="line">    <span class="keyword">if</span> (x == <span class="keyword">null</span>) <span class="keyword">return</span> ;</span><br><span class="line">    <span class="keyword">if</span> (x.val != <span class="keyword">null</span>) q.add(pre);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">char</span> c = <span class="number">0</span>; c &lt; R; c++)</span><br><span class="line">        collect(x.next[c], pre + c, q);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Wildcard-match"><a href="#Wildcard-match" class="headerlink" title="Wildcard match"></a>Wildcard match</h3><p>Wildcard match: to implement <code>keysThatMatch()</code> method.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> Iterable&lt;String&gt; <span class="title">keysThatMatch</span><span class="params">(String pat)</span> </span>&#123;</span><br><span class="line">    Queue&lt;String&gt; queue = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">    collect(root, <span class="string">""</span>, pat, queue);</span><br><span class="line">    <span class="keyword">return</span> queue;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">collect</span><span class="params">(Node x, String pre, String pat, Queue&lt;String&gt; queue)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (x == <span class="keyword">null</span>) <span class="keyword">return</span> ;</span><br><span class="line">    <span class="keyword">int</span> len = pre.length();</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (len == pat.length()) &#123;</span><br><span class="line">        <span class="keyword">if</span> (x.val != <span class="keyword">null</span>) queue.add(pre);</span><br><span class="line">        <span class="keyword">return</span> ;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">char</span> next = pat.charAt(len);</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">char</span> c = <span class="number">0</span>; c &lt; R; c ++) &#123;</span><br><span class="line">        <span class="keyword">if</span> (c == next || c == <span class="string">'.'</span>)</span><br><span class="line">            collect(x.next[c], pre + c, pat, queue);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Longest-prefix"><a href="#Longest-prefix" class="headerlink" title="Longest prefix"></a>Longest prefix</h3><p>Now we also want to method <code>longestPrefixOf(String s)</code> to find the longest string which is a prefix of a given string. The principle is quite similar: go down the trie with the given string; once we find a node with a non-null value, we just update the length.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> String <span class="title">longestPrefixOf</span><span class="params">(String s)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span> length = search(root, s, <span class="number">0</span>, <span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> s.substring(<span class="number">0</span>, length);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">int</span> <span class="title">search</span><span class="params">(Node x, String s, <span class="keyword">int</span> d, <span class="keyword">int</span> length)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (x == <span class="keyword">null</span>) <span class="keyword">return</span> length;</span><br><span class="line">    <span class="keyword">if</span> (x.val != <span class="keyword">null</span>) length = d;</span><br><span class="line">    <span class="keyword">if</span> (d == s.length()) <span class="keyword">return</span> length;</span><br><span class="line">    <span class="keyword">char</span> c = s.charAt(d);</span><br><span class="line">    <span class="keyword">return</span> search(x.next[c], s, d + <span class="number">1</span>, length);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Deletion"><a href="#Deletion" class="headerlink" title="Deletion"></a>Deletion</h3><p>What if we want to delete a key? Apparently, the first step is to find the node corresponding to the input string and then set the value to <code>null</code>. However, we need to remove many nodes all the way down. This can be easily implemented with the recursive method.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">delete</span><span class="params">(String key)</span> </span>&#123;</span><br><span class="line">    root = delete(root, key, <span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> Node <span class="title">delete</span><span class="params">(Node x, String key, <span class="keyword">int</span> d)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (x == <span class="keyword">null</span>) <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (d == key.length()) &#123;</span><br><span class="line">        <span class="comment">// Find the node representing the key</span></span><br><span class="line">        x.val = <span class="keyword">null</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// Keep gping down and find the node.</span></span><br><span class="line">        <span class="keyword">char</span> c = key.charAt(d);</span><br><span class="line">        x.next[c] = delete(x.next[c], key, d + <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> (x.val != <span class="keyword">null</span>) <span class="keyword">return</span> x;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">char</span> c = <span class="number">0</span>; c &lt; R; c ++) &#123;</span><br><span class="line">        <span class="comment">// Check if x have a non-null link</span></span><br><span class="line">        <span class="keyword">if</span> (x.next[c] != <span class="keyword">null</span>) <span class="keyword">return</span> x;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+            <br>
+        </div>       
+
+        <br>
+        <br>
+
+        <div style="text-align:center;font-weight:bold"><h2>Comments</h2></div>
+        <div class="post-comment" id="vssue"></div>
+        <div class="comments-fold" style="text-align:center;font-weight:bold"><button onclick="myFunction()" id="comment-switch">Hide Comments</button></div>       
+
+        
+
+            <section class="post-copyright">
+                <span><b>Categories:</b></span>
+                <span class="copyright-item">
+                    
+                    
+                        <<a href="/categories/technique/">technique</a>>
+                    
+                        
+                </span>
+                <br>
+                <span><b>Tags:</b></span>
+                <span class="copyright-item">
+                    
+                    
+                        #<a href="/tags/algorithm/">algorithm</a>
+                    
+                        
+                </span>
+
+                
+                    <p class="copyright-item">
+                        <span><b>Author:</b></span>
+                        <span>Yihang (Ian) Ding</span>
+                    </p>
+                
+
+                
+                    <p class="copyright-item">
+                        <span><b>Permalink:</b></span>
+                        <span><a href="http://silhding.github.io/2020/04/18/string-algorithm/">http://silhding.github.io/2020/04/18/string-algorithm/</a></span>
+                    </p>
+                
+
+                
+                    <p class="copyright-item">
+                        <span><b>License:</b></span>
+                        <span>Copyright (c) 2019 <a href="http://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC-BY-NC-4.0</a> LICENSE</span>
+                    </p>
+                
+
+                
+
+            </section>
+        
+        
+                            
+        <div>
+            <a href="javascript:window.history.back();">↵ Back</a>
+            <span> &nbsp;&nbsp;&nbsp;</span>
+            <a href="/">❏ Home</a>
+            
+        </div>
+
+        <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
+        <script src="https://unpkg.com/vssue/dist/vssue.github.min.js"></script>
+        <script>
+          new Vue({
+            el: '#vssue',
+
+            render: h => h('Vssue', {
+              props: {
+                // here set the title of issue of current page
+                title: location.pathname,
+
+                // here set the options for your OAuth App
+                options: {
+                  owner: 'SilhDing',
+                  repo: 'SilhDing.github.io',
+                  clientId: 'a400ed2ef2f4c24a9015',
+                  clientSecret: '5fc6a590741afcb45b5ea2051aab87872c95d472', // only required for some of the platforms
+                },
+              }
+            })
+          })
+          function myFunction() {
+              var x = document.getElementsByClassName("vssue-comments")[0];
+              if (x == undefined) {
+                return ;
+              }
+              var property = x.style.getPropertyValue("display");
+              if (property === "none") {
+                x.style.setProperty("display","block");
+                document.getElementById("comment-switch").innerHTML="Hide Comments";
+              } else {
+                x.style.setProperty("display","none");
+                document.getElementById("comment-switch").innerHTML="Show Comments";
+              }
+            }
+        </script>
+
+        <br>
+        <br>
+
+
+        <section class="post-nav">
+            
+            
+            <a class="next" rel="next" href="/2020/04/17/java3/">A Java programmer? Try these puzzles! (Part 3/3)</a>
+            
+        </section>
+
+
+    </article>
+</div>
+
+        </div>
+        <footer id="footer" class="footer">
+    <div class="copyright">
+        <span>© Yihang (Ian) Ding | Powered by <i><a href="https://hexo.io" target="_blank">Hexo</a></i> & <i><a href="https://github.com/Siricee/hexo-theme-Chic" target="_blank">Chic</a></i></span>
+    </div>
+</footer>
+
+    </div>
+</body>
+</html>

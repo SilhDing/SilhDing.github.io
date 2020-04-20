@@ -131,6 +131,45 @@
         <article class="archive-item">
             <a class="archive-item-link" href="/2019/11/29/socialnetwork/">Project: Social Network Data Visualization and Analysis Framework</a>
             <span class="archive-item-date">Nov 29, 2019</span>
+            <!-- <span style=> <p><img src="0.png" alt="banner"></p>
+<p>In this project we work as a team to design and implement an extensible data visualization and analysis framework, consisting of an interactive GUI tool and underlying interfaces and implementations.</p>
+<p>Social media posts share people’s opinions, ideas and events in small pieces of content. The power that lies behind these posts are way more than they seem to be - they represent the trend of our daily life. What is going on in this world? What if we could analyze the social network post data in various dimensions, and demonstrate the trend visually in the form of graph, charts, and even more than that?</p>
+<p>Our framework offers a feasible way to analyze social network posts data and query data based on user-defined requirements, as well as display the analysis result in multiple ways with extensible display plugins. Users may design and implement their own plugins, register them to the framework, and that’s it! Our framework will bring all together to you.</p>
+<p>Across the project, we kept asking some questions to us:</p>
+<ul>
+<li>How can you guarantee extensibility and flexibility if you want to design and implement a framework that might be used by many people across different domains?</li>
+<li>“Maximizing reuse minimizes use.” (<em>C. Szyoerski</em>) So how do you trade off between “use” and “reuse”?</li>
+<li>Have you ever consider a proper name for your APIs?</li>
+</ul>
+<p>This team project is a course project of CMU 17-514, and <strong>it is selected as the “Best Framework”</strong> among all teams from the class.</p>
+<p>Contributors: <a href="https://github.com/shengguan13" target="_blank" rel="noopener">Sheng Guan</a>, <a href="https://github.com/OpusA" target="_blank" rel="noopener">Qingyi Wang</a></p>
+<p>(<strong>Note:</strong> due to the CMU academic integrity policy, the code of this project will not be publicized. If you are <strong>NOT</strong> taking this course currently <strong>AND</strong> you will <strong>NOT</strong> take this course in the future, please leave comments or contact me by e-mail in case you want more information.)</p>
+<h2 id="Framework-Overview"><a href="#Framework-Overview" class="headerlink" title="Framework Overview"></a>Framework Overview</h2><h3 id="Plugins-and-Interfaces"><a href="#Plugins-and-Interfaces" class="headerlink" title="Plugins and Interfaces"></a>Plugins and Interfaces</h3><p>In order to use the framework, users need to design and implements two types of plugins: <em>data source plugin</em> and <em>display plugin</em>.</p>
+<h4 id="Data-Source-Plugin"><a href="#Data-Source-Plugin" class="headerlink" title="Data Source Plugin"></a>Data Source Plugin</h4><p>Data source plugin is responsible for reading data from somewhere (e.g., web APIs, local JSON files) and process data into a specific data format. We have defined an interface <code>DataSourcePlugin</code> and each data source plugin <strong>MUST</strong> implement this interface. The interface contains the following methods that should be implemented:</p>
+<p>(<strong>Note</strong>: due to the CMU academic integrity policy, this part cannot be publicized as it is a part of homework’s solution. If you are <strong>NOT</strong> taking this course currently <strong>AND</strong> you will <strong>NOT</strong> take this course in the future, please leave comments or contact me by e-mail in case you want more information about this part.)</p>
+<h4 id="Display-Plugin"><a href="#Display-Plugin" class="headerlink" title="Display Plugin"></a>Display Plugin</h4><p>Display plugin is supposed to query data using our built-in functions in the framework and visualize the data in its own way. If users want to design a display plugin, it must implement the interface <code>DisplayPlugin</code>, which has following methods:</p>
+<p>(<strong>Note</strong>: due to the CMU academic integrity policy, this part cannot be publicized as it is a part of homework’s solution. If you are <strong>NOT</strong> taking this course currently <strong>AND</strong> you will <strong>NOT</strong> take this course in the future, please leave comments or contact me by e-mail in case you want more information about this part.)</p>
+<h4 id="Framework-Interfaces"><a href="#Framework-Interfaces" class="headerlink" title="Framework Interfaces"></a>Framework Interfaces</h4><p>Users do not need to know the implementation details of framework, but there are some highly helpful built-in methods provided by our framework that can be used in users’ customized plugins:</p>
+<p>(<strong>Note</strong>: due to the CMU academic integrity policy, this part cannot be publicized as it is a part of homework’s solution. If you are <strong>NOT</strong> taking this course currently <strong>AND</strong> you will <strong>NOT</strong> take this course in the future, please leave comments or contact me by e-mail in case you want more information about this part.)</p>
+<h3 id="Usage"><a href="#Usage" class="headerlink" title="Usage"></a>Usage</h3><p>Once you run the program, you will see the main interface of our framework.</p>
+<p><img src="1.png" alt="welcome-pic"></p>
+<p>The left sidebar shows all registered plugins. You need to select ONLY one data source plugin and AT LEAST one display plugins.</p>
+<p>Say now we select the “JSON File Data Plugin” and all display plugins, then click the button “Visualize”, a separate window will prompt asking for value of the parameter “File Path”, and you should enter the path of the JSON file.</p>
+<p><img src="2.png" alt="param">  </p>
+<p>Please note that multiple parameters might be asked. If we select “Twitter Search Plugin”, which accesses twitter official API, you are required to give values of multiple parameters.</p>
+<p><img src="3.png" alt="param-2"><br>We choose the “JSON File Data Plugin” as the data source plugin and select all display plugins, then click “Visualize”. The dataset we use here contains about 5000 most recent tweets from Twitter (by 11/10/2019 11:59 PM).</p>
+<p>As we use three display plugins, we could see three tabs on the right section of the main interface. The first one (see the picture below) is a bar chart plugin, which shows the top 20 popualr post entries (popularity is determned by sum of “Favorites” and “ReTweets”); it also lists the contents of the top 3 popular post entries.</p>
+<p><img src="4.png" alt="analysis-res-1"></p>
+<p>The second one is the “Word Cloud Plugin”, which shows the most frequent words across all post entries in the dataset. A word with a bigger font size also indicates higher frequency of appearance.</p>
+<p><img src="5.png" alt="analysis-res-2"></p>
+<p>Another display is “Pie Chart Plugin”. It categorizes all post entries by location (USA state), and shows the results in a pie chart. In addition, you can choose a US state and the plugin is able to show the top post from the state.</p>
+<p><img src="6.png" alt="analysis-res-3"></p>
+<p>The display plugins are highly informative as they might provide much information about your dataset that is processed by our framework.</p>
+<p>For example, from the word cloud diagram, we found that the most frequent words are all politics-related (e.g., “impeachment”, “president”, “racists”, “voters”, …) and some of the words are strongly related with President Trump’s personal tweets (e.g., “great”, “democrat”, “treason”, “liar”, …). This observation is not surprising, as President Trump is famous for its speeches on Twitter and people are enthusiastic about making fun with his personal slogans.</p>
+<p>It is also found, from the pie chart plugin, that most of the posts are from Southern or Central states in the USA (e.g., TX, FL, AZ, OH, …). It also corresponds to our assumptions that most of Trump’s supporters are from Southern and Central states and people who tweeted with “trump2020” are more likely to be Trump’s supporter.</p>
+<p>The content above is only one example of plugins you can design and implement. You may also design you own ones: the only thing you have to do is to implement our pre-defined interfaces (<code>DataSourcePlugin</code> and <code>DisplayPlugin</code>) adn register them into our framework.</p>
+<h2 id="Community-Support"><a href="#Community-Support" class="headerlink" title="Community Support"></a>Community Support</h2><p>This project was selected as one of the “Best Framework” in the CMU course 17514, and some other teams need to use our framework and implement their own plugins. In order to do this, we publicized the code to the whole class, wrote a detailed documentation, and continuously provided help and support through GitHub platform.</p>
+</span> -->
         </article>
     
         
@@ -140,6 +179,41 @@
         <article class="archive-item">
             <a class="archive-item-link" href="/2019/11/01/carcassonne-1/">Project: Carcassonne Game in Java</a>
             <span class="archive-item-date">Nov 1, 2019</span>
+            <!-- <span style=> <p><img src="0.jpg" alt="game-pic"></p>
+<p>In this individual project, the classical board game <a href="https://en.wikipedia.org/wiki/Carcassonne_(board_game)" target="_blank" rel="noopener">Carcassonne</a> is designed and implemented in Java.</p>
+<p>The project is a course project of CMU 17-514, which is mostly about object oriented design and Java software design. The project contains a full cycle of software design and development, which means it also involves GUI design/implementation, testing and deployment.</p>
+<p><strong>Note</strong>: due to the CMU academic integrity rules, the project codes cannot be publicized.</p>
+<h2 id="Game-Overview"><a href="#Game-Overview" class="headerlink" title="Game Overview"></a>Game Overview</h2><p>Once you run the program, you will first be required to enter the number of players:</p>
+<p><img src="1.png" alt="game-init"></p>
+<p>You are required to enter names of all players. The number of players should be between 2 and 5 (both inclusive).</p>
+<p>Say now we have three players: Alice, Bob, and Evil. Then we start the game.</p>
+<p><img src="2.png" alt="game-start"></p>
+<p>Below is the main interface of the game:</p>
+<p><img src="3.png" alt="game-main"></p>
+<p>In the real board game, there exists a deck and each player is supposed to get a tile from the top of the deck in turn, and then put the tile on the game board accordingly. We also simulate the real game experience through the GUI design:</p>
+<ul>
+<li><strong>Current Player</strong>: the player who is supposed to get a tile from the deck and put it on the game board;</li>
+<li><strong>Current Tile</strong>: the tile on the top of the tile, which is assigned to the current player. It can be rotated (90 degree, clockwise) by clicking the button “Rotate Tile”;</li>
+<li><strong>Action</strong>: action which the current player needs to take right now. It could be:<ul>
+<li>“Please put a tile”: the player now should place the tile on the board. The tile may be rotated by the player. The “+” sign on the grid represents the positions that the tile can be placed on if the tile will not be rotated anymore;</li>
+<li>“Please put a meeple”: the player now should put a meeple on the tile which is just previously placed on the board. Once a meeple is placed, a small solid circle is drawn on the board, in the same color of the player’s name. If a pattern is completed, meeples on that pattern will be revoked.</li>
+<li>“Please skip putting a meeple”: if will happen if there are not any available positions, or the current players has no meeples right now. In this case, the player should click the button “Skipping Putting a Meeple” below to finish the current round.</li>
+</ul>
+</li>
+<li><strong>Scores</strong>: real-time scores and number of available meeples for each player.</li>
+</ul>
+<p>Note it is also possible that a tile cannot be placed on any positions, even if it is rotated. In this case, simply click the button “Skip the Current tile” to drop the current tile and get the next tile.</p>
+<p>The picture below is a screenshot of the main interface. The grid will automatically extend if necessary.</p>
+<p><img src="4.png" alt="game-process"></p>
+<p>Once all tiles are used (dropped or placed), the game is over, and the final ranking will appear on the sidebar.</p>
+<p><img src="5.png" alt="game-over"></p>
+<h2 id="Software-Design-and-Patterns"><a href="#Software-Design-and-Patterns" class="headerlink" title="Software Design and Patterns"></a>Software Design and Patterns</h2><p>In a Java project, it is highly important to use some suitable design patterns and some strategies, in consideration of robustness, flexibility and extensibility.</p>
+<h3 id="Design-Goal"><a href="#Design-Goal" class="headerlink" title="Design Goal"></a>Design Goal</h3><p>The design goal in this project is to construct a comprehensive system that contains all concepts in the game and is able to execute all operations during the game. It should also correctly records the state of the game and return the correct results once the game is over.</p>
+<p>As the game contains multiple objects, coupling between each object should be low, which may be helpful for debugging and implementation. Thus, each object should have clear responsibility and appropriate size of information, which should be helpful for implementation of algorithm in the future.</p>
+<h3 id="Object-Model"><a href="#Object-Model" class="headerlink" title="Object Model"></a>Object Model</h3><p>(<strong>Note</strong>: due to the CMU academic integrity policy, this part cannot be publicized as it is a part of homework’s solution. If you are <strong>NOT</strong> taking this course currently <strong>AND</strong> you will <strong>NOT</strong> take this course in the future, please leave comments or contact me by e-mail in case you want more information about this part.)</p>
+<h3 id="Hierarchy-and-structure"><a href="#Hierarchy-and-structure" class="headerlink" title="Hierarchy and structure"></a>Hierarchy and structure</h3><p>(<strong>Note</strong>: due to the CMU academic integrity policy, this part cannot be publicized as it is a part of homework’s solution. If you are <strong>NOT</strong> taking this course currently <strong>AND</strong> you will <strong>NOT</strong> take this course in the future, please leave comments or contact me by e-mail in case you want more information about this part.)</p>
+<h3 id="Design-Highlights"><a href="#Design-Highlights" class="headerlink" title="Design Highlights"></a>Design Highlights</h3><p>(<strong>Note</strong>: due to the CMU academic integrity policy, this part cannot be publicized as it is a part of homework’s solution. If you are <strong>NOT</strong> taking this course currently <strong>AND</strong> you will <strong>NOT</strong> take this course in the future, please leave comments or contact me by e-mail in case you want more information about this part.)</p>
+</span> -->
         </article>
     
     
