@@ -363,7 +363,7 @@ public Node delete(Node x, String key, int d) {
         // Find the node representing the key
         x.val = null;
     } else {
-        // Keep gping down and find the node.
+        // Keep going down and find the node.
         char c = key.charAt(d);
         x.next[c] = delete(x.next[c], key, d + 1);
     }
@@ -377,3 +377,202 @@ public Node delete(Node x, String key, int d) {
     return null;
 }
 ```
+
+### Performance
+
+It is easy to prove the time complexity of this algorithm. What about space?
+
+The number of links in a trie us between `RN` and `RNw`, where w is the average key length.
+
+## TSTs
+
+Ternary search tries (TSTs) are used to avoid the excessive space cost associated with R-way tries. In a TST, each node has a character, three links, and a value.The three links corresponds to keys whose current characters are less than, equal, or greater than the node's character.
+
+```Java
+public class TSTNew<Value> {
+    private Node root;
+
+    private class Node {
+        char c;
+        Node left, mid, right;
+        Value value;
+    }
+
+    public Value get(String key) {
+        Node node = get(root, key, 0);
+        if (node == null) return null;
+        // Note: value could be null
+        return node.value;
+    }
+
+    private Node get(Node x, String key, int d) {
+        if (x == null) return null;
+
+        char c = key.charAt(d);
+        if (c < x.c) {
+            // Go to the left side.
+            return get(x.left, key, d);
+        } else if (c > x.c) {
+            // Go to the right side.
+            return get(x.right, key, d);
+        } else if (d < key.length() - 1) {
+            // Have not reached the end of key, need to go down.
+            return get(x.mid, key, d + 1);
+        } else {
+            // Have reached the end of the key.
+            return x;
+        }
+    }
+
+    public void put(String key, Value val) {
+        root = put(root, key, val, 0);
+    }
+
+    private Node put(Node x, String key, Value val, int d) {
+        char c = key.charAt(d);
+        if (x == null) {
+            x = new Node();
+            x.c = c;
+        }
+
+        if (c < x.c) {
+            // Go to the left side.
+            x.left = put(x.left, key, val, d);
+        } else if (c > x.c) {
+            // Go to the rigth side.
+            x.right = put(x.right, key, val, d);
+        } else if (d < key.length() - 1) {
+            // Have not reached the end of the key.
+            x.mid = put(x.mid, key, val, d + 1);
+        } else {
+            // Have reached the end of the key.
+            x.value = val;
+        }
+
+        return x;
+    }
+}
+```
+
+The number of links in a TST build from N string keys of average length `w` is between `3N` and `3Nw`.
+
+## Substring Search
+
+### Brute-force
+
+```Java
+public class StringSearch {
+    // This is the brute-force substring search
+
+    public static int search(String pat, String txt) {
+        int M = pat.length();
+        int N = txt.length();
+
+        for (int i = 0; i <= N - M; i++) {
+            int j;
+            for (j = 0; j < M; j ++) {
+                if (txt.charAt(i + j) != pat.charAt(j))
+                    break;
+            }
+            if (j == M) return i;
+        }
+        return N;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(search("ABRA", "ABACADABRAC"));
+        System.out.println(search("ABRA", "ABACADABRBC"));
+
+    }
+}
+```
+
+Time complexity: `O(MN)`. Below is an alternative solution.
+
+```Java
+public static int search2(String pat, String txt) {
+    int M = pat.length();
+    int N = txt.length();
+
+    int i, j;
+    for (i = 0, j = 0; i < N && j < M; i ++) {
+        if (txt.charAt(i) == pat.charAt(j)) {
+            j++;
+        } else {
+            i -= j;
+            j = 0;
+        }
+    }
+
+    if (j == M) return i - M;
+    else return N;
+
+}
+```
+
+### KMP
+
+Here I will introduce two versions of KMP algorithms.
+
+#### 2D Version with DFA
+
+As we mentioned in the brute-force substring match algorithm (the alternate one), if we find a mismatch at some point, `j` has to set to be `0` and `i` will also decremented. This is the main reason that the running time of that algorithm is high.
+
+Is there a way which avoids decrementing the value of 'j'. This is what KMP algorithm tries to achieve. The basic idea behind the algorithm discovered by Knuth, Morris, and Pratt is this: whenever we detect a mismatch, *we already know some of the characters in the text*, since they matched the pattern characters prior to the mismatch.
+
+In KMP substring search, we never back up the text pointer `i`, and we use an array `dfa[][]` to record how far to back up the pattern pointer `j` when a mismatch is detected. For every character `c`, `dfa[c][j]` is the pattern position to compare with next text position after comparing `c` with `pat.charAt(j)`. During the search, **`dfa[txt.charAt(i)][j]` is the pattern position to compare with `txt.charAt(i)` with `pat.charAt(j)`**. Thus, `dfa[pat.charAt(j)][j]` is always `j+1`.
+
+Once we have computed DFA, we then can easily search the match with DFA. You may ask, why we have to call it "DFA"?
+
+In fact, "DFA" represents *deterministic finite-state automation*. For example, for a pattern `A B A B A C`, the DFA will be (we will later study how can we construct DFA):
+
+	   A B C D E F
+	j  0 1 2 3 4 5
+	   -----------
+	A |1 1 3 1 5 1
+	B |0 2 0 4 0 4
+	C |0 0 0 0 0 6
+
+Please note that here we assume there are only three characters (A, B, and C) in the alphabet. Below is the graphical representation of this DFA.
+
+![dfa_graph](dfa_graph.jpg)
+
+We then could easily use this to finish the matching process. The input text string is "B C B A A B A C A A B A B A C A A":
+
+![dfa_process](dfa_process.jpg)
+
+Below is the code corresponding to the process showed in the picture.
+
+```Java
+public class KMP {
+
+    private String pat;
+    private int[][] dfa;
+
+    public KMP(String pat) {
+        this.pat = pat;
+        int M = pat.length();
+        int R = 256;
+        dfa = new int[R][M];
+        // TODO: construct the DFA array    
+    }
+
+    public int search(String txt) {
+        int i, j;
+        int N = txt.length(), M = this.pat.length();
+        for(i = 0, j = 0; i < N && j < M; i++) {
+            j = dfa[txt.charAt(i)][j];
+        }
+        if (j == M) return i - M;
+        else return N;
+    }
+
+}
+```
+
+Up to now, you must feel the logic is natural and comfortable. Now, we have to know how can we construct DFA array with a given pattern string, which is much trickier and interesting.
+
+When we have a mismatch at `pat.charAt(j)`, our interest is in knowing in what state the DFA *would be* if we were to back up the next index and rescan the text characters that we just saw after shifting to the right one position (remember, `i` is always incremented by `1` after a match or mismatch).
+
+
+What should the DFA do with the next character? ***Exactly what it would have done if we had backed up***, except if it finds a match with `pat.charAt(j)`, when it should go to state `j+1`. Certainly, this makes sense and is straightforward.
