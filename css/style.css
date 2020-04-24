@@ -1182,8 +1182,8 @@ header label {
   background: #f8f5ec;
 }
 .dark-theme .post-content code {
-  color: #c7254e;
-  background: #f8f5ec;
+  color: #bbbbc3;
+  background: #6d7078;
 }
 .post-content p code {
   font-size: 11.5pt;
@@ -1191,6 +1191,7 @@ header label {
 }
 .post-content pre code {
   font-size: 11.5pt;
+  background: inherit;
 }
 .post-content ul li code,
 .post-content ol li code {
@@ -1242,7 +1243,7 @@ header label {
 }
 .post-content figure.highlight .gutter {
   width: 10px;
-  color: #d0d0d0;
+  color: #d1d1d1;
 }
 .post-content figure.highlight .gutter pre {
   margin: 0;
@@ -2948,6 +2949,10 @@ header label {
   overflow-y: hidden;
   overflow-x: auto;
 }
+.dark-theme .post-content figure.highlight,
+.dark-theme .markdown-body figure.highlight {
+  background: #303036;
+}
 .post-content figure.highlight .gutter,
 .markdown-body figure.highlight .gutter {
   color: $hight-gutter;
@@ -2957,6 +2962,10 @@ header label {
   background: #f7f7f7;
   margin: 0;
 }
+.dark-theme .post-content figure.highlight pre,
+.dark-theme .markdown-body figure.highlight pre {
+  background: #303036;
+}
 .post-content code,
 .markdown-body code {
   padding: 2px 4px;
@@ -2964,12 +2973,24 @@ header label {
   font-family: Source Code Pro, Menlo, Monaco, Consolas, Courier New, monospace;
   font-size: 12px;
 }
+.dark-theme .post-content code,
+.dark-theme .markdown-body code {
+  background: #303036;
+}
 .post-content pre,
 .markdown-body pre {
   padding: 10px;
   overflow: auto;
   background: #f7f7f7;
   font-family: Source Code Pro, Menlo, Monaco, Consolas, Courier New, monospace;
+}
+.dark-theme .post-content pre,
+.dark-theme .markdown-body pre {
+  background: #303036;
+}
+.dark-theme .post-content pre,
+.dark-theme .markdown-body pre {
+  color: #b3b4b1;
 }
 .post-content pre code,
 .markdown-body pre code {
@@ -2990,6 +3011,10 @@ header label {
 .post-content pre .comment,
 .markdown-body pre .comment {
   color: #8e908c;
+}
+.dark-theme .post-content pre .comment,
+.dark-theme .markdown-body pre .comment {
+  color: #676864;
 }
 .post-content pre .variable,
 .markdown-body pre .variable,
