@@ -574,5 +574,92 @@ Up to now, you must feel the logic is natural and comfortable. Now, we have to k
 
 When we have a mismatch at `pat.charAt(j)`, our interest is in knowing in what state the DFA *would be* if we were to back up the next index and rescan the text characters that we just saw after shifting to the right one position (remember, `i` is always incremented by `1` after a match or mismatch).
 
-
 What should the DFA do with the next character? ***Exactly what it would have done if we had backed up***, except if it finds a match with `pat.charAt(j)`, when it should go to state `j+1`. Certainly, this makes sense and is straightforward.
+
+So, the question here is, what is the back up state X? before this question, we must know what exactly happens (or, say, what we should do) when backing up to state X. Here are two question to discussed about:
+
+> Q: What we actually do after backing up to state X?
+
+If we back up to state X after a mismatch, keep `i` not changed, and set `j` to X. The definition of X should guarantee that **all chars from index 0 to `j - 1` (i.e., `X - 1`) are matched with chars prior to `i` in the text string**. We now, we just need to compare the char of index `j` (`X`) in the pattern string and the char of index `i` in the text string, this may proceed to a nigger state or a level state. Because our DFA is partially completed already, and `X < j`, so we can use the DFA now! which is: `dfa[c][X]`, where `c` is the current text char at index `i`. And then, according to the definition of DFA, we get a new position for `j` (the result of `dfa[c][X]`), and `i` is incremented by 1.
+
+***Thus, we can copy the entry values in state `X` to state `j`***.
+
+I know this is kind of confusing, so let's look into 2 example. In both these examples, we use pattern string `A B A B A C`.
+
+**~ Example 1**
+
+Say we have completed the first column of DFA (the first column of this DFA is in fact the complete DFA for pattern string `A`), and we are building the second column. As mentioned earlier, we should back up (exception there is a match, and we will handle this case specially) to state `X`. `X` for the second column (`j = 1`) is `0` (we will explain why `X` is this value later).
+
+	             (i)
+	txt string: A A C ...
+	pat string: A B A ...
+	             (j)
+
+We can see that when state is `1` (`j = 1`) we have a mismatch. As we said previously, we need to remain the value of `i`, and set `j` to `0`.
+
+	             (i)
+	txt string: A A C...
+	pat string:   A B A...
+	             (j)
+	             (X)
+
+We have backed up the `X`, and we have not finished our job. We could only make sure that all chars from index `0` to `X - 1` is pattern string are matched (of course, it is none in this example), but how about char on index `X` (`i` for text string)? We cannot make sure it is also match.
+
+In fact, because we have finished the first column of DFA, and `j` is `0` now, and you may also notice that ***we are actually doing a match***! All of these indicate that we can use the partially completed DFA to determine a new state, which is given by `dfa['A'][X]`. The first `A` indicates the char on index `i` in text string. If the text string is `A B ...`, then use `dfa['B'][X]`. As we are building the second column of DFA, we might need a loop: `dfa[][j] = dfa[][X]` (note `j` here is the original `y`).
+
+Continue this example. `dfa['A'][X]`, which is also `dfa['A'][0]` will return `1`. Thus, we set `j` to `1` and increment `i` by 1.
+
+	               (i)
+	txt string: A A C...
+	pat string:   A B A...
+	               (j)
+
+**~ Example 2**
+
+You may notice that the example 1 does not show that **all chars from index 0 to `X - 1` are matched with chars prior to `i` in the text string**. No worry, we can give you another example.
+
+Suppose now we have a mismatch at index `j = 3`, and `X` is `1`. For example, it happens when the text string is `A B A C ...`
+
+	                 (i)
+	txt string: A B A C A...
+	pat string: A B A B A...
+	                 (j)
+
+As we discussed previously, we need to remain the value of `i`, and set `j` to `X`, which is `1`.
+
+	                 (i)
+	txt string: A B A C A ...
+	pat string:     A B A B A ...
+	                 (j)
+	                 (X)
+
+We can see all chars from index `0` to `X - 1`, in fact, `A`, match with txt string. So, we only need to care about the chars after `X`, and we can just use value of `dfa[C][X]` as the DFA is partially built. The value given by it is `0`.
+
+	                   (i)
+	txt string: A B A C A ...
+	pat string:         A B A B A ...
+	                   (j)
+
+I believe these two examples can help you understand the process that we build the DFA array. The key to understand the process is to be aware that state `X` *can make sure all chars prior to index `X` in pattern string have will be matched if we set `j` to `X` and do not change `i`*.
+
+There is another way to understand `X`, and it will help you understand the next question.
+
+For a given string, we define its ***prefix set*** as the set of all its prefix (exclude the string itself) and ***suffix set*** as the set of all its suffix (exclude the string itself). **`X` will be the length of the longest string in the intersection set of the string's prefix and suffix set**. For example, for string `ABA`, longest string is `A`, and `X` is `1`; for `ABAB`, `X` will be `2`.
+
+We have image the you are match two same strings, while sliding one to the left and another one to right. Once the overlapping matches, we get the `X` value. Take `ABAB` as an example:
+
+	←  A B A B
+	       A B A B →
+
+It should be easy to derive this representation once you have understand the two examples above.
+
+In fact, this is also the way to compute the value of `X`. However, we don't want to use this naive way, and here comes our second question.
+
+> Q: How can we compute the value of `X`?
+
+At first, let's talk about what is the initial value of `X` when we just start to build the DFA array.
+
+- If we mismatch at state `0`, of course we should go back to state `0` (`j = 0`). This is totally understandable;
+- If we mismatch at state `1`, we could only back up to `0` as well as we cannot stay the same state.
+
+What if we mismatch at other positions? The method is, every time when we have finished one column of DFA, **we need to update the value of `X`**.
