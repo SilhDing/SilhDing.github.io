@@ -210,6 +210,60 @@ C |0 0 0 0 0 6</code></pre><p>Please note that here we assume there are only thr
 <p>Up to now, you must feel the logic is natural and comfortable. Now, we have to know how can we construct DFA array with a given pattern string, which is much trickier and interesting.</p>
 <p>When we have a mismatch at <code>pat.charAt(j)</code>, our interest is in knowing in what state the DFA <em>would be</em> if we were to back up the next index and rescan the text characters that we just saw after shifting to the right one position (remember, <code>i</code> is always incremented by <code>1</code> after a match or mismatch).</p>
 <p>What should the DFA do with the next character? <strong><em>Exactly what it would have done if we had backed up</em></strong>, except if it finds a match with <code>pat.charAt(j)</code>, when it should go to state <code>j+1</code>. Certainly, this makes sense and is straightforward.</p>
+<p>So, the question here is, what is the back up state X? before this question, we must know what exactly happens (or, say, what we should do) when backing up to state X. Here are two question to discussed about:</p>
+<blockquote>
+<p>Q: What we actually do after backing up to state X?</p>
+</blockquote>
+<p>If we back up to state X after a mismatch, keep <code>i</code> not changed, and set <code>j</code> to X. The definition of X should guarantee that <strong>all chars from index 0 to <code>j - 1</code> (i.e., <code>X - 1</code>) are matched with chars prior to <code>i</code> in the text string</strong>. We now, we just need to compare the char of index <code>j</code> (<code>X</code>) in the pattern string and the char of index <code>i</code> in the text string, this may proceed to a nigger state or a level state. Because our DFA is partially completed already, and <code>X &lt; j</code>, so we can use the DFA now! which is: <code>dfa[c][X]</code>, where <code>c</code> is the current text char at index <code>i</code>. And then, according to the definition of DFA, we get a new position for <code>j</code> (the result of <code>dfa[c][X]</code>), and <code>i</code> is incremented by 1.</p>
+<p><strong><em>Thus, we can copy the entry values in state <code>X</code> to state <code>j</code></em></strong>.</p>
+<p>I know this is kind of confusing, so let’s look into 2 example. In both these examples, we use pattern string <code>A B A B A C</code>.</p>
+<p><strong>~ Example 1</strong></p>
+<p>Say we have completed the first column of DFA (the first column of this DFA is in fact the complete DFA for pattern string <code>A</code>), and we are building the second column. As mentioned earlier, we should back up (exception there is a match, and we will handle this case specially) to state <code>X</code>. <code>X</code> for the second column (<code>j = 1</code>) is <code>0</code> (we will explain why <code>X</code> is this value later).</p>
+<pre><code>             (i)
+txt string: A A C ...
+pat string: A B A ...
+             (j)</code></pre><p>We can see that when state is <code>1</code> (<code>j = 1</code>) we have a mismatch. As we said previously, we need to remain the value of <code>i</code>, and set <code>j</code> to <code>0</code>.</p>
+<pre><code>             (i)
+txt string: A A C...
+pat string:   A B A...
+             (j)
+             (X)</code></pre><p>We have backed up the <code>X</code>, and we have not finished our job. We could only make sure that all chars from index <code>0</code> to <code>X - 1</code> is pattern string are matched (of course, it is none in this example), but how about char on index <code>X</code> (<code>i</code> for text string)? We cannot make sure it is also match.</p>
+<p>In fact, because we have finished the first column of DFA, and <code>j</code> is <code>0</code> now, and you may also notice that <strong><em>we are actually doing a match</em></strong>! All of these indicate that we can use the partially completed DFA to determine a new state, which is given by <code>dfa[&#39;A&#39;][X]</code>. The first <code>A</code> indicates the char on index <code>i</code> in text string. If the text string is <code>A B ...</code>, then use <code>dfa[&#39;B&#39;][X]</code>. As we are building the second column of DFA, we might need a loop: <code>dfa[][j] = dfa[][X]</code> (note <code>j</code> here is the original <code>y</code>).</p>
+<p>Continue this example. <code>dfa[&#39;A&#39;][X]</code>, which is also <code>dfa[&#39;A&#39;][0]</code> will return <code>1</code>. Thus, we set <code>j</code> to <code>1</code> and increment <code>i</code> by 1.</p>
+<pre><code>               (i)
+txt string: A A C...
+pat string:   A B A...
+               (j)</code></pre><p><strong>~ Example 2</strong></p>
+<p>You may notice that the example 1 does not show that <strong>all chars from index 0 to <code>X - 1</code> are matched with chars prior to <code>i</code> in the text string</strong>. No worry, we can give you another example.</p>
+<p>Suppose now we have a mismatch at index <code>j = 3</code>, and <code>X</code> is <code>1</code>. For example, it happens when the text string is <code>A B A C ...</code></p>
+<pre><code>                 (i)
+txt string: A B A C A...
+pat string: A B A B A...
+                 (j)</code></pre><p>As we discussed previously, we need to remain the value of <code>i</code>, and set <code>j</code> to <code>X</code>, which is <code>1</code>.</p>
+<pre><code>                 (i)
+txt string: A B A C A ...
+pat string:     A B A B A ...
+                 (j)
+                 (X)</code></pre><p>We can see all chars from index <code>0</code> to <code>X - 1</code>, in fact, <code>A</code>, match with txt string. So, we only need to care about the chars after <code>X</code>, and we can just use value of <code>dfa[C][X]</code> as the DFA is partially built. The value given by it is <code>0</code>.</p>
+<pre><code>                   (i)
+txt string: A B A C A ...
+pat string:         A B A B A ...
+                   (j)</code></pre><p>I believe these two examples can help you understand the process that we build the DFA array. The key to understand the process is to be aware that state <code>X</code> <em>can make sure all chars prior to index <code>X</code> in pattern string have will be matched if we set <code>j</code> to <code>X</code> and do not change <code>i</code></em>.</p>
+<p>There is another way to understand <code>X</code>, and it will help you understand the next question.</p>
+<p>For a given string, we define its <strong><em>prefix set</em></strong> as the set of all its prefix (exclude the string itself) and <strong><em>suffix set</em></strong> as the set of all its suffix (exclude the string itself). <strong><code>X</code> will be the length of the longest string in the intersection set of the string’s prefix and suffix set</strong>. For example, for string <code>ABA</code>, longest string is <code>A</code>, and <code>X</code> is <code>1</code>; for <code>ABAB</code>, <code>X</code> will be <code>2</code>.</p>
+<p>We have image the you are match two same strings, while sliding one to the left and another one to right. Once the overlapping matches, we get the <code>X</code> value. Take <code>ABAB</code> as an example:</p>
+<pre><code>←  A B A B
+       A B A B →</code></pre><p>It should be easy to derive this representation once you have understand the two examples above.</p>
+<p>In fact, this is also the way to compute the value of <code>X</code>. However, we don’t want to use this naive way, and here comes our second question.</p>
+<blockquote>
+<p>Q: How can we compute the value of <code>X</code>?</p>
+</blockquote>
+<p>At first, let’s talk about what is the initial value of <code>X</code> when we just start to build the DFA array.</p>
+<ul>
+<li>If we mismatch at state <code>0</code>, of course we should go back to state <code>0</code> (<code>j = 0</code>). This is totally understandable;</li>
+<li>If we mismatch at state <code>1</code>, we could only back up to <code>0</code> as well as we cannot stay the same state.</li>
+</ul>
+<p>What if we mismatch at other positions? The method is, every time when we have finished one column of DFA, <strong>we need to update the value of <code>X</code></strong>.</p>
 </span> -->
         </article>
     

@@ -984,11 +984,19 @@ header label {
   color: #eee;
 }
 .post-content h4::before {
-  content: "*";
+  content: "|";
   margin-right: 5px;
   color: #1e90ff;
 }
 .dark-theme .post-content h4::before {
+  color: #eee;
+}
+.post-content h5::before {
+  content: "*";
+  margin-right: 5px;
+  color: #1e90ff;
+}
+.dark-theme .post-content h5::before {
   color: #eee;
 }
 .post-content a {
@@ -2951,7 +2959,7 @@ header label {
 }
 .dark-theme .post-content figure.highlight,
 .dark-theme .markdown-body figure.highlight {
-  background: #303036;
+  background: #3e3e3e;
 }
 .post-content figure.highlight .gutter,
 .markdown-body figure.highlight .gutter {
@@ -2964,7 +2972,7 @@ header label {
 }
 .dark-theme .post-content figure.highlight pre,
 .dark-theme .markdown-body figure.highlight pre {
-  background: #303036;
+  background: #3e3e3e;
 }
 .post-content code,
 .markdown-body code {
@@ -2975,7 +2983,7 @@ header label {
 }
 .dark-theme .post-content code,
 .dark-theme .markdown-body code {
-  background: #303036;
+  background: #3e3e3e;
 }
 .post-content pre,
 .markdown-body pre {
@@ -2986,7 +2994,7 @@ header label {
 }
 .dark-theme .post-content pre,
 .dark-theme .markdown-body pre {
-  background: #303036;
+  background: #3e3e3e;
 }
 .dark-theme .post-content pre,
 .dark-theme .markdown-body pre {
