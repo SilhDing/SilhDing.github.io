@@ -578,11 +578,11 @@ What should the DFA do with the next character? ***Exactly what it would have do
 
 So, the question here is, what is the back up state X? before this question, we must know what exactly happens (or, say, what we should do) when backing up to state X. Here are two question to discussed about:
 
-> Q: What we actually do after backing up to state X?
+> Q: What we actually do after backing up to state `X`?
 
 If we back up to state X after a mismatch, keep `i` not changed, and set `j` to X. The definition of X should guarantee that **all chars from index 0 to `j - 1` (i.e., `X - 1`) are matched with chars prior to `i` in the text string**. We now, we just need to compare the char of index `j` (`X`) in the pattern string and the char of index `i` in the text string, this may proceed to a nigger state or a level state. Because our DFA is partially completed already, and `X < j`, so we can use the DFA now! which is: `dfa[c][X]`, where `c` is the current text char at index `i`. And then, according to the definition of DFA, we get a new position for `j` (the result of `dfa[c][X]`), and `i` is incremented by 1.
 
-***Thus, we can copy the entry values in state `X` to state `j`***.
+***Thus, we can copy the entry values in state `X` to state `j`, except when we see a match: `dfa[pat.charAt(j)][j] = j + 1`.***
 
 I know this is kind of confusing, so let's look into 2 example. In both these examples, we use pattern string `A B A B A C`.
 
@@ -648,8 +648,8 @@ For a given string, we define its ***prefix set*** as the set of all its prefix 
 
 We have image the you are match two same strings, while sliding one to the left and another one to right. Once the overlapping matches, we get the `X` value. Take `ABAB` as an example:
 
-	←  A B A B
-	       A B A B →
+	← A B A B
+	      A B A B →
 
 It should be easy to derive this representation once you have understand the two examples above.
 
@@ -663,3 +663,68 @@ At first, let's talk about what is the initial value of `X` when we just start t
 - If we mismatch at state `1`, we could only back up to `0` as well as we cannot stay the same state.
 
 What if we mismatch at other positions? The method is, every time when we have finished one column of DFA, **we need to update the value of `X`**.
+
+Say we now have finished the first three columns of the DFA array and are building the 4th column. The prefix with length of 3 is `ABA`, and the `X` value during the construction of 4th column is `1`:
+
+	← A B A
+	      A B A →
+	       (X)
+
+Apparently, value of `X` is the length that we can self-matched, as showed above. Say now we also have finished the 4th column, and the prefix length should be `4`. Then, it is necessary to update the value of `X`:
+
+	   (new char added)
+	        ↓
+	← A B A B
+	      A B A B →
+	       (X)  ↑
+	          (new char added)
+
+A critical observation is, to determine the new value of `X` (or, say, the new length of self-matching), ***we only need to match the new char added with the char on index of previous `X`***: `dfs[pat.charAt(j)][X]`!
+
+We can use DFA to do this still because `X` is smaller than `j` and the DFA is partially completed!
+
+You will find some interesting facts about `X`. For example, if `X` is incremented after one update, it could only be incremented by `1`; `X` might also be lower after one update (e.g., if the newly added char is `c` rather than `B`, `X` will become `0`).
+
+Okay, take a deep breath! We have gone through everything about KMP now, and I believe (100%) that you are confident in writing the code by yourself.
+
+```Java
+public class KMP {
+
+    private String pat;
+    private int[][] dfa;
+
+    public KMP(String pat) {
+        this.pat = pat;
+        int M = pat.length();
+        int R = 256;
+        dfa = new int[R][M];
+        dfa[pat.charAt(0)][0] = 1;
+        for (int j = 1, X = 0; j < M; j++) {
+            for (int c = 0; c < R; c ++) {
+                dfa[c][j] = dfa[c][X];
+            }
+            dfa[pat.charAt(j)][j] = j + 1;
+
+            // Update X
+            X = dfa[pat.charAt(j)][X]
+        }
+    }
+
+    public int search(String txt) {
+        int i, j;
+        int N = txt.length(), M = this.pat.length();
+        for(i = 0, j = 0; i < N && j < M; i++) {
+            j = dfa[txt.charAt(i)][j];
+        }
+        if (j == M) return i - M;
+        else return N;
+    }
+
+}
+```
+
+#### 1D Version with PMT
+
+If you are a Chinese reader, you can also refer to [this post](https://www.zhihu.com/question/21923021/answer/281346746) for a new version which only uses a 1-D array. I will translate it into English later.
+
+One hint I would give you is: though these two versions seem to differ a lot, they still share something (which plays a big role in KMP algorithm) in common. ***You will find that the the "PMT" mentioned in this version is exactly the restart state `X` is the 2D version!***
