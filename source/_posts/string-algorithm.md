@@ -871,5 +871,4 @@ This algorithm is an early and famous example of *Monte Carlo* algorithm that ha
 
 Rabin-Karp substring search is known as a *fingerprint* search because it uses a small amount of information to represent a pattern.
 
-
 ## Regex
