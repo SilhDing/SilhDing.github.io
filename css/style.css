@@ -183,7 +183,7 @@ template {
   font-style: italic;
 }
 html {
-  font-family: 'source serif pro', 'Noto Serif SC', 'STSong', 'Songti SC', 'Noto Serif KR';
+  font-family: 'Computer Modern', 'source serif pro', 'Noto Serif SC', 'STSong', 'Songti SC', 'Noto Serif KR';
 }
 html::-webkit-scrollbar {
   width: 8px;
@@ -1336,7 +1336,7 @@ header label {
   width: 100%;
   color: #161209;
   font-size: 16px;
-  font-family: 'source serif pro', 'Noto Serif SC', 'STSong', 'Songti SC', 'Noto Serif KR';
+  font-family: 'Computer Modern', 'source serif pro', 'Noto Serif SC', 'STSong', 'Songti SC', 'Noto Serif KR';
   padding: 10px;
 }
 .vssue .vssue-button {
@@ -1565,7 +1565,7 @@ header label {
   width: 100%;
   padding: 15px;
   font-size: 16px;
-  font-family: 'source serif pro', 'Noto Serif SC', 'STSong', 'Songti SC', 'Noto Serif KR';
+  font-family: 'Computer Modern', 'source serif pro', 'Noto Serif SC', 'STSong', 'Songti SC', 'Noto Serif KR';
   background-color: #f1f1f1;
   border: 0px solid #e8e8e8;
   border-radius: 5px;
@@ -2778,10 +2778,22 @@ header label {
   margin-left: 0.25rem;
 }
 .post-toc .toc-link::before {
-  background-color: #fff;
+  background-color: #d9d9d9;
+}
+.dark-theme .post-toc .toc-link::before {
+  background-color: #3e3e3e;
 }
 .post-toc .is-active-link::before {
   background-color: #1e90ff;
+}
+.dark-theme .post-toc .is-active-link::before {
+  background-color: #eee;
+}
+.post-toc .is-active-link {
+  color: #1e90ff;
+}
+.dark-theme .post-toc .is-active-link {
+  color: #eee;
 }
 .post-toc .tocbot-list-menu {
   margin: 1rem 0.75rem;
