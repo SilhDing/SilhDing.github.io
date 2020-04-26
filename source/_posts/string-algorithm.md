@@ -5,6 +5,7 @@ tag:
     - "algorithm"
 categories:
     - "technique"
+mathjax: true
 ---
 
 In this post, we want to study and summarize some well-known algorithms for Strings.
@@ -510,7 +511,7 @@ public static int search2(String pat, String txt) {
 }
 ```
 
-### KMP
+### KMP Algorithm
 
 Here I will introduce two versions of KMP algorithms.
 
@@ -679,7 +680,7 @@ Apparently, value of `X` is the length that we can self-matched, as showed above
 	       (X)  ↑
 	          (new char added)
 
-A critical observation is, to determine the new value of `X` (or, say, the new length of self-matching), ***we only need to match the new char added with the char on index of previous `X`***: `dfs[pat.charAt(j)][X]`!
+A critical observation is, to determine the new value of `X` (or, say, the new length of self-matching), ***we only need to match the newly added char with the char on index of previous `X`***: `dfs[pat.charAt(j)][X]`!
 
 We can use DFA to do this still because `X` is smaller than `j` and the DFA is partially completed!
 
@@ -706,7 +707,7 @@ public class KMP {
             dfa[pat.charAt(j)][j] = j + 1;
 
             // Update X
-            X = dfa[pat.charAt(j)][X]
+            X = dfa[pat.charAt(j)][X];
         }
     }
 
@@ -728,3 +729,147 @@ public class KMP {
 If you are a Chinese reader, you can also refer to [this post](https://www.zhihu.com/question/21923021/answer/281346746) for a new version which only uses a 1-D array. I will translate it into English later.
 
 One hint I would give you is: though these two versions seem to differ a lot, they still share something (which plays a big role in KMP algorithm) in common. ***You will find that the the "PMT" mentioned in this version is exactly the restart state `X` is the 2D version!***
+
+#### Performance
+
+For the second version, the time complexity is `O(M + N)` (`O(M)` for computing DFA and `O(N)` for search); if we do not ignore the alphabet size `R`, then it should be `O(RM + N)`.
+
+### Boyer-Moore Algorithm
+
+AS you can see, KMP algorithm is a method based on *left-to-right* compare. Here we want to introduce a new algorithm based on the *right-to-left* compare.
+
+In this algorithm, we still have two pointers, `i` and `j`, for text string and pattern string respectively. Index
+`i` always points to the char in the text string that should be compared with the first char of the pattern string, `j` initially points to the last char of the pattern string and will be decremented if `pat.charAt(j) == txt.charAt(i+j)`.
+
+In addition, we also implement an array `right[]` that gives fir each character in the alphabet, the index of its *rightmost occurrence* in the pattern (or `-1` if the character is not in the pattern). For example, if the string is `N E E D L E`:
+
+	  A  B  C  D  E ... L   M  N ...
+	 -1 -1 -1  3  5 ... 4  -1  0 ...
+
+If there is a mismatch between `pat.charAt(j)` and `txt.charAt(i+j)`, we will have one of the following three cases:
+
+1. If the character causing the mismatch is not found in the pattern, we can slide the pattern `j+1` positions to the right;
+2. If the character `c` causing the mismatch is found in the pattern ,we use the `right[]` array to line up the pattern with the text string so that character will match its rightmost occurrence in the pattern. To do so, we increment `i` by `j` minus `right[c]`.
+3. If the computation would not increase `i`, i.e., not helping, we simply increment `i` by `1`, just like what we do in the brute-force algorithm.
+
+Now, the code below should be understandable and straightforward.
+
+```Java
+public class BoyerMoore {
+    private int[] right;
+    private String pat;
+
+    public BoyerMoore(String pat) {
+        this.pat = pat;
+        int M = pat.length();
+        int R = 256;
+        right = new int[R];
+        for (int c = 0 ; c < R; c++) {
+            right[c] = -1;
+        }
+        for (int j = 0; j < M; j++) {
+            right[pat.charAt(j)] = j;
+        }
+    }
+
+    public int search(String txt) {
+        int N = txt.length();
+        int M = pat.length();
+        int skip;
+        for (int i = 0; i <= N - M; i += skip) {
+            skip = 0;  // the increment for i
+            for (int j = M - 1; j >= 0; j --) {
+                // compare pat.charAt(i) and txt.charAt(i+j)
+                if (pat.charAt(j) != txt.charAt(i+j)) {
+                    skip = j - right[txt.charAt(i+j)];
+                    // if value of `right` is -1, then skip = j + 1, which is the second case
+                    if (skip < 1) skip = 1;
+                    break;
+                }
+            }
+            if (skip == 0) return i;
+        }
+        return N;
+    }
+}
+```
+
+Please note, this algorithm requires *backup in the input string*, i.e., we need to read previous chars again during the process. It enables us to exploit some features of right-to-left compares. In some applications where backup is not allowed, KMP would be a better candidate.
+
+### Rabin-Karp Algorithm
+
+Unlike the two algorithms above, this algorithm will use hashing. In fact, each string of length `M` corresponds to an `M`-digit base-`R` number, which means we can totally treat a string as a number. We could also implement a has function to convert an `M`-digit base-`R` number to an `int` value between 0 and `Q-1`, with the help of modular hashing.
+
+ A naive solution is based on the brute-force substring matching: we could simply compute the hash value for every possible substring with length `M` of the text string, and compare it with the hash value of pattern string. However, it is not efficient and shows no improvement over brute-force solution.
+
+The Rabin-Karp algorithm shows an efficient way to get the new hash value after we move `i` to the right position
+by 1. It is easy to derive this logic with some simple maths work:
+
+Using the notation $t_i$ for `txt.charAt(i)`, the number corresponding to the `M`-character substring of text string that starts at position `i` is
+
+$$x_i = t_iR^{M-1} + t_{i+1}R^{M} + ... + t_{i+M-1}R^0$$
+
+and we can assume that we know the value of $h(x_i)=x_i$ mod Q. It is also easy to get that
+
+$$x_{i+1} = (x_i - t_iR^{M-1})R+t_{i+M}$$
+
+```Java
+public class RabinKarp {
+    private String pat;
+    private int M;
+    private long patHash;
+    private long Q;
+    private int R = 256;
+    private long RM;  // R^(M - 1) % Q
+
+    public RabinKarp(String pat) {
+        this.pat = pat;
+        this.M = pat.length();
+        Q = 997; // A prime number
+        RM = 1;
+        for (int i = 1; i <= M - 1; i++) {
+            RM = (R * RM ) % Q;
+        }
+        patHash = hash(pat, M);
+    }
+
+	public boolean check(int i) {
+		// TODO
+		return true;
+	}
+
+    public long hash(String key, int M) {
+        long h = 0;
+        for (int j = 0; j < M ; j++) {
+            h = (R * h + key.charAt(j)) % Q;
+        }
+        return h;
+    }
+
+    private int search(String txt) {
+        int N = txt.length();
+        long txtHash = hash(txt, M); // only get the hash value for the first M chars
+        if (patHash == txtHash && check(0)) return 0;
+        for (int i = M ; i < N; N++) {
+            txtHash = (txtHash + Q - RM * txt.charAt(i-M) % Q) % Q;  
+            // Adding Q to make sure we can always get the positive value
+            txtHash = (txtHash * R + txt.charAt(i)) % Q;
+            if (patHash == txtHash && check(i - M + 1)) {
+                return i - M + 1;
+            }
+        }
+        return N;
+    }
+}
+```
+
+You may notice that there is a function called `check()`. Why do we need this?
+
+hashing is a good thing and we could exploit hashing for many applications, e.g., `HashMap` in Java. However, one main problem of hashing is that we may see hash conflict sometimes. Of course, we have the same problem in this case, as two different strings will get the same hash value. In order to resolve this issue, we can simply add an additional check when we see a hash value match, but we do not want to do that as it requires backup in the text string. Instead, we can choose a bigger value for `Q` to make the probability of hash conflict very small.
+
+This algorithm is an early and famous example of *Monte Carlo* algorithm that has a guaranteed completion time but fails to output a correct answer with a small probability. The alternative method of checking for a match could be slow (it might amount to the brute-force algorithm, with a small probability) but is guaranteed correct, which is known as a *Las Vegas* algorithm.
+
+Rabin-Karp substring search is known as a *fingerprint* search because it uses a small amount of information to represent a pattern.
+
+
+## Regex
