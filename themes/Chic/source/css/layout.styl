@@ -1,14 +1,24 @@
-.wrapper 
+.wrapper
   display flex
   flex-direction column
   min-height 100vh
   width 100%
-  
-.navbar 
+
+.navbar
+  background-color $light-background-color
+  /* border-bottom 1px solid #eee */
+  box-shadow 0 2px 4px 0 rgba(0,0,0,0.05), 0 2px 8px 0 rgba(0,0,0,0.01)
+  .dark-theme &
+    background-color $dark-background-color
+    /* box-shadow 0 2px 4px 0 rgba(255, 255, 255, 0.03), 0 2px 8px 0 rgba(255, 255, 255, 0.01) */
+    box-shadow 0 0 0 0 rgba(255, 255, 255, 0.03)
+  position fixed
+  display block
   height 4rem
   line-height 4rem
   width 100%
-  .container 
+  z-index 100
+  .container
     width auto
     max-width 1200px
     text-align center
@@ -16,12 +26,12 @@
     display flex
     justify-content space-between
 
-  
-
-.main 
+.main
   flex-grow 1
   flex-shrink 0
   flex-basis auto
+  padding-top 8rem
+  position relative
 
 .container
   padding-left 1em

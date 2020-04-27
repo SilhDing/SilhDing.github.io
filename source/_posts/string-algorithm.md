@@ -872,3 +872,126 @@ This algorithm is an early and famous example of *Monte Carlo* algorithm that ha
 Rabin-Karp substring search is known as a *fingerprint* search because it uses a small amount of information to represent a pattern.
 
 ## Regex
+
+Substring search appears in many applications in real world, but we also need regular expressions to describe patterns and use this pattern to recognize some input string. In this section, we will implement algorithms for recognizing strings with regex.
+
+If you have experience with regex in some programming languages, you may notice that there are many complicated rules in regex, but here we will not do all of them. Instead, we will only focus on three basic operations:
+
+1. Concatenation: when we write `AB`, we are specifying the language `{AB}`that has one two-character string, formed by concatenating `A` and `B`;
+2. Or: specified by `|`. E.g., `A|B` specified the language `{A, B}`;
+3. Closure: close allows parts of the pattern to be repeated arbitrarily. We denote closure by placing a `*` after
+the pattern to be repeated.
+
+By convention, we also use parentheses to override the default precedence rules. All patterns will be enclosed in parentheses as well.
+
+### NFA
+
+Recall the KMP algorithm for substring search where DFA is exploited. Here we will also exploit this idea, though we might do something different.
+
+We will build a ***nondeterministic finite-state automata*** (NFA) for a given regex string. Unlike DFA, the automata shows nondeterminism due to the nature of regex, as we are faced with more than one way to try to match the pattern.
+
+For pattern string `((A*B|AC)D)`, the NFA is showed below:
+
+![nfa_eg](nfa.svg)
+
+The rules for an NFA is listed below:
+
+1. The NFA corresponding to an regex of length *M* has exactly one state per pattern chars, starts at state 0, and has a (virtual) accept state *M*;
+2. States corresponding to character from the alphabet have an outgoing edge that goes to the state corresponding to the next character in the pattern (black edges in the diagram);
+3. States corresponding to the meta-chars `(`,`)`,`|`,`*` have at least one outgoing black edge (red edges in the diagram).
+4. No state has more than one outgoing black edge.
+
+What are the the rules when we match the input string?
+
+1. If the current state corresponding to a char in the alphabet and the current char in the text string matched the char, the automation can scan past the char in the text string and take the black transition to the next state;
+2. the automation can follow any red edge to another state without scanning any text char.
+
+We can use the rules to scan and recognize the input text string. As there might be multiple outgoing red edges for a state, we need to find all possible path to check the input text string.
+
+### Simulating an NFA
+
+NFA is in similar to a directed graph and simulating an NFA is similar to DFS. We create the initial states by starting state `0` and going all the way to states pointed by read edge. In the example above, the initial state should be `0 1 2 3 4 6`; if the first char in text string is `A`, then we update the state set to `2 3 4 7`. We should keep doing this until all chars from text string are exhausted, and finally we check if the accept state is in the state set.
+
+**Note**: when building digraph, we will not include the black edges into the graph.
+
+We then can write the code out immediately with the idea. The code use `Digraph` and `DirectedDFS` class and you may refer their implementation in [Appendix](#Appendix)
+
+## Appendix
+
+### Directed Graph and DFS
+
+```Java
+public class Digraph {
+
+    private final int V;
+    private int E;
+    private Bag<Integer>[] adj;
+
+    public Digraph (int V) {
+        this.V = V;
+        this.E = 0;
+        adj = (Bag<Integer>[])new Bag[V];
+        for (int v = 0; v < V; v++) {
+            adj[v] = new Bag<>();
+        }
+    }
+
+    public int V() {
+        return V;
+    }
+
+    public int E() {
+        return E;
+    }
+
+    public void addEdge(int v, int w) {
+        adj[v].add(w); // v -> w
+        this.E ++;
+    }
+
+    public Iterable<Integer> adj(int v) {
+        return adj[v];
+    }
+
+    public Digraph reverse() {
+        Digraph R = new Digraph(V);
+        for (int v = 0; v < V; v++) {
+            for (int w: adj(v)) {
+                R.addEdge(w, v);
+            }
+        }
+        return R;
+    }
+}
+```
+
+```Java
+public class DirectedDFS {
+
+    private boolean[] marked;
+
+    public DirectedDFS(Digraph G, int s) {
+        marked = new boolean[G.V()];
+        dfs(G, s);
+    }
+
+    public DirectedDFS(Digraph G, Iterable<Integer> sources) {
+        marked = new boolean[G.V()];
+        for (int s: sources) {
+            if (!marked[s]) dfs(G, s);
+        }
+    }
+
+    private  void dfs(Digraph G, int v) {
+        marked[v] = true;
+        for(int w: G.adj(v)) {
+            if (!marked[w]) dfs(G, w);
+        }
+    }
+
+    public boolean marked(int v) {
+        return marked[v];
+    }
+
+}
+```
