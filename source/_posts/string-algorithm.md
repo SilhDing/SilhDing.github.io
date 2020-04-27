@@ -914,7 +914,67 @@ NFA is in similar to a directed graph and simulating an NFA is similar to DFS. W
 
 **Note**: when building digraph, we will not include the black edges into the graph.
 
-We then can write the code out immediately with the idea. The code use `Digraph` and `DirectedDFS` class and you may refer their implementation in [Appendix](#Appendix)
+We then can write the code out immediately with the idea. The code use `Digraph` and `DirectedDFS` class and you may refer to their implementation in [Appendix](#Appendix).
+
+```Java
+public class NFA {
+    private char[] re;
+    private Digraph G;
+    private int M;
+
+    public NFA(String regexp) {
+        re = regexp.toCharArray();
+        M = regexp.length();
+        // TODO: construct the NFA
+    }
+
+    public boolean recognizes(String txt) {
+        Set<Integer> pc = new HashSet<>();
+        DirectedDFS dfs = new DirectedDFS(G, 0);
+        for (int v = 0; v < G.V(); v ++) {
+            if (dfs.marked(v)) pc.add(v);
+        }
+
+        for (int i = 0; i < txt.length(); i++) {
+            // Compute possible NFA states for txt[i+1]
+            Set<Integer> match = new HashSet<>();
+            for (int v: pc) {
+                if (v < M) {
+                    if (re[v] == txt.charAt(i) || re[v] == '.') {
+                        match.add(v+1);
+                    }
+                }
+            }
+            dfs = new DirectedDFS(G, match);
+            for (int v = 0; v < G.V(); v++) {
+                if (dfs.marked(v)) pc.add(v);
+            }
+        }
+        for (int v: pc) {
+            if (v == M) return true;
+        }
+        return false;
+    }
+}
+```
+
+Determining whether an N-character text string is recognized by the NFA corresponding to an M-character RE takes time proportional to *NM* in the worst case. However, we in fact need to know the number of edges in the directed graph. We will talk about it later.
+
+### Building an NFA
+
+Now, the problem is how we can build an NFA given a pattern string. For different operations, we might need to exploit different rules.
+
+***Concatenation***
+
+This is the simplest one. We just mentioned that we do not include black edge into the graph, so we can just simply ignore the char if the char is in the alphabet.
+
+***Parentheses***
+
+We just push the RE index of each left parentheses on the stack, and pop the left one out of the stack if we see a right one. It could be tricker than you think, as we will also push the or operator `|` on the stack.
+
+***Closure***
+
+![nfa_closure](nfa_closure.svg)
 
 ## Appendix
 
