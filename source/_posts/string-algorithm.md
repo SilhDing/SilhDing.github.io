@@ -974,7 +974,15 @@ We just push the RE index of each left parentheses on the stack, and pop the lef
 
 ***Closure***
 
+[TODO]
+
 ![nfa_closure](nfa_closure.svg)
+
+***Or***
+
+[TODO]
+
+![nfa_or](nfa_or.svg)
 
 ## Appendix
 
