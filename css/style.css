@@ -250,9 +250,20 @@ a:hover {
   width: 100%;
 }
 .navbar {
+  background-color: #fff;
+/* border-bottom 1px solid #eee */
+  box-shadow: 0 2px 4px 0 rgba(0,0,0,0.05), 0 2px 8px 0 rgba(0,0,0,0.01);
+  position: fixed;
+  display: block;
   height: 4rem;
   line-height: 4rem;
   width: 100%;
+  z-index: 100;
+}
+.dark-theme .navbar {
+  background-color: #292a2d;
+/* box-shadow 0 2px 4px 0 rgba(255, 255, 255, 0.03), 0 2px 8px 0 rgba(255, 255, 255, 0.01) */
+  box-shadow: 0 0 0 0 rgba(255,255,255,0.03);
 }
 .navbar .container {
   width: auto;
@@ -266,6 +277,8 @@ a:hover {
   flex-grow: 1;
   flex-shrink: 0;
   flex-basis: auto;
+  padding-top: 8rem;
+  position: relative;
 }
 .container {
   padding-left: 1em;
@@ -368,6 +381,7 @@ input[type="radio"]:not(:checked) + label:after {
 /*.switch_default:checked + label:after{*/
 /*    left: 29px;*/
 /*}*/
+
 @font-face {font-family: "iconfont";
   src: url('iconfont/iconfont.eot?t=1559842184425'); /* IE9 */
   src: url('iconfont/iconfont.eot?t=1559842184425#iefix') format('embedded-opentype'), /* IE6-IE8 */
@@ -498,7 +512,7 @@ input[type="radio"]:not(:checked) + label:after {
   padding: 0;
 }
 .navbar .menu a {
-  padding: 0 8px;
+  padding-right: 20px;
 }
 .navbar .menu .active {
   font-weight: 900;
@@ -513,7 +527,6 @@ input[type="radio"]:not(:checked) + label:after {
 }
 header label {
   margin-left: 15px;
-  position: relative;
   -webkit-transform: translateY(0.1em) translateX(0.5em);
 }
 .copyright {
@@ -594,11 +607,11 @@ header label {
   width: 60%;
 }
 .intro {
-  transform: translateY(20vh);
+  transform: translateY(18vh);
   text-align: center;
 }
 .intro .avatar {
-  padding: 10px;
+  padding: 20px;
 }
 .intro .avatar img {
   width: 128px;
@@ -606,8 +619,8 @@ header label {
   display: inline-block;
   -webkit-border-radius: 100%;
   border-radius: 100%;
-  -webkit-box-shadow: 0 0 0 0.3618em rgba(0,0,0,0.05);
-  box-shadow: 0 0 0 0.3618em rgba(0,0,0,0.05);
+  -webkit-box-shadow: 0 0 0 0.2em rgba(0,0,0,0.05);
+  box-shadow: 0 0 0 0.2em rgba(0,0,0,0.05);
   margin: 0 auto;
   -webkit-transition: all ease 0.4s;
   -moz-transition: all ease 0.4s;
@@ -615,14 +628,24 @@ header label {
   transition: all ease 0.4s;
   cursor: pointer;
 }
+.dark-theme .intro .avatar img {
+  -webkit-box-shadow: 0 0 0 0.2em #474747;
+  box-shadow: 0 0 0 0.2em #474747;
+}
 .intro .avatar img:hover {
   position: relative;
+  -webkit-box-shadow: 0 0 0 0.4em rgba(0,0,0,0.05);
+  box-shadow: 0 0 0 0.4em rgba(0,0,0,0.05);
   -webkit-transform: translateY(-0.75em);
   -moz-transform: translateY(-0.75em);
   -ms-transform: translateY(-0.75em);
   -o-transform: translateY(-0.75em);
-  transform: translateY(-0.75em);
+  transform: scale(1.05);
   cursor: pointer;
+}
+.dark-theme .intro .avatar img:hover {
+  -webkit-box-shadow: 0 0 0 0.4em #474747;
+  box-shadow: 0 0 0 0.4em #474747;
 }
 .nickname {
   font-size: 1.8em;
@@ -638,7 +661,6 @@ header label {
   font-size: 1.5em;
 }
 .post-wrap {
-  position: relative;
   width: 100%;
   max-width: 780px;
   margin: 0 auto;
@@ -683,6 +705,9 @@ header label {
 }
 .dark-theme .archive-item-date {
   color: #87878d;
+}
+.post-wrap {
+  z-index: 2;
 }
 .post-wrap .categories-card {
   margin: 0 auto;
@@ -1025,7 +1050,6 @@ header label {
 .post-content figure.highlight {
   margin: 1em 0;
   overflow-x: auto;
-  position: relative;
 }
 .post-content figure.highlight::-webkit-scrollbar {
   width: 6px;
@@ -1035,9 +1059,6 @@ header label {
   width: 6px;
   background-color: #eee;
   border-radius: 2px;
-}
-.post-content figure.highlight table {
-  position: relative;
 }
 .post-content figure.highlight table,
 .post-content figure.highlight tr,
@@ -1103,7 +1124,6 @@ header label {
   display: block;
   margin: 1em 0;
   padding: 1em 1.2em 1em 1.2em;
-  position: relative;
   color: rgba(52,73,94,0.8);
   background-color: #e9f4ff;
   border-left: 2px solid #1e90ff;
@@ -1215,7 +1235,6 @@ header label {
 .post-content figure.highlight {
   margin: 1em 0;
   overflow-x: auto;
-  position: relative;
 }
 .post-content figure.highlight::-webkit-scrollbar {
   width: 6px;
@@ -1233,9 +1252,6 @@ header label {
 }
 .post-content figure.highlight figcaption span {
   margin: 0 0.5em;
-}
-.post-content figure.highlight table {
-  position: relative;
 }
 .post-content figure.highlight table,
 .post-content figure.highlight tr,
@@ -2748,6 +2764,7 @@ header label {
 }
 .post-toc {
   position: fixed;
+  padding-top: 6rem;
   top: 95px;
   right: 2em;
   width: 15rem;
