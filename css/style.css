@@ -1268,6 +1268,10 @@ header label {
 .post-content figure.highlight .gutter {
   width: 10px;
   color: #d1d1d1;
+  border-right: 1px solid #d1d1d1;
+}
+.dark-theme .post-content figure.highlight .gutter {
+  border-right: 1px solid #55565e;
 }
 .post-content figure.highlight .gutter pre {
   margin: 0;
