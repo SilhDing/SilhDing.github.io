@@ -5,8 +5,8 @@ navname: "楽しんでね。| Yihang's Nest"
 # navigatior items
 nav:
   ✐  Post: /archives
-  ⌸  Category: /category
-  ⍟  Tag: /tag
+  ➭  Category: /category
+  ✰  Tag: /tag
   ❐  Résumé: /about
 
 # favicon

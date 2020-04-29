@@ -1,5 +1,5 @@
 ---
-title: Algorithms of String
+title: "Algorithms Case Study: String"
 date: 2020-04-18 21:15:09
 tag:
     - "algorithm"
