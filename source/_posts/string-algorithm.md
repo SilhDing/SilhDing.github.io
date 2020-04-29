@@ -974,15 +974,90 @@ We just push the RE index of each left parentheses on the stack, and pop the lef
 
 ***Closure***
 
-[TODO]
+A closure (\*) operator must occur either after a single character or after a right parenthesis. The picture below shows these two cases and what we should do regarding updating the graph.
 
 ![nfa_closure](nfa_closure.svg)
 
 ***Or***
 
-[TODO]
+We only consider an RE of the form `(A|B)` where `A` and `B` are both REs. When we see `)`, we should find the index of `|` and `(` then add two edges to the graph, as showed in the picture below. Please note within a pair of parenthesis, there will only be one `|`; a form of RE like `(A|B|C)` is not supported here.
 
 ![nfa_or](nfa_or.svg)
+
+
+With all the rules above, we can implement the code for building an NFA.
+
+```Java
+public class NFA {
+    private char[] re;
+    private Digraph G;
+    private int M;
+
+    public NFA(String regexp) {
+        re = regexp.toCharArray();
+        M = regexp.length();
+        G = new Digraph(M+1);  // Remember to include the accept state
+        Stack<Integer> stack = new Stack<>();
+
+        for (int i = 0; i < M; i++) {
+            int lp = i;
+            if (re[i] == '(' || re[i] == '|') {
+                stack.push(i);
+            } else if (re[i] == ')') {
+                int or = stack.pop();
+                if (re[or] == '|') {
+                     lp = stack.pop();
+                     G.addEdge(lp, or+1);
+                     G.addEdge(or, i);
+                } else {
+                    lp = or;
+                }
+            }
+
+            if (i < M - 1 && re[i+1] == '*') {
+                // lp could be i (current index), or a left parenthesis.
+                // It in fact handles the two cases for closure.
+                G.addEdge(lp, i+1);
+                G.addEdge(i+1, lp);
+            }
+
+            if (re[i] == '(' || re[i] == '*' || re[i] == ')') {
+                G.addEdge(i, i+1);
+            }
+        }
+    }
+
+    public boolean recognizes(String txt) {
+        Set<Integer> pc = new HashSet<>();
+        DirectedDFS dfs = new DirectedDFS(G, 0);
+        for (int v = 0; v < G.V(); v ++) {
+            if (dfs.marked(v)) pc.add(v);
+        }
+
+        for (int i = 0; i < txt.length(); i++) {
+            // Compute possible NFA states for txt[i+1]
+            Set<Integer> match = new HashSet<>();
+            for (int v: pc) {
+                if (v < M) {
+                    if (re[v] == txt.charAt(i) || re[v] == '.') {
+                        match.add(v+1);
+                    }
+                }
+            }
+            dfs = new DirectedDFS(G, match);
+            for (int v = 0; v < G.V(); v++) {
+                if (dfs.marked(v)) pc.add(v);
+            }
+        }
+        for (int v: pc) {
+            if (v == M) return true;
+        }
+        return false;
+    }
+}
+```
+
+Building the NFA corresponding to an M-character RE takes time ad space proportional to M in the worst case, as for each of the RE character in the regular expression, we add at most three transitions and perhaps execute one or two stack operations.
 
 ## Appendix
 
