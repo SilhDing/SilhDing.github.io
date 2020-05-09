@@ -86,7 +86,7 @@ Remember: ***avoid reusing the names of platform classes, and never reuse class 
 
 ### Package Deal
 
-This program involves the interaction of two classes un different packages. What does the program print?
+This program involves the interaction of two classes in different packages. What does the program print?
 
 ```Java
 package hack;
@@ -118,3 +118,31 @@ public class CodeTalk {
     }
 }
 ```
+
+If you run this program, you will find the output is `Click`. In fact, ***a package-private method cannot be directly overridden by a method in a different package***. The two `printMessage` methods in this program are unrelated; they merely have the same name. The purpose of this rule for Java is to enable packages to support encapsulation of abstractions larger than a single class.
+
+If you want the `printMessage` method in `hack.TypeIt.ClickIt` to override the method in `click.CodeTalk`, you must add the `protected` or `public` modifier to the method declaration in `click.CodeTalk`. To make the program compile, you must also add a modifier to the overriding declaration in `hack.TypeIt.ClickIt`. The modifier must be no more restrictive than the one you placed in the declaration for `printMessage` in `hack.TypeIt.ClickIt`.
+
+### Import Duty
+
+What does the program below print?
+
+```Java
+import static java.util.Arrays.toString;
+
+public class ImportDuty {
+    public static void main(String[] args) {
+        printArgs(1,2,3,4,5);
+    }
+
+    static void printArgs(Object... args) {
+        System.out.println(toString(args));
+    }
+}
+```
+
+However, this program does not compile. What is the problem? Is it because the compiler cannot find the function `toString`?
+
+If you write this program in an IDE, probably the IDE will tell you what is the result: "Non-static method `toString` cannot be referenced from a static context". The function `toString` we used in function `printArgs` is in fact the member method of class `ImportDuty` (inherit this method from class `Object`).
+
+***Members that re naturally in scope take precedence over static imports***. Remember: static import facility cannot be used effectively on a method if its name is already in scope.
