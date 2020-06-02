@@ -18,22 +18,29 @@
     margin-top: 3px
     margin-bottom: 3px
     max-width: 570px
+    transition-duration: .3s
+    transition-property: transform
+    transition-timing-function: ease-out
     &:hover
       color $light-global-link-hover-color
       border-left: 1.5px solid $light-global-link-hover-color
       background-color transparent
-      transform: scale(1.05)  // zoom out the icon
+      transform: scale(1.1)  // zoom out the icon
+      font-weight bold
 
     .dark-theme &
       color $dark-global-link-color
       border-left: 1px solid $dark-font-color
       text-decoration none
-      transition color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease
+      transition-duration: .3s
+      transition-property: transform
+      transition-timing-function: ease-out
+      //transition color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease
 
       &:hover
         color $dark-global-link-hover-color
         text-decoration none
-        transition color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease
+        //transition color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease
 
   .archive-item-date
     float right
