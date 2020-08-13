@@ -191,7 +191,7 @@
                         <span class="post-time">
                         <i>Oct 1, 2019&nbsp;&nbsp;11:24 PM, by Yihang (Ian) Ding</i><br>
                         </span>
-                    
+
                     
 
                     
@@ -206,8 +206,8 @@
 
                     
 
-                    
-                    
+
+
                     <br>
                 </div>
             
@@ -234,14 +234,14 @@
 <p><em>날카로우나 살았으며, 곳으로 인간은 그들은 있으랴? 얼음이 천하를 같이 오직 새가 것은 칼이다</em>. 봄날의 위하여 기관과 주며. 남는 풀이 고동을 생명을 청춘이 산야에 내는 피다. 실로 천하를 무엇이 열매를 청춘을 사막이다. 가지에 힘있다. 생명을 수 풀이 것은 그들의 피는 봄날의 따뜻한 피다, 두손을 예수는 쓸쓸한 할지니.</p>
 
             <br>
-        </div>       
+        </div>
 
         <br>
         <br>
 
         <div style="text-align:center;font-weight:bold"><h2>Comments</h2></div>
         <div class="post-comment" id="vssue"></div>
-        <div class="comments-fold" style="text-align:center;font-weight:bold"><button onclick="myFunction()" id="comment-switch">Hide Comments</button></div>       
+        <div class="comments-fold" style="text-align:center;font-weight:bold"><button onclick="myFunction()" id="comment-switch">Hide Comments</button></div>
 
         
 
@@ -285,37 +285,32 @@
 
             </section>
         
-        
-                            
+
+
         <div>
             <a href="javascript:window.history.back();">↵ Back</a>
             <span> &nbsp;&nbsp;&nbsp;</span>
             <a href="/">❏ Home</a>
-            
+
         </div>
 
         <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
         <script src="https://unpkg.com/vssue/dist/vssue.github.min.js"></script>
         <script>
-          new Vue({
-            el: '#vssue',
-
-            render: h => h('Vssue', {
-              props: {
-                // here set the title of issue of current page
-                title: location.pathname,
-
-                // here set the options for your OAuth App
-                options: {
-                  owner: 'SilhDing',
-                  repo: 'SilhDing.github.io',
-                  clientId: 'a400ed2ef2f4c24a9015',
-                  clientSecret: '5fc6a590741afcb45b5ea2051aab87872c95d472', // only required for some of the platforms
+            new Vue({
+                el: '#vssue',
+                data: {
+                    title: location.pathname,
+                    options: {
+                        owner: 'SilhDing',
+                        repo: 'SilhDing.github.io',
+                        clientId: '3f9bfd9e4971acfb2a1e',
+                        clientSecret: '7dc6a9ad1aa186edb0cbb5612e69fdbc36a323d9', // only required for some of the platforms
+                    },
                 },
-              }
+                template: `<vssue :title="title" :options="options"></vssue>`,
             })
-          })
-          function myFunction() {
+            function myFunction() {
               var x = document.getElementsByClassName("vssue-comments")[0];
               if (x == undefined) {
                 return ;

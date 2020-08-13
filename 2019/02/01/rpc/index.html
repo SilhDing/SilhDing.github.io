@@ -191,7 +191,7 @@
                         <span class="post-time">
                         <i>Feb 1, 2019&nbsp;&nbsp;11:03 PM, by Yihang (Ian) Ding</i><br>
                         </span>
-                    
+
                     
 
                     
@@ -227,8 +227,8 @@
                     <br>
                     
 
-                    
-                    
+
+
                     <br>
                 </div>
             
@@ -297,14 +297,14 @@
 <p style="color:#F13E3E">[Contents are disabled]</p>
 
             <br>
-        </div>       
+        </div>
 
         <br>
         <br>
 
         <div style="text-align:center;font-weight:bold"><h2>Comments</h2></div>
         <div class="post-comment" id="vssue"></div>
-        <div class="comments-fold" style="text-align:center;font-weight:bold"><button onclick="myFunction()" id="comment-switch">Hide Comments</button></div>       
+        <div class="comments-fold" style="text-align:center;font-weight:bold"><button onclick="myFunction()" id="comment-switch">Hide Comments</button></div>
 
         
 
@@ -364,37 +364,32 @@
 
             </section>
         
-        
-                            
+
+
         <div>
             <a href="javascript:window.history.back();">↵ Back</a>
             <span> &nbsp;&nbsp;&nbsp;</span>
             <a href="/">❏ Home</a>
-            
+
         </div>
 
         <script src="https://unpkg.com/vue/dist/vue.min.js"></script>
         <script src="https://unpkg.com/vssue/dist/vssue.github.min.js"></script>
         <script>
-          new Vue({
-            el: '#vssue',
-
-            render: h => h('Vssue', {
-              props: {
-                // here set the title of issue of current page
-                title: location.pathname,
-
-                // here set the options for your OAuth App
-                options: {
-                  owner: 'SilhDing',
-                  repo: 'SilhDing.github.io',
-                  clientId: 'a400ed2ef2f4c24a9015',
-                  clientSecret: '5fc6a590741afcb45b5ea2051aab87872c95d472', // only required for some of the platforms
+            new Vue({
+                el: '#vssue',
+                data: {
+                    title: location.pathname,
+                    options: {
+                        owner: 'SilhDing',
+                        repo: 'SilhDing.github.io',
+                        clientId: '3f9bfd9e4971acfb2a1e',
+                        clientSecret: '7dc6a9ad1aa186edb0cbb5612e69fdbc36a323d9', // only required for some of the platforms
+                    },
                 },
-              }
+                template: `<vssue :title="title" :options="options"></vssue>`,
             })
-          })
-          function myFunction() {
+            function myFunction() {
               var x = document.getElementsByClassName("vssue-comments")[0];
               if (x == undefined) {
                 return ;

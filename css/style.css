@@ -685,6 +685,9 @@ header label {
   transition-timing-function: ease-out;
 }
 .archive-item-link:hover {
+  transition-duration: 0.3s;
+  transition-property: transform;
+  transition-timing-function: ease-out;
   color: #2e86c1;
   border-left: 1.5px solid #2e86c1;
   background-color: transparent;
@@ -700,6 +703,9 @@ header label {
   transition-timing-function: ease-out;
 }
 .dark-theme .archive-item-link:hover {
+  transition-duration: 0.3s;
+  transition-property: transform;
+  transition-timing-function: ease-out;
   color: #fff;
   text-decoration: none;
 }
@@ -786,6 +792,9 @@ header label {
 .tag-cloud-tags a:active,
 .tag-cloud-tags a:focus,
 .tag-cloud-tags a:hover {
+  transition-duration: 0.3s;
+  transition-property: transform;
+  transition-timing-function: ease-out;
   color: #2e86c1;
   transform: scale(1.2);
 }
