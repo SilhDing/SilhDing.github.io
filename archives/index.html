@@ -128,11 +128,91 @@
             <a class="archive-item-link" href="/2020/08/12/Magic-Bitwise-Operation-Benwick-Tree/">Magic Bitwise Operation: Benwick Tree</a>
             <span class="archive-item-date">Aug 12, 2020</span>
             <!-- <span style=> <p>First, let’s look at one problem on the LeetCode:</p>
-<p>Given an integer array nums, find the sum of the elements between indices <code>i</code> and <code>j</code> (<code>i</code> ≤ <code>j</code>), inclusive. The <code>update(i, val)</code> function modifies nums by updating the element at index <code>i</code> to <code>val</code>.</p>
+<p>Given an integer array <code>nums</code>, find the sum of the elements between indices <code>i</code> and <code>j</code> (<code>i</code> ≤ <code>j</code>), inclusive. The <code>update(i, val)</code> function modifies <code>nums</code> by updating the element at index <code>i</code> to <code>val</code>.</p>
 <p>Example:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Given nums &#x3D; [1, 3, 5]</span><br><span class="line"></span><br><span class="line">sumRange(0, 2) -&gt; 9</span><br><span class="line">update(1, 2)</span><br><span class="line">sumRange(0, 2) -&gt; 8</span><br></pre></td></tr></table></figure>
 
 <p>Fro this question, a simple and naive solution is to maintain a prefix sum array for this input array and then we can easily get the sum of any sub array. However, the array itself will be updated at some entries, and the prefix sum array will also be updated, which could be expensive. Is there any better solution for this problem?</p>
+<p>Say we have an array below:</p>
+<pre><code>array = [1,3,4,7,10,34,1,8]</code></pre><p>For convenience, we will index the array staring with 1. In other words,</p>
+<pre><code>array[1] = 1
+array[2] = 3
+...</code></pre><h2 id="Warm-up"><a href="#Warm-up" class="headerlink" title="Warm-up"></a>Warm-up</h2><p>We construct a binary tree with all of these indices:</p>
+<img src="tree_1.svg" alt="tree_1" width="500"/>
+
+<p>We assign each node a number with the index of the node.</p>
+<p><strong><em>For node <code>i</code>, the value of this node is the sum of all array entries will all indices in its left sub-tree and itself</em></strong>.</p>
+<p>In other words, say <code>node(i)</code> is the value of the node with index <code>i</code>:</p>
+<pre><code>node(1) = array[1]
+node(2) = array[1] + array[2]
+node(3) = array[3]
+node(4) = array[1] + array[2] + array[3] + array[4]
+node(5) = array[5]
+node(6) = array[5] + array[6]
+node(7) = array[7]
+node(8) = array[1] + array[2] + array[3] + array[4] + array[5] + array[6] + array[7] + array[8]</code></pre><p>We can write it in another way:</p>
+<pre><code>node(1) = array[1]
+node(2) = node(1) + array[2]
+node(3) = array[3]
+node(4) = node(2) + node(3) + array[4]
+node(5) = array[5]
+node(6) = node(5) + array[6]
+node(7) = array[7]
+node(8) = node(4) + node(6) + node(7) + array[8]</code></pre><p>Put the values in the tree:</p>
+<img src="tree_2.svg" alt="tree_2" width="500"/>
+
+<p>You might get confused. What can we do with this tree? Well, think about two questions.</p>
+<blockquote>
+<p>How can we find prefix sum of the array?</p>
+</blockquote>
+<p>Say we want to get the sum of all entries before index <code>i</code> (inclusive). You will find we can always find a node-to-top path in the tree whose sum of all values on that path if the prefix sum.</p>
+<p>For example, say now <code>i</code> is 6，we start the node 6, get the value of node 6; as node 6’s value is the sum of <code>array[5]</code> and <code>array[6]</code>, we only need to get the sum of <code>array[1]</code>, <code>array[2]</code>, <code>array[3]</code> and <code>array[4]</code>, which is the value of node 4. Thus, the path is <code>6 -&gt; 4</code>.</p>
+<p>We will later generalize a way to get the path for calculating the prefix sum.</p>
+<blockquote>
+<p>If we update one entry of the array, how can we update the nodes’ values in the tree?</p>
+</blockquote>
+<p>Apparently, <strong><em>all nodes whose values contain the modified entry will have to be updated.</em></strong> For example, say <code>array[3]</code> is changed, node 3, 4 and 8 will be to be updated. We also have a path to update these nodes one by one: <code>3 -&gt; 4 -&gt; 8</code>. We will later generalize this problem as well.</p>
+<p>Now, I believe you are still confused with this tree. A question you might ask is: <em>How can we construct a tree like this? What are the properties of this tree?</em></p>
+<h2 id="Construction"><a href="#Construction" class="headerlink" title="Construction"></a>Construction</h2><p>Here we will discuss some properties of this tree:</p>
+<p>Let’s convert all the node numbers into binary.</p>
+<img src="tree_3.svg" alt="tree_3" width="400"/>
+
+<h3 id="Parent-and-Child-Nodes"><a href="#Parent-and-Child-Nodes" class="headerlink" title="Parent and Child Nodes"></a>Parent and Child Nodes</h3><ul>
+<li>If this node is its parent node’s left child node, then its parent node is: <strong>increment the last set bit of this node number</strong>. For example, if we increment the last set bit of 2 (0010), we get 4, which is the parent node of node 2.</li>
+<li>If this node is its parent node’s right child node, then its parent node is: <strong>remove the last set bit of this node number</strong>. For example, if we remove the last set bit of 7 (0111), we get 6, which is the parent node of node 6.</li>
+</ul>
+<p>Though these observations will help us understand the tree better, we do not need these information, as you will see later.</p>
+<h3 id="Tree-Shape"><a href="#Tree-Shape" class="headerlink" title="Tree Shape"></a>Tree Shape</h3><p>With the previous property, it is not easy to get that, for a node <code>i</code>, its parent node and child nodes will always be fixed, and it is independent of the array’s length. More interestingly, a non-root node in the tree might not have a parent node.</p>
+<p>The picture above shows the tree of an array of length 8. The picture below shows trees for arrays with length 10 and 15.</p>
+<img src="tree_4.svg" alt="tree_4" width="500"/>
+
+<p>You can see that, every time we are given an array, the tree is already there. A longer array just means we should add more nodes to the tree.</p>
+<p>We can find more properties of the tree based on the binary representation.</p>
+<h2 id="Application"><a href="#Application" class="headerlink" title="Application"></a>Application</h2><p>In the warm-up section we have discussed how can we get the prefix sum of the array and how can we update the tree if we update the array. Here, we will generalize the answer to these two problems.</p>
+<h3 id="Prefix-Sum"><a href="#Prefix-Sum" class="headerlink" title="Prefix Sum"></a>Prefix Sum</h3><p>what is the prefix sum of the array at index <code>i</code> (inclusive) (note: we still use 1-based indexing here)? Similarly, we still wish to find a path (starting at <code>i</code>) that the sum of all values on that path is the prefix sum. <strong><em>It is not hard to find out that the node number on that path will be decreasing</em></strong>, as we need to sum all nodes’ values with lower indices. Thus, for a node <code>i</code>, in order to find the nodes with lower indices, there are three parts we need to consider:</p>
+<ol>
+<li>Its left sub tree. Apparently, we can ignore this part, as node <code>i</code> already contains all values in its left tree.</li>
+<li>Node at the same or lower <strong><em>level</em></strong> (see picture below) which are smaller than <code>i</code> (e.g., node 1, 2 and 3 for node 6). We can also ignore this part because all such nodes will be included by a node on a higher level, which will be discussed in the case 3 (e.g., node 1, 2 and 3 are included by node 4).</li>
+<li>Nodes with higher level which are smaller than <code>i</code>. For example, if <code>i</code> is 5, the next node on the path should be 4.</li>
+</ol>
+<img src="tree_5.svg" alt="tree_5" width="400"/>
+
+<p>A straightforward way to find the prefix sum path is: starting at node <code>i</code>, go to its parent node, if its node is smaller than <code>i</code>, then add it to the path; continue it until we reach the root.</p>
+<p>In fact, we have a better way to find the next node: <strong><em>remove the last set bit of <code>i</code>, the new number is just the next node which is smaller than <code>i</code> and on a higher level</em></strong>. It can be expressed as <code>i - i &amp; (-i)</code>, where <code>i &amp; (-i)</code> is the last set bit and all zeros after this bit. For example, if <code>i</code> is 7, the path is <code>0111(7) -&gt; 0110(6) -&gt; 0100(4) -&gt; 0000(0) (end of the path)</code>; if <code>i</code> is 9, the path is <code>1001(9) -&gt; 1000(8) -&gt; 0000(0)</code>.</p>
+<p>This observation is really helpful for coding. You will feel it magic, but we can always find an explanation. In fact, the last set bit of one node always indicates the level of this node, for example, if last set bit of 10 and 14 is <code>10</code>, which means they are on the second level; <code>1</code> indicates the first level and <code>100</code> indicates the third level. Thus, for a given node <code>i</code>, if we want find the next smaller node which is on a higher level, then apparently, we just need to remove the last set bit of <code>i</code>.</p>
+<p>A snippet of code to get the prefix sum:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> prefixSum = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">while</span> (i &gt; <span class="number">0</span>) &#123;</span><br><span class="line">    prefixSum += tree[i];  <span class="comment">// the tree can be represented as an array</span></span><br><span class="line">    i -= i &amp; (-i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="Update-the-Tree"><a href="#Update-the-Tree" class="headerlink" title="Update the Tree"></a>Update the Tree</h3><p>If the array is updated, we then need to update the tree as well. Apparently, we need to find all nodes that are affected by the modified entry of the array. Instead of finding a descending path in the last problem, here we need to find an ascending path.</p>
+<p>How can we find larger nodes of node <code>i</code>? Similarly, we can also have three cases like we did for the last problem, but we only need to consider one part: <strong>all nodes at higher levels which are larger than <code>i</code></strong>.</p>
+<p>Thus, similarly, we can also find the path by starting with <code>i</code> and recursively finding parent nodes. However, a more concise way is to just <strong>increment the last set bit of <code>i</code></strong>, which can be expressed as <code>i + i &amp; (-i)</code>. It also has a good explanation: we need to find the next larger number whose last set bit is also higher, thus incrementing the last set bit is just the solution.</p>
+<p>It is then trivial to update the tree.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// diff is the diff between the old value and new value on index i</span></span><br><span class="line"><span class="comment">// n is the length of array</span></span><br><span class="line"><span class="keyword">while</span> (i &lt;= n) &#123;</span><br><span class="line">    tree[i] += diff;</span><br><span class="line">    i += i &amp; (-i);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="Summary"><a href="#Summary" class="headerlink" title="Summary"></a>Summary</h2><p>It is kind of hard to fully understand this magic data structure, but coding with all of these ideas is pretty easy. Here is a solution to the original LeetCode problem.</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">NumArray</span> </span>&#123;</span><br><span class="line">    <span class="keyword">int</span>[] nums;</span><br><span class="line">    <span class="keyword">int</span>[] tree;</span><br><span class="line">    <span class="keyword">int</span> len;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">NumArray</span><span class="params">(<span class="keyword">int</span>[] nums)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.nums = nums;</span><br><span class="line">        <span class="keyword">this</span>.len = nums.length;</span><br><span class="line">        <span class="keyword">this</span>.tree = <span class="keyword">new</span> <span class="keyword">int</span>[len+<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">            updateTree(i, nums[i]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">updateTree</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> diff)</span> </span>&#123;</span><br><span class="line">        i += <span class="number">1</span>;</span><br><span class="line">        <span class="keyword">while</span> (i &lt;= len) &#123;</span><br><span class="line">            <span class="keyword">this</span>.tree[i] += diff;</span><br><span class="line">            i += i &amp; (-i);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">update</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> val)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> diff = val - nums[i];</span><br><span class="line">        nums[i] = val;</span><br><span class="line">        updateTree(i, diff);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">sumRange</span><span class="params">(<span class="keyword">int</span> i, <span class="keyword">int</span> j)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">return</span> getPrefixSum(j) - getPrefixSum(i - <span class="number">1</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">int</span> <span class="title">getPrefixSum</span><span class="params">(<span class="keyword">int</span> i)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">int</span> sum = <span class="number">0</span>;</span><br><span class="line">        i ++;</span><br><span class="line">        <span class="keyword">while</span> (i &gt; <span class="number">0</span>) &#123;</span><br><span class="line">            sum += tree[i];</span><br><span class="line">            i -= i &amp; (-i);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The time complexity of the two methods are both <code>O(logN)</code> where <code>N</code> is the length of the input array.</p>
 </span> -->
         </article>
     
