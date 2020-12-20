@@ -800,10 +800,9 @@ Please note, this algorithm requires *backup in the input string*, i.e., we need
 
 Unlike the two algorithms above, this algorithm will use hashing. In fact, each string of length `M` corresponds to an `M`-digit base-`R` number, which means we can totally treat a string as a number. We could also implement a has function to convert an `M`-digit base-`R` number to an `int` value between 0 and `Q-1`, with the help of modular hashing.
 
- A naive solution is based on the brute-force substring matching: we could simply compute the hash value for every possible substring with length `M` of the text string, and compare it with the hash value of pattern string. However, it is not efficient and shows no improvement over brute-force solution.
+A naive solution is based on the brute-force substring matching: we could simply compute the hash value for every possible substring with length `M` of the text string, and compare it with the hash value of pattern string. However, it is not efficient and shows no improvement over brute-force solution.
 
-The Rabin-Karp algorithm shows an efficient way to get the new hash value after we move `i` to the right position
-by 1. It is easy to derive this logic with some simple maths work:
+The Rabin-Karp algorithm shows an efficient way to get the new hash value after we move `i` to the right position by 1. It is easy to derive this logic with some simple maths work:
 
 Using the notation $t_i$ for `txt.charAt(i)`, the number corresponding to the `M`-character substring of text string that starts at position `i` is
 
@@ -833,9 +832,9 @@ public class RabinKarp {
         patHash = hash(pat, M);
     }
 
-	public boolean check(int i) {
-		// TODO
-		return true;
+    public boolean check(int i) {
+        // TODO
+        return true;
 	}
 
     public long hash(String key, int M) {
