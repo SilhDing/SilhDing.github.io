@@ -835,7 +835,7 @@ public class RabinKarp {
     public boolean check(int i) {
         // TODO
         return true;
-	}
+    }
 
     public long hash(String key, int M) {
         long h = 0;
