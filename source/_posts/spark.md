@@ -55,13 +55,13 @@ But, what makes the program so slow?
 
 ### Shuffle
 
-Shuffle mechanism is used to redistribute the partitioned RDDs to satisfy certain conditions. For example, in order to detect domain-specific "stop" words, we need to count the document frequency of each word, which may require `reduceByKey` operations. **Shuffle is an expensive operation.** It normally requires a lot of disk IO and network IO costs. Also, each node (worker) will not be independent anymore, so one slow work can make the whole process slow.
+Shuffle mechanism is used to redistribute the partitioned RDDs to satisfy certain conditions. For example, in order to detect domain-specific "stop" words, we need to count the document frequency of each word, which may require `reduceByKey` operations. **Shuffle is an expensive operation.** It normally requires a lot of disk IO and network IO costs. Also, each node (worker) will not be independent anymore, so one slow worker can make the whole process slow.
 
 ### Transformations and Actions
 
 [Transformations](https://spark.apache.org/docs/latest/rdd-programming-guide.html#transformations) and [actions](https://spark.apache.org/docs/latest/rdd-programming-guide.html#actions) are different, and you should be aware of how they behave differently.
 
-Note that, if there is no actions, Spark could records the dependency information between RDDs without evaluating them, which is called "lazy evaluation". Thus, several distinct steps could be merged and be executed seamlessly. This is very helpful in boosting computing performance. Thus, do not invoke actions unless required.
+Note that, if there is no actions, Spark could record the dependency information between RDDs without evaluating them, which is called "lazy evaluation". Thus, several distinct steps could be merged and be executed seamlessly. This is very helpful in boosting computing performance. Thus, do not invoke actions unless required.
 
 ## Ideas
 

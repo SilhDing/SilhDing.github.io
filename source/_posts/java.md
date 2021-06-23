@@ -209,6 +209,16 @@ Sometimes you might want to use Unicode escape to represent some special charact
 
 Please use HTML entity escapes instead.
 
+```java
+/**
+ * This method calls itself recursively, causing a
+ * <tt>StackOverFlowError</tt> to be thrown.
+ * The algorithm is due to Peter von Ah&eacute.
+ */
+```
+
+An important lesson from this example is to avoid putting Windows filenames into comments in generated Java source files without first processing them to eliminate backslashes.
+
 ### Classy Fire
 
 What does this program print?
@@ -235,7 +245,7 @@ public class Classifier {
 }
 ```
 
-you might nit find anything wrong in this program. However, this program does not compile. You may also notice that I did not use code highlight. This is becasue you will easily find out the truth if I go with it:
+you might not find anything wrong in this program. However, this program does not compile. You may also notice that I did not use code highlight. This is becasue you will easily find out the truth if I go with it:
 
 ```java
 public class Classifier {
@@ -379,6 +389,34 @@ Okay, it seems that `b` goes through every value from `Byte.MIN_VALUE` to `Byte.
 To figure it out, I should know what really happens in `b == 0x90`. The comparison of a `byte` to an `int` is a *mixed-type comparison*. Java will promote the `byte` to an `int` with a widening primitive conversion and compares the two `int` values. And remember, `byte` a ***signed*** value, and the conversion performs sign extension, promoting negative `byte` values to numerically equal `int` values. Thus, if we treat `b` as an `int`, its values are from `-128` to `+127`, while `0x90` is `+144`.
 
 Remember, avoid mixed-type comparisons, because they are inherently confusing, and there are many hidden cases we might not be aware of.
+
+### Inclement Increment
+
+What does the program print?
+
+```java
+public class Increment {
+    public static void main(String[] args) {
+        int j = 0;
+        for (int i = 0; i < 100; i++) {
+            j = j++;
+        }
+        System.out.println(j);
+    }
+}
+```
+
+You might expect the output is '100', right? In each loop, `j` will increment itself and assign it to itself. However, the result is '0'.
+
+When palced after a variable, the `++` operator functions as the *postfix increment operator*: the value of the expression `j++` is the original value of `j` before it was incremented. The assignment is equivalent to this sequence of statements:
+
+```Java
+int tmp = j;
+j = j + 1;
+j = tmp;
+```
+
+Remember: do not assign to the same variable more than once in a single expression.
 
 ### Shifty i's
 
