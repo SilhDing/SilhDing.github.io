@@ -440,6 +440,29 @@ Remember, ***shift operators use only the five low-order bits of their right ope
 
 A good practice from this puzzler is, shift distances should, if possible, be constants.
 
+### Loopers
+
+It is your turn to write some codes.
+
+1. what declaration for `i` turns this loop into aninfinite one?
+
+```java
+while (i == i + 1) {
+}
+```
+2. what declaration for `i` turns this loop into aninfinite one?
+
+```java
+while (i != i) {
+}
+```
+
+When working with float number, remember that Java mandates the use of IEEE 754 floating-point arithmetic, **which lets you represent infinity as a `double` or `float`**. And, infinity plus 1 is still infinity. Thus, for the first puzzle, you can initialize `i` by `double i = 1.0 / 0.0` or, better yet, `double i = Double.POSITIVE_INFINITY`.
+
+Also, IEEE 754 floating-point arithmetic reserves a special value to represrent a quantity that is *not a number*, which is known as `NaN`. **NaN is not equal to any floating-point value, *including itself*.** Thus, for the second puzzle, you can initialize `i` by `double i = 0.0 / 0.0` or `double i = Double.NaN`.
+
+In addition, NaN holds other similar surpises. **Any floating-point operation evaluates to NaN if one or more of its operands are NaN**.
+
 ### Ghost of Looper
 
 Provide a declaration for `i` that turns this loop in to an infinite loop:
