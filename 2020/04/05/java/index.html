@@ -360,6 +360,19 @@ This post will keep updating. Welcome to revisit!
 <p>Okay, <code>-1</code> is an <code>int</code> value with all 32 bits set. The left-shift operator shifts zeros in from the right to fill the low-order bits vacated by the shift, since there are 32 bits in <code>-1</code>, <code>-1</code> will become 0 when <code>i</code> is <code>32</code>. Is it right? If you run this program, you will not see such a value printed but an infinite loop.</p>
 <p>Remember, <strong><em>shift operators use only the five low-order bits of their right operand as the shift distance, or six bits if the left operand is a <code>long</code></em></strong>. The applies to all three shift operators: <code>&lt;&lt;</code>, <code>&gt;&gt;</code> and <code>&gt;&gt;&gt;</code>. So the shift distance is always between 0 and 31, or 0 and 63 if the left operand is a <code>long</code>.</p>
 <p>A good practice from this puzzler is, shift distances should, if possible, be constants.</p>
+<h3 id="Loopers"><a href="#Loopers" class="headerlink" title="Loopers"></a>Loopers</h3><p>It is your turn to write some codes.</p>
+<ol>
+<li>what declaration for <code>i</code> turns this loop into aninfinite one?</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (i == i + <span class="number">1</span>) &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>what declaration for <code>i</code> turns this loop into aninfinite one?</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (i != i) &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>When working with float number, remember that Java mandates the use of IEEE 754 floating-point arithmetic, <strong>which lets you represent infinity as a <code>double</code> or <code>float</code></strong>. And, infinity plus 1 is still infinity. Thus, for the first puzzle, you can initialize <code>i</code> by <code>double i = 1.0 / 0.0</code> or, better yet, <code>double i = Double.POSITIVE_INFINITY</code>.</p>
+<p>Also, IEEE 754 floating-point arithmetic reserves a special value to represrent a quantity that is <em>not a number</em>, which is known as <code>NaN</code>. <strong>NaN is not equal to any floating-point value, <em>including itself</em>.</strong> Thus, for the second puzzle, you can initialize <code>i</code> by <code>double i = 0.0 / 0.0</code> or <code>double i = Double.NaN</code>.</p>
+<p>In addition, NaN holds other similar surpises. <strong>Any floating-point operation evaluates to NaN if one or more of its operands are NaN</strong>.</p>
 <h3 id="Ghost-of-Looper"><a href="#Ghost-of-Looper" class="headerlink" title="Ghost of Looper"></a>Ghost of Looper</h3><p>Provide a declaration for <code>i</code> that turns this loop in to an infinite loop:</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (i != <span class="number">0</span>)</span><br><span class="line">    i &gt;&gt;&gt;= <span class="number">1</span>;</span><br></pre></td></tr></table></figure>
 
