@@ -637,6 +637,32 @@ In fact, do not assume that you will not write similar codes. It is very common 
 
 Remember: ***a constructor must declare any checked exceptions thrown by its instance initializers.***
 
+### Field and Stream
+
+This method copies one file to anotehr and was designed to close every stream it creates, even if encounters I/O errors. However, it doesn't alwasy do this. Why?
+
+```java
+static void copy(String scc, String dest) throws IOException {
+    InputStream in = null;
+    OutputStream out = null;
+    try {
+        in = new FileInputStream(scc);
+        out = new FIleOutputStream(dest);
+        byte[] buf = new byte[1024];
+        int n;
+        while ((n = in.read(buf)) >= 0)
+            out.write(buf, 0, n);
+    } finally {
+        if (in != null) in.close();
+        if (out != null) out.close();
+    }
+}
+```
+
+This bug might be really subtle as it is not always reproducable. The problem is in the `finally` block itself. The `close` method can throw an `IOException` too. Once that happens, the calls to `close` can cause the `finally` block to complete abruptly. Unfortunately, the compiler will not help you find the problem, because `close` throws the same exception type as `read` and `write`, and the enclosing method `copy` will propagate it for sure.
+
+An important lesson is to make sure you have handled any checked exception that can be thrown within a finally block rather than letting it propagate. Furthermore, in a lot of cases you might want to keep you program running even when exceptions occur, so you might use `try finally` to handle and make program continue. But always remember that the `finally` is not that safe: it can throw exceptions as well (I also experienced this when I was working at Apple).
+
 <br>
 
 ------------ END OF THIS POST ------------
