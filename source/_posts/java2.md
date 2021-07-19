@@ -422,7 +422,7 @@ Exception in thread "main" java.lang.ArrayIndexOutOfBoundsException: Index -2 ou
 	at src.Mod.main(Mod.java:8)
 ```
 
-So `Math.abs(i)` returns a negative value? Let's go to the documentation for `Math.abs`. The method is supposed to always return non-negative value， but in one case, it does not. The documentation says: if the argument is equal to the value of `Integer.MIN_VALUE`, the result is that same value, which is negative.
+So `Math.abs(i)` returns a negative value? Let's go to the documentation for `Math.abs`. The method is supposed to always return non-negative value, but in one case, it does not. The documentation says: if the argument is equal to the value of `Integer.MIN_VALUE`, the result is that same value, which is negative.
 
 Please remember that `Math.abs()` is not guaranteed to return a non-negative value.
 
@@ -475,7 +475,7 @@ public class SuspiciousSort {
 
 In this program, we try to sort a random generated array with a self-defined comparator. Then, we use a static method `order` to determine the type of the order. From the code, the comparator is supposed to sort the array in descending order. However, if you run this code, you will find that the program will print `UNORDERED`. What happens here?
 
-There is a problem in the comparator. Seemingly this idiom always makes sense: if you have two numbers and you want a value whose sign indicates their order, compute their difference. However, the problem with this idiom us that a fixed-width integer is not big enough to hold the difference of two arbitrary integers of the same width. When you subtract two `int` or `long` values, the result can overflow, in which case it will have the wrong sign. Try the program below:
+There is a problem in the comparator. Seemingly this idiom always makes sense: if you have two numbers and you want a value whose sign indicates their order, compute their difference. However, the problem with this idiom is that a fixed-width integer is not big enough to hold the difference of two arbitrary integers of the same width. When you subtract two `int` or `long` values, the result can overflow, in which case it will have the wrong sign. Try the program below:
 
 ```Java
 public class OverFlow {
