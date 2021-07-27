@@ -84,6 +84,35 @@ Although `StrungOut` has a method named "main", it has the wrong signature. A `m
 
 Remember: ***avoid reusing the names of platform classes, and never reuse class names from java.lang***.
 
+### Shades of Gray
+
+What does this program print?
+
+```java
+public class ShadesOfGray {
+    public static void main(String[] args) {
+        System.out.println(X.Y.Z);
+    }
+}
+
+class X {
+    static class Y {
+        static String Z = "BLACK";
+    }
+    static C Y = new C();
+}
+
+class C {
+    String Z = "WHITE";
+}
+```
+
+There is no abvious way to decide whether this program should print `BLACK` or `WHITE`. Normally, our compiler would reject ambiguous programs, but this one is legal and you can see the result is `WHITE`.
+
+The class `X` has a type `Y` and a variable `Y`. When a variable and a type have the same name and both are in scope, the compiler will not return any errors. Instead, the variable name will take precedence. The variable name is said to *obsure* the type name. Similarly, variable and type names can obscure package names.
+
+This seems to be a trivial problem, but in a big class we might make this mistake as there might be many variables and types within the class. However, **if you are strictly following standard Java naming conventions, you almost will never encounter this issue**. This is apparent as differnet entities in Java will have their own ways to do naming. Remember: always follow a standardized naming convention!
+
 ### Package Deal
 
 This program involves the interaction of two classes in different packages. What does the program print?
@@ -145,4 +174,4 @@ However, this program does not compile. What is the problem? Is it because the c
 
 If you write this program in an IDE, probably the IDE will tell you what is the result: "Non-static method `toString` cannot be referenced from a static context". The function `toString` we used in function `printArgs` is in fact the member method of class `ImportDuty` (inherit this method from class `Object`).
 
-***Members that re naturally in scope take precedence over static imports***. Remember: static import facility cannot be used effectively on a method if its name is already in scope.
+***Members that are naturally in scope take precedence over static imports***. Remember: static import facility cannot be used effectively on a method if its name is already in scope.
