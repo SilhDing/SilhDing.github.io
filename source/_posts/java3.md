@@ -175,3 +175,74 @@ However, this program does not compile. What is the problem? Is it because the c
 If you write this program in an IDE, probably the IDE will tell you what is the result: "Non-static method `toString` cannot be referenced from a static context". The function `toString` we used in function `printArgs` is in fact the member method of class `ImportDuty` (inherit this method from class `Object`).
 
 ***Members that are naturally in scope take precedence over static imports***. Remember: static import facility cannot be used effectively on a method if its name is already in scope.
+
+## Library Puzzlers
+
+### Rudely Interrupted
+
+What does the program below print?
+
+```java
+public class SelfInterruption {
+    public static void main(String[] args) {
+        Thread.currentThread().interrupt();
+
+        if (Thread.interrupted()) {
+            System.out.println("Interrupted: " + Thread.interrupted());
+        } else {
+            System.out.println("Not interrupted: " +  Thread.interrupted());
+        }
+    }
+}
+```
+
+The program first interrupts itself, then prints out the status of the thread. So you might expect the output to be `Interrupted: true`. However, it prints out `Interrupted: false`.
+
+What really happened was that the fist invocation of `Thread.inyerrupted` returned `true` and cleared the interrupted status of the thread, so the second invocation will return `false`. **Calling `Thread.interrupted` always clears the interrupted status of the current thread.** The method name gives no hints of this behavior and the documentation is also misleading. Instead, if you do not want to clear the state and only want to query the status, please use the one instance method of `Thread`: `isInterrupted`. This one will not clear the interrupted status of the thread.
+
+The lesson for API designer is that methods should have names that describe their primamry functions. In this case, a better name for this static method could be `interruptedAndClear`. When the name cannot fully indicate the behavior of an API, please well document it.
+
+
+### Lazy Initialization
+
+What does this program print?
+
+```java
+public class Lazy {
+
+    private static boolean initialized = false;
+    static {
+        Thread t = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                initialized = true;
+            }
+        });
+        t.start();
+        try {
+            t.join();
+        } catch(InterruptedException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(initialized);
+    }
+}
+```
+
+Apparently, the result should be `true`, right? However, if you run this program, it will not print out anything; it just hangs there.
+
+When a thread is about to access a member of a class, it has to check if the class has been initialized. Ignoring serious errors, there are four possible cases:
+
+1. The class is not yet initilized;
+2. The class is being initilized by the current thread: a recursive request for initialization;
+3. The class is being initialized by some thread other than the current thread;
+4. The class is already initialized.
+
+In the main thread, `Lazy.main` checks whether the class `Lazy` has been initialized. It hasn't (case 1), so it begins to initialize it: set `initialized` to `false`, create and start a background thread whose `run` method sets `initilized` to `true`, and wait for it to complete.
+
+In the `run` method, as it is accessing the static member variable `initialized`, it will also check if the class has been initialized, and find that it is being initialized by another thread (which is the main thread, case 3). **The current thread, which is the background thread, will waits on the `Class` object until initialization is complete**. On the other hand, the main thread is also waiting for the background thread to complete (`t.join()`). Thus, this program generates a deadlock.
+
+This bug is pretty subtle. To fix this, the best way is alwasy to **avoid start any background threads during class initialization**. More generally, keep class initialization as simple as possible.
