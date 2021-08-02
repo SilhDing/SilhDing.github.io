@@ -246,3 +246,64 @@ In the main thread, `Lazy.main` checks whether the class `Lazy` has been initial
 In the `run` method, as it is accessing the static member variable `initialized`, it will also check if the class has been initialized, and find that it is being initialized by another thread (which is the main thread, case 3). **The current thread, which is the background thread, will waits on the `Class` object until initialization is complete**. On the other hand, the main thread is also waiting for the background thread to complete (`t.join()`). Thus, this program generates a deadlock.
 
 This bug is pretty subtle. To fix this, the best way is alwasy to **avoid start any background threads during class initialization**. More generally, keep class initialization as simple as possible.
+
+## Advanced Puzzlers
+
+### Raw Deal
+
+What does the program below print?
+
+```java
+import java.util.*;
+
+public class Pair<T> {
+    private final T first;
+    private final T second;
+
+    public Pair(T first, T second) {
+        this.first = first;
+        this.second = second;
+    }
+
+    public T first() {
+        return first;
+    }
+
+    public T second() {
+        return second;
+    }
+
+    public List<String> stringList() {
+        return Arrays.asList(String.valueOf(first), String.valueOf(second));
+    }
+
+    public static void main(String[] args) {
+        Pair p = new Pair<Object>(23, "skipoo");
+        System.out.println(p.first() + " " + p.second());
+        for (String s: p.stringList()) {
+            System.out.println(s + " ");
+        }
+    }
+}
+```
+
+The result seems really apparent and it should be `23 skipoo`, right? However, you cannot compile the program.
+
+```
+Pair.java:26: incompatible types;
+found: Object, required: String
+        for (String s: p.stringList())
+```
+ This is quite surprising, as the returned type of the function `stringList()` is indeed list of string, right? What is the problem here?
+
+ This rather countertuitive behavior is caused by the program's use of *raw* types. A raw type is simply the name of a generic cass or interface without any type parameters. For example, `List<E>` is a generic interface, `List<String>` is a parameterized type, and `List` is a raw type. In the program above, variable `p` is also a raw type.
+
+ What happens if `p` is declared as a raw type? A raw type is like its parameterized counterpart, but all its instance members are replaced by their *erased* counterparts. **In particular, each parameterized types appearing in an instance will be replaced with its raw counterpart**. Thus, for `stringList()` method, the compiler interprets the program as if this method returned the raw type `List`. While `List<String>` implements the parameterized type `Interable<String>`, `List` implements the raw type `Iterable`. Where `Interable<String>` has an `iterator` method that returns the parameterized type `Iterator<String>`, `Iterable` has an `Iterator` method taht returns the raw type `Iterator`. Similar for all subsequent methods in `Iterator`. Therefor, iterating over `p.stringList()` requires a loop bariable of type `Object`, which explains the compiler's bizarre error message.
+
+ To fix the problem, you can change the type of the loop varible from `String` to `Object`. However, it loses all the benefits of generics, and the program wouldn't even compile if the loop invoked any `String` methods on `s`. The right way to fix it is still to avoid raw type for `p` by declaring it as `Pair<Object>`.
+
+ The key point here is: **the raw type `List` is not the same as the parameterized type `List<Object>`**. If the raw type used, the compiler has no idea whether there are nay restrictions on the type of the elements permitted by the list, but it lets you insert elements of any type. *This is not typesafe*.
+
+ There is a third type that is closely related to these two: `List<?> is a special kind of parameterized type known as a *wildcard* type`. This is a parameterized type. The language requires stronger type-checking.
+
+ Raw types are in fact a concession to exsiting code, which could not use generics prior to release 5.0. The real problam for the "Pair" program is that the author did not decide what version of Java to use. You should always **avoid writing raw types in code indended for release 5.0 or later**.
