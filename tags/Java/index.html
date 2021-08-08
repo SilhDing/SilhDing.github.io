@@ -299,7 +299,7 @@
 <p> To fix the problem, you can change the type of the loop varible from <code>String</code> to <code>Object</code>. However, it loses all the benefits of generics, and the program wouldn’t even compile if the loop invoked any <code>String</code> methods on <code>s</code>. The right way to fix it is still to avoid raw type for <code>p</code> by declaring it as <code>Pair&lt;Object&gt;</code>.</p>
 <p> The key point here is: <strong>the raw type <code>List</code> is not the same as the parameterized type <code>List&lt;Object&gt;</code></strong>. If the raw type used, the compiler has no idea whether there are nay restrictions on the type of the elements permitted by the list, but it lets you insert elements of any type. <em>This is not typesafe</em>.</p>
 <p> There is a third type that is closely related to these two: <code>List&lt;?&gt; is a special kind of parameterized type known as a *wildcard* type</code>. This is a parameterized type. The language requires stronger type-checking.</p>
-<p> Raw types are in fact a concession to exsiting code, which could not use generics prior to release 5.0. The real problam for the “Pair” program is that the author did not decide what version of Java to use. You should always <strong>avoid writing raw types in code indended for release 5.0 or later</strong>.</p>
+<p> Raw types are in fact a concession to exsiting code, which could not use generics prior to release 5.0. The real problam for the “Pair” program is that the author did not decide what version of Java to use. You should always <strong>avoid writing raw types in code indended for release 5.0 or later</strong></p>
 </span> -->
         </article>
     
