@@ -306,4 +306,4 @@ found: Object, required: String
 
  There is a third type that is closely related to these two: `List<?> is a special kind of parameterized type known as a *wildcard* type`. This is a parameterized type. The language requires stronger type-checking.
 
- Raw types are in fact a concession to exsiting code, which could not use generics prior to release 5.0. The real problam for the "Pair" program is that the author did not decide what version of Java to use. You should always **avoid writing raw types in code indended for release 5.0 or later**.
+ Raw types are in fact a concession to exsiting code, which could not use generics prior to release 5.0. The real problam for the "Pair" program is that the author did not decide what version of Java to use. You should always **avoid writing raw types in code indended for release 5.0 or later**
