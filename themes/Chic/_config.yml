@@ -1,6 +1,6 @@
 # Header
 #
-navname: "楽しんでね。| Yihang's Nest"
+navname: "楽しんでね。| Yihang's Blog"
 
 # navigatior items
 nav:
@@ -16,7 +16,7 @@ favicon: /favicon.png
 nickname: Yihang (Ian) Ding
 
 ### this variable is MarkDown form.
-description: "嘤其鸣矣，求其友声<br> I'm glad you are here. Have fun."
+description: "<em>I'm glad you are here. Have fun.</em>"
 avatar: /image/avatar.jpeg
 
 # main menu navigation
