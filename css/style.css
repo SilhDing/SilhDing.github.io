@@ -182,8 +182,28 @@ template {
   font-weight: bold;
   font-style: italic;
 }
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../fonts/IBM_Plex_Mono/IBMPlexMono-Regular.ttf");
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../fonts/IBM_Plex_Mono/IBMPlexMono-Italic.ttf");
+  font-style: italic;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../fonts/IBM_Plex_Mono/IBMPlexMono-SemiBold.ttf");
+  font-weight: bold;
+}
+@font-face {
+  font-family: "IBM Plex Mono";
+  src: url("../fonts/IBM_Plex_Mono/IBMPlexMono-SemiBoldItalic.ttf");
+  font-weight: bold;
+  font-style: italic;
+}
 html {
-  font-family: 'source serif pro', 'Noto Serif SC', 'STSong', 'Songti SC', 'Noto Serif KR';
+  font-family: 'IBM Plex Mono', 'source serif pro', 'Noto Serif SC', 'STSong', 'Songti SC', 'Noto Serif KR';
 }
 html::-webkit-scrollbar {
   width: 8px;
@@ -198,7 +218,7 @@ html::-webkit-scrollbar-thumb:hover {
   background-color: #ddd;
 }
 body {
-  font-size: 13.5pt;
+  font-size: 12.5pt;
   font-weight: normal;
   line-height: 1.5em;
   background-color: #fff;
@@ -872,9 +892,9 @@ header label {
   transition: color 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.2s ease;
 }
 .card {
-  width: 340px;
-  height: 320px;
-  margin: 20px;
+  width: 360px;
+  height: 330px;
+  margin: 15px 10px 15px 10px;
   background: #e9f3fa;
   border-top: 2px solid #2e86c1;
   padding-top: 0px;
@@ -896,23 +916,27 @@ header label {
 .card .title {
   text-align: center;
   vertical-align: middle;
-  width: 350px;
-  height: 60px;
-  padding: 20px 20px 10px 20px;
+  width: 360px;
+  height: 70px;
+  padding: 15px 15px 10px 15px;
   font-weight: bold;
   display: table-cell;
   vertical-align: middle;
+  font-size: 16px;
 }
 .card .text {
-  width: 300px;
-  height: 160px;
+  width: 320px;
+  height: 170px;
   margin-left: 20px;
   margin-right: 20px;
-  font-size: 17px;
+  font-size: 16px;
+  font-style: italic;
 }
 .card .link .link2 {
-  width: 350px;
-  height: 70px;
+  width: 360px;
+  height: 65px;
+  font-style: italic;
+  font-weight: bold;
   display: table-cell;
   vertical-align: middle;
   color: #2e86c1;
@@ -1134,7 +1158,7 @@ header label {
   cursor: zoom-in;
 }
 .post-content blockquote {
-  font-size: 1.1rem;
+  font-size: 1rem;
   display: block;
   margin: 1em 0;
   padding: 1em 1.2em 1em 1.2em;
@@ -1369,8 +1393,8 @@ header label {
 .vssue {
   width: 100%;
   color: #161209;
-  font-size: 16px;
-  font-family: 'source serif pro', 'Noto Serif SC', 'STSong', 'Songti SC', 'Noto Serif KR';
+  font-size: 12pt;
+  font-family: 'IBM Plex Mono', 'source serif pro', 'Noto Serif SC', 'STSong', 'Songti SC', 'Noto Serif KR';
   padding: 10px;
 }
 .vssue .vssue-button {
@@ -1598,8 +1622,8 @@ header label {
   outline: none;
   width: 100%;
   padding: 15px;
-  font-size: 16px;
-  font-family: 'source serif pro', 'Noto Serif SC', 'STSong', 'Songti SC', 'Noto Serif KR';
+  font-size: 12pt;
+  font-family: 'IBM Plex Mono', 'source serif pro', 'Noto Serif SC', 'STSong', 'Songti SC', 'Noto Serif KR';
   background-color: #f1f1f1;
   border: 0px solid #e8e8e8;
   border-radius: 5px;
@@ -1691,6 +1715,10 @@ header label {
   border: none;
   width: 100%;
   background: transparent;
+}
+.vssue .vssue-comments .vssue-comment .vssue-comment-main .markdown-body code,
+.vssue .vssue-comments .vssue-comment .vssue-comment-main pre {
+  font-size: 12pt;
 }
 .vssue .vssue-comments .vssue-comment .vssue-comment-footer {
   padding: 10px 15px;
