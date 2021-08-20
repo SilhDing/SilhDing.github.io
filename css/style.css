@@ -182,28 +182,8 @@ template {
   font-weight: bold;
   font-style: italic;
 }
-@font-face {
-  font-family: "IBM Plex Mono";
-  src: url("../fonts/IBM_Plex_Mono/IBMPlexMono-Regular.ttf");
-}
-@font-face {
-  font-family: "IBM Plex Mono";
-  src: url("../fonts/IBM_Plex_Mono/IBMPlexMono-Italic.ttf");
-  font-style: italic;
-}
-@font-face {
-  font-family: "IBM Plex Mono";
-  src: url("../fonts/IBM_Plex_Mono/IBMPlexMono-SemiBold.ttf");
-  font-weight: bold;
-}
-@font-face {
-  font-family: "IBM Plex Mono";
-  src: url("../fonts/IBM_Plex_Mono/IBMPlexMono-SemiBoldItalic.ttf");
-  font-weight: bold;
-  font-style: italic;
-}
 html {
-  font-family: 'IBM Plex Mono', 'source serif pro', 'Noto Serif SC', 'STSong', 'Songti SC', 'Noto Serif KR';
+  font-family: 'IBM Plex Mono', 'Noto Sans SC', 'Noto Sans JP', 'STSong', 'Songti SC', 'Noto Sans KR';
 }
 html::-webkit-scrollbar {
   width: 8px;
@@ -1394,7 +1374,7 @@ header label {
   width: 100%;
   color: #161209;
   font-size: 12pt;
-  font-family: 'IBM Plex Mono', 'source serif pro', 'Noto Serif SC', 'STSong', 'Songti SC', 'Noto Serif KR';
+  font-family: 'IBM Plex Mono', 'Noto Sans SC', 'Noto Sans JP', 'STSong', 'Songti SC', 'Noto Sans KR';
   padding: 10px;
 }
 .vssue .vssue-button {
@@ -1623,7 +1603,7 @@ header label {
   width: 100%;
   padding: 15px;
   font-size: 12pt;
-  font-family: 'IBM Plex Mono', 'source serif pro', 'Noto Serif SC', 'STSong', 'Songti SC', 'Noto Serif KR';
+  font-family: 'IBM Plex Mono', 'Noto Sans SC', 'Noto Sans JP', 'STSong', 'Songti SC', 'Noto Sans KR';
   background-color: #f1f1f1;
   border: 0px solid #e8e8e8;
   border-radius: 5px;

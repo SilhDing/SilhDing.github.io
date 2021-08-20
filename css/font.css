@@ -38,23 +38,3 @@
   font-weight: bold;
   font-style: italic;
 }
-@font-face {
-  font-family: "IBM Plex Mono";
-  src: url("../fonts/IBM_Plex_Mono/IBMPlexMono-Regular.ttf");
-}
-@font-face {
-  font-family: "IBM Plex Mono";
-  src: url("../fonts/IBM_Plex_Mono/IBMPlexMono-Italic.ttf");
-  font-style: italic;
-}
-@font-face {
-  font-family: "IBM Plex Mono";
-  src: url("../fonts/IBM_Plex_Mono/IBMPlexMono-SemiBold.ttf");
-  font-weight: bold;
-}
-@font-face {
-  font-family: "IBM Plex Mono";
-  src: url("../fonts/IBM_Plex_Mono/IBMPlexMono-SemiBoldItalic.ttf");
-  font-weight: bold;
-  font-style: italic;
-}
