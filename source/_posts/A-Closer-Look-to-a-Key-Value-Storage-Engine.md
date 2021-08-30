@@ -141,9 +141,36 @@ In fact, the implementation of a bloom filter could be really easy. Another simi
 
 There are some other ways to improve the performance:
 
-1. cache. It's possible to cache some SSTables in memory;
+1. Cache. It's possible to cache some SSTables in memory;
 2. Sparse index or full index of each SSTables can be stored in the memory for fast lookup.
 
 # B-tree
 
-(TODO)
+While the LSM-tree is the main focus in this post, the most popular indexing data structure is, however, B-tree. We mentioned B-tree earlier in this post, and it is always instructive to compare B-tree and LSM-tree.
+
+**B-tree is almost the standard index implementation in almost all relational databases**, and some non-relational database systems. B-tree also keeps key-value pair sorted by key, but the mechanism is pretty different from LSM-tree. Briefly speaking, B-tree is able to maintain a on-disk tree structure to index the data. To find a key and its value, we normally start with the root *page* and go all the way to a leaf node (of the key) or a position which indicates the absence of the key. If we want to write a key and its value, we will use the similar method to find the key, change the value in that page, and write back to disk. If a new key is added, the tree structure might be adjusted (split, merge, ...).
+
+## Reliability
+
+In contrast to LSM-tree, when writing to a key in a B-tree, we usually change ***in place***, which it is just an appending operation in LSM-tree. In B-tree, you need to find the page that contains the key and then overwrite the page with the new value. The tree's structure normally will not be changed and all references to the modified page will not be changed either.
+
+However, a write operation, in some cases, might involve some additional work (this is always called write amplification/multiplication). For example, if the key is absent and you insert it, you might need to split the page to two new ones if the page becomes too big. If it happens, you also need to update the references in their parent pages, which, however, could be dangerous: what if the database crashes after the whole process get completed?
+
+A widely used solution for this problem is write-ahead log (WAL). Another possible issue is concurrency. For this problem, applying some latches (lightweight locks) might work.
+
+As a whole, you will find that, in this regard, LSM-tree is much better: appending to log is simpler than writing in place; the background compaction process can be greatly isolated from the incoming queries.
+
+## B-tree VS LSM-tree
+The most intuitive performance difference between these two data structures is: B-tree is good for read operation while LSM-tree is generally faster for write operations. Of course, benchmarking always varies as the actual performance is sensitive to implementation details and workload. Let's see something that you might be interested when measuring the performance of a storage engine.
+
+### Advantages of LSM-trees
+
+Typically, a LST-tree is able to sustain higher write throughput then a B-tree, *partly* because it normally involves lower write amplification. Note that LSM-tree also has write amplification, such as compaction/merging process, but this can always be in the background and incoming writes will not be affected: this promises high write throughput.
+
+A LSM-tree also compressed better, and it always produce smaller files on disk than a B-tree. In a B-tree, some space in a page might be unused so fragmentation is more serious.
+
+### Downsides of LSM-trees
+
+The most serious downside of a LSM-tree is that the write bandwidth has to be shared the initial write and the compaction threads running in the background. It could be pretty bad when the write throughout gets high: the compaction might not be able to keep up with the rate of the incoming writes. It even gets worse later: the number of unmerged segments (SSTable files) on disk keeps growing and you will run out of the disk space finally. The performance will also get worse as there are now more segments to check in order to find the key.
+
+Another concern arises when a transaction happens, where there are multiple operations in a single transaction. In a B-tree, a key will only exactly exist in one place, but might be copied several times in a LSM-tree. Transaction isolation can be easily implemented using locks on a B-tree, which could be hard on a LSM-tree.
