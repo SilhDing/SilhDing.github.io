@@ -158,9 +158,9 @@
     <div class="tocbot-list">
     </div>
     <div class="tocbot-list-menu">
-        <a class="tocbot-toc-expand" onclick="expand_toc()">Expand all</a>
-        <a onclick="go_top()">Back to top</a>
-        <a onclick="go_bottom()">Go to bottom</a>
+        <a class="tocbot-toc-expand" onclick="expand_toc()">⇲ Expand all</a>
+        <a onclick="go_top()">↑ Back to top</a>
+        <a onclick="go_bottom()">↓ Go to bottom</a>
     </div>
 </div>
 
@@ -189,7 +189,7 @@
             scrollSmooth: true,
         });
         b.setAttribute("onclick", "collapse_toc()");
-        b.innerHTML = "Collapse all"
+        b.innerHTML = "⇱ Collapse all"
     }
 
     function collapse_toc() {
@@ -203,7 +203,7 @@
             scrollSmooth: true,
         });
         b.setAttribute("onclick", "expand_toc()");
-        b.innerHTML = "Expand all"
+        b.innerHTML = "⇲ Expand all"
     }
 
     function go_top() {
