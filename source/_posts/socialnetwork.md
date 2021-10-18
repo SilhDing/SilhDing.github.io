@@ -24,7 +24,7 @@ Across the project, we kept asking some questions to us:
 - "Maximizing reuse minimizes use." (*C. Szyoerski*) So how do you trade off between "use" and "reuse"?
 - Have you ever consider a proper name for your APIs?
 
-This team project is a course project of CMU 17-514, and **it is selected as the "Best Framework"** among all teams from the class.
+This team project is a course project at CMU, and **it is selected as the "Best Framework"** among all teams from the class.
 
 Contributors: [Sheng Guan](https://github.com/shengguan13), [Qingyi Wang](https://github.com/OpusA)
 

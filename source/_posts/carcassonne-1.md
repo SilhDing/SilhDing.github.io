@@ -15,7 +15,7 @@ categories:
 
 In this individual project, the classical board game [Carcassonne](https://en.wikipedia.org/wiki/Carcassonne_(board_game)) is designed and implemented in Java.
 
-The project is a course project of CMU 17-514, which is mostly about object oriented design and Java software design. The project contains a full cycle of software design and development, which means it also involves GUI design/implementation, testing and deployment.
+The project contains a full cycle of software design and development, which means it also involves GUI design/implementation, testing and deployment.
 
 **Note**: due to the CMU academic integrity rules, the project codes cannot be publicized.
 

@@ -30,7 +30,7 @@ In this team project, we designed and implemented a comprehensive distributed ba
 - Support some basic banking operations, e.g., create an account, deposit, withdraw, etc.
 - ...
 
-This project is the course project of CMU 18749 (Building Reliable Distributed Systems) which spanned the whole semester. Due to the CMU AIV policy, we will not release the codes of the project. If you have any question, please contact me or leave comments at the bottom of this page.
+Due to the CMU AIV policy, we will not release the codes of the project. If you have any question, please contact me or leave comments at the bottom of this page.
 
 # Design Overview
 
