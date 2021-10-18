@@ -1303,7 +1303,7 @@ end tell</code></pre><p>A code block continues until it reaches a line that is n
 <li>Support some basic banking operations, e.g., create an account, deposit, withdraw, etc.</li>
 <li>…</li>
 </ul>
-<p>This project is the course project of CMU 18749 (Building Reliable Distributed Systems) which spanned the whole semester. Due to the CMU AIV policy, we will not release the codes of the project. If you have any question, please contact me or leave comments at the bottom of this page.</p>
+<p>Due to the CMU AIV policy, we will not release the codes of the project. If you have any question, please contact me or leave comments at the bottom of this page.</p>
 <h1 id="Design-Overview"><a href="#Design-Overview" class="headerlink" title="Design Overview"></a>Design Overview</h1><p>In this section, we are going to give a brief introduction to our system.</p>
 <h2 id="Terminology"><a href="#Terminology" class="headerlink" title="Terminology"></a>Terminology</h2><table>
 <thead>
@@ -1592,7 +1592,7 @@ end tell</code></pre><p>A code block continues until it reaches a line that is n
 <li>“Maximizing reuse minimizes use.” (<em>C. Szyoerski</em>) So how do you trade off between “use” and “reuse”?</li>
 <li>Have you ever consider a proper name for your APIs?</li>
 </ul>
-<p>This team project is a course project of CMU 17-514, and <strong>it is selected as the “Best Framework”</strong> among all teams from the class.</p>
+<p>This team project is a course project at CMU, and <strong>it is selected as the “Best Framework”</strong> among all teams from the class.</p>
 <p>Contributors: <a href="https://github.com/shengguan13" target="_blank" rel="noopener">Sheng Guan</a>, <a href="https://github.com/OpusA" target="_blank" rel="noopener">Qingyi Wang</a></p>
 <p>(<strong>Note:</strong> due to the CMU academic integrity policy, the code of this project will not be publicized. If you are <strong>NOT</strong> taking this course currently <strong>AND</strong> you will <strong>NOT</strong> take this course in the future, please leave comments or contact me by e-mail in case you want more information.)</p>
 <h2 id="Framework-Overview"><a href="#Framework-Overview" class="headerlink" title="Framework Overview"></a>Framework Overview</h2><h3 id="Plugins-and-Interfaces"><a href="#Plugins-and-Interfaces" class="headerlink" title="Plugins and Interfaces"></a>Plugins and Interfaces</h3><p>In order to use the framework, users need to design and implements two types of plugins: <em>data source plugin</em> and <em>display plugin</em>.</p>
@@ -1632,7 +1632,7 @@ end tell</code></pre><p>A code block continues until it reaches a line that is n
             <span class="archive-item-date">Nov 1, 2019</span>
             <!-- <span style=> <p><img src="0.jpg" alt="game-pic"></p>
 <p>In this individual project, the classical board game <a href="https://en.wikipedia.org/wiki/Carcassonne_(board_game)" target="_blank" rel="noopener">Carcassonne</a> is designed and implemented in Java.</p>
-<p>The project is a course project of CMU 17-514, which is mostly about object oriented design and Java software design. The project contains a full cycle of software design and development, which means it also involves GUI design/implementation, testing and deployment.</p>
+<p>The project contains a full cycle of software design and development, which means it also involves GUI design/implementation, testing and deployment.</p>
 <p><strong>Note</strong>: due to the CMU academic integrity rules, the project codes cannot be publicized.</p>
 <h2 id="Game-Overview"><a href="#Game-Overview" class="headerlink" title="Game Overview"></a>Game Overview</h2><p>Once you run the program, you will first be required to enter the number of players:</p>
 <p><img src="1.png" alt="game-init"></p>
@@ -1841,7 +1841,7 @@ end tell</code></pre><p>A code block continues until it reaches a line that is n
 <li>build an RPC system to allow remote file operations (<code>open</code>, <code>read</code>, <code>write</code>, …); these RPC stubs will be interposed in place of the C library functions that handle file operation. For example, if you execute <code>cat foo</code> command on the local machine, instead of opening and printing the contents of a local file, it will access the contents of file <code>foo</code> on the remote server machine.</li>
 <li>based on the task 1, a proxy containing a cache should be implemented and placed between the clients and the server. Multi-clients and multi-proxy will be supported. You should also exploit some cache policies and strategies to guarantee consistency.</li>
 </ol>
-<p>This project comes from the CMU course 15-440/640: Distributed System. <font color="#F13E3E">Due to the CMU academic integrity policy, the code will not be publicized and some contents in this post will also be disabled as there are directly related to the design of my solution. </font></p>
+<p><font color="#F13E3E">Due to the CMU academic integrity policy, the code will not be publicized and some contents in this post will also be disabled as there are directly related to the design of my solution. </font></p>
 <h1 id="RPC"><a href="#RPC" class="headerlink" title="RPC"></a>RPC</h1><p>It is very common for us to access resources located on remote machines. We may easily write some applications to use the network to communicate between different components running on different machines, which, however, is tedious and inelegant to insert ad-hoc networking code every place our software needs to access remote resources.</p>
 <p>Instead, we could implement remote procedure calls to hide the network complexities and to access the remote resources in a clean abstraction. Users of these RPCs will not need to care anything on networking, and they could also develop more applications on the top of them.</p>
 <h2 id="Requirements"><a href="#Requirements" class="headerlink" title="Requirements"></a>Requirements</h2><p>The purpose of this task is to enable clients to use some commands (such as <code>cat</code>, <code>ls</code>) to access files on remote machine. In order to do this, we need to rewrite the standard C library calls and replace the original ones:</p>
